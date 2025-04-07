@@ -1,16 +1,19 @@
-name: Split Inference
+name: YOLO
 server:
-  cut-layer:
-    - 6
+  cut-layer: a #or b, c
   clients:
     - 1
     - 1
-  model: VGG16
+  model: yolov8n
+  batch-size: 1
+  save-output: False
 rabbit:
   address: 127.0.0.1
   username: admin
   password: admin
   virtual-host: /
 
+data: video.mp4
 log-path: .
+control-count: 10
 debug-mode: False

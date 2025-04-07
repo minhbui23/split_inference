@@ -1,13 +1,14 @@
 import pickle
 import time
+import base64
 
 import pika
 import torch
 import torch.nn as nn
 
 import src.Log
-import src.Model
-
+from src.Model import SplitDetectionModel
+from ultralytics import YOLO
 
 class RpcClient:
     def __init__(self, client_id, layer_id, address, username, password, virtual_host, inference_func, device):
@@ -40,31 +41,30 @@ class RpcClient:
         self.response = pickle.loads(body)
         src.Log.print_with_color(f"[<<<] Client received: {self.response['message']}", "blue")
         action = self.response["action"]
-        state_dict = self.response["parameters"]
 
         if action == "START":
             model_name = self.response["model_name"]
-            cut_layers = self.response['layers']
             num_layers = self.response["num_layers"]
-
-            klass = getattr(src.Model, model_name)
-            full_model = klass()
-            src.Log.print_with_color(f"Cut layer: {cut_layers}", "green")
-            from_layer = cut_layers[0]
-            to_layer = cut_layers[1]
-            if to_layer == -1:
-                self.model = nn.Sequential(*nn.ModuleList(full_model.children())[from_layer:])
+            splits = self.response["splits"]
+            save_layers = self.response["save_layers"]
+            batch_size = self.response["batch_size"]
+            model = self.response["model"]
+            save_output = self.response["save_output"]
+            if model is not None:
+                decoder = base64.b64decode(model)
+                with open(f"{model_name}.pt", "wb") as f:
+                    f.write(decoder)
+                src.Log.print_with_color(f"Loaded {model_name}.pt", "green")
             else:
-                self.model = nn.Sequential(*nn.ModuleList(full_model.children())[from_layer:to_layer])
-            self.model.to(self.device)
-            if state_dict:
-                self.model.load_state_dict(state_dict)
-            status = True
-            self.inference_func(self.model, num_layers)
+                src.Log.print_with_color(f"Do not load model.", "yellow")
+
+            pretrain_model = YOLO(f"{model_name}.pt").model
+            self.model = SplitDetectionModel(pretrain_model, split_layer=splits)
+
+            self.inference_func(self.model, num_layers, save_layers, batch_size, save_output)
             # Stop or Error
             return False
         else:
-
             return False
 
     def connect(self):

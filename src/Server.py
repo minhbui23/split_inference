@@ -1,4 +1,6 @@
 import os
+import sys
+import base64
 import pika
 import pickle
 import torch
@@ -19,6 +21,8 @@ class Server:
         self.model_name = config["server"]["model"]
         self.total_clients = config["server"]["clients"]
         self.cut_layer = config["server"]["cut-layer"]
+        self.batch_size = config["server"]["batch-size"]
+        self.save_output = config["server"]["save-output"]
 
         credentials = pika.PlainCredentials(username, password)
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(address, 5672, f'{virtual_host}', credentials))
@@ -72,40 +76,32 @@ class Server:
         self.channel.start_consuming()
 
     def notify_clients(self):
-        klass = getattr(src.Model, self.model_name)
-        full_model = klass()
-        full_model = nn.Sequential(*nn.ModuleList(full_model.children()))
+        default_splits = {
+            "a": (10, [4, 6, 9]),
+            "b": (16, [9, 12, 15]),
+            "c": (22, [15, 18, 21])
+        }
+        splits = default_splits[self.cut_layer]
+        file_path = f"{self.model_name}.pt"
+        if os.path.exists(file_path):
+            src.Log.print_with_color(f"Load model {self.model_name}.", "green")
+            with open(f"{self.model_name}.pt", "rb") as f:
+                file_bytes = f.read()
+                encoded = base64.b64encode(file_bytes).decode('utf-8')
+        else:
+            src.Log.print_with_color(f"{self.model_name} does not exist.", "yellow")
+            sys.exit()
+
         for (client_id, layer_id) in self.list_clients:
-            filepath = f"{self.model_name}.pth"
-            state_dict = None
-            if layer_id == 1:
-                layers = [0, self.cut_layer[0]]
-            elif layer_id == len(self.total_clients):
-                layers = [self.cut_layer[-1], -1]
-            else:
-                layers = [self.cut_layer[layer_id - 2], self.cut_layer[layer_id - 1]]
-
-            if os.path.exists(filepath):
-                full_state_dict = torch.load(filepath, weights_only=True)
-                full_model.load_state_dict(full_state_dict)
-
-                if layer_id == 1:
-                    model_part = nn.Sequential(*nn.ModuleList(full_model.children())[:layers[1]])
-                elif layer_id == len(self.total_clients):
-                    model_part = nn.Sequential(*nn.ModuleList(full_model.children())[layers[0]:])
-                else:
-                    model_part = nn.Sequential(*nn.ModuleList(full_model.children())[layers[0]:layers[1]])
-
-                state_dict = model_part.state_dict()
-                src.Log.print_with_color("Model loaded successfully.", "green")
-            else:
-                src.Log.print_with_color(f"File {filepath} does not exist.", "yellow")
 
             response = {"action": "START",
                         "message": "Server accept the connection",
-                        "parameters": state_dict,
-                        "layers": layers,
+                        "model": None,
+                        "splits": splits[0],
+                        "save_layers": splits[1],
+                        "batch_size": self.batch_size,
                         "num_layers": len(self.total_clients),
-                        "model_name": self.model_name}
+                        "model_name": self.model_name,
+                        "save_output": self.save_output}
 
             self.send_to_response(client_id, pickle.dumps(response))

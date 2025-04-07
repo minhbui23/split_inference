@@ -3,21 +3,24 @@
 ## Configuration
 Application configuration is in the `config.yaml` file:
 ```yaml
-name: Split Inference
-server: # server configuration
-  cut-layer:
-    - 6
-  clients: # all devices in system
+name: YOLO
+server:
+  cut-layer: a #or b, c
+  clients:
     - 1
     - 1
-  model: VGG16 # model name
-rabbit: # RabbitMQ connection configuration
+  model: yolov8n
+  batch-size: 1
+  save-output: False
+rabbit:
   address: 127.0.0.1
   username: admin
   password: admin
   virtual-host: /
 
+data: video.mp4
 log-path: .
+control-count: 10
 debug-mode: False
 ```
 This configuration is use for server.
