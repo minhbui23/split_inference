@@ -31,14 +31,13 @@ class Scheduler:
             bit_size = len(message)
             print(f"Size: {bit_size} bites.")
 
-
         self.channel.basic_publish(
             exchange='',
             routing_key=intermediate_queue,
             body=message
         )
 
-    def first_layer(self, model, save_layers, batch_size):
+    def first_layer(self, model, save_layers, batch_size, save_output):
         input_image = []
         predictor = SplitDetectionPredictor(model, overrides={"imgsz": 640})
 
@@ -70,7 +69,7 @@ class Scheduler:
                     src.Log.print_with_color(f"Not read from video", "yellow")
                     return False
                 frame = cv2.resize(frame, (640, 640))
-                tensor = torch.from_numpy(frame).float().permute(2,0,1) # shape: (3, 640, 640)
+                tensor = torch.from_numpy(frame).float().permute(2, 0, 1)  # shape: (3, 640, 640)
                 tensor /= 255.0
                 input_image.append(tensor)
                 # input_image = tensor.unsqueeze(0)
@@ -88,9 +87,10 @@ class Scheduler:
 
                     # Head predict
                     y = model.forward_head(preprocess_image, save_layers)
-                    y["img"] = preprocess_image
-                    y["orig_imgs"] = input_image
-                    y["path"] = path
+                    if save_output:
+                        y["img"] = preprocess_image
+                        y["orig_imgs"] = input_image
+                        y["path"] = path
 
                     stop = time.time()
                     print(stop - start)
@@ -135,11 +135,11 @@ class Scheduler:
                         predictions = model.forward_tail(y)
 
                         # Postprocess
-                        results = predictor.postprocess(predictions, y["img"], y["orig_imgs"], y["path"])
-                        for res in results:
-                            annotated_frame = res.plot()
-                            # cv2.imshow("YOLOv8n - Object Detection", annotated_frame)
-                            if save_output:
+                        if save_output:
+                            results = predictor.postprocess(predictions, y["img"], y["orig_imgs"], y["path"])
+                            for res in results:
+                                annotated_frame = res.plot()
+                                # cv2.imshow("YOLOv8n - Object Detection", annotated_frame)
                                 video.write(cv2.resize(annotated_frame, (width, height)))
                         stop = time.time()
                         print(stop - start)
@@ -158,7 +158,7 @@ class Scheduler:
 
     def inference_func(self, model, num_layers, save_layers, batch_size, save_output):
         if self.layer_id == 1:
-            self.first_layer(model, save_layers, batch_size)
+            self.first_layer(model, save_layers, batch_size, save_output)
         elif self.layer_id == num_layers:
             self.last_layer(model, save_output)
         else:
