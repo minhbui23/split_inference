@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: split-infer-config
+  namespace: split-infer
+data:
+  config.yaml: |
+    name: YOLO
+    server:
+      cut-layer: a #or b, c
+      clients:
+        - 1
+        - 1
+      model: yolov8n
+      batch-size: 1
+      save-output: False
+    rabbit:
+      address: rabbitmq
+      username: admin
+      password: admin
+      virtual-host: /
+
+    data: video.mp4
+    log-path: .
+    control-count: 10
+    debug-mode: False
+
+  limits.conf: |
+    rabbitmq soft nofile 65536
+    rabbitmq hard nofile 65536
+
+  rabbitmq.conf: |
+    max_message_size = 524288000

@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # RabbitMQ main port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq-config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq-config/limits.conf:/etc/security/limits.conf
+    networks:
+      - SI-network
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: "2GB"
+
+  server:
+    image: minhbui1/server-infer
+    container_name: server
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./config.yaml:/app/config.yaml  # Mount file cấu hình
+      #- ./server_result:/app/result
+    networks:
+      - SI-network
+    command: ["sh", "-c", "sleep 10 && python -u server.py"]
+
+
+  client1:
+    image: minhbui1/client-infer
+    container_name: client1
+    depends_on:
+      - server
+    volumes:
+      - ./config.yaml:/app/config.yaml  
+    networks:
+      - SI-network
+    command: ["sh", "-c", "sleep 20 && python client.py --layer_id 1 --device cpu"]
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "2GB"
+
+  client2:
+    image: minhbui1/client-infer
+    container_name: client2
+    depends_on:
+      - server
+    volumes:
+      - ./config.yaml:/app/config.yaml  
+    networks:
+      - SI-network
+    command: ["sh", "-c", "sleep 20 && python client.py --layer_id 2 --device cpu"]
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: "2GB"
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  SI-network:
+    driver: bridge

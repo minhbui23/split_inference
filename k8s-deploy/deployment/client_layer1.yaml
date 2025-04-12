@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-layer1
+  namespace: split-infer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-layer1
+  template:
+    metadata:
+      labels:
+        app: client-layer1
+    spec:
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+      nodeSelector:
+        kubernetes.io/hostname: worker1
+      containers:
+        - name: client
+          image: minhbui1/client-infer
+          command: ["sh", "-c", "sleep 20 && python -u client.py --layer_id 1 --device cpu"]
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: split-infer-config

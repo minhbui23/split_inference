@@ -8,7 +8,7 @@ server:
   batch-size: 1
   save-output: False
 rabbit:
-  address: 127.0.0.1
+  address: rabbitmq
   username: admin
   password: admin
   virtual-host: /
