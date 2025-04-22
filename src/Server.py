@@ -64,13 +64,16 @@ class Server:
 
     def send_to_response(self, client_id, message):
         reply_queue_name = f"reply_{client_id}"
-        self.reply_channel.queue_declare(reply_queue_name, durable=False)
-        src.Log.print_with_color(f"[>>>] Sent notification to client {client_id}", "red")
-        self.reply_channel.basic_publish(
-            exchange='',
-            routing_key=reply_queue_name,
-            body=message
-        )
+        try: 
+            src.Log.print_with_color(f"[>>>] Sending notification to client {client_id} via queue {reply_queue_name}", "red") # Log rõ tên queue
+            self.reply_channel.basic_publish(
+                exchange='',
+                routing_key=reply_queue_name, 
+                body=message
+            )
+        except Exception as e:
+             src.Log.print_with_color(f"Error publishing to {reply_queue_name}: {e}. Maybe client disconnected?", "red")
+
 
     def start(self):
         self.channel.start_consuming()

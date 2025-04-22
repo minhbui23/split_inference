@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Client Layer 1", // Tên để bạn chọn
+            "type": "python",              // Kiểu debugger là Python
+            "request": "launch",           // "launch" để VS Code tự khởi chạy file
+            "program": "${workspaceFolder}/client.py", // Đường dẫn tới file client.py
+                                                     // ${workspaceFolder} là thư mục gốc project
+            "args": [                      // Các tham số dòng lệnh cho client.py
+                "--layer_id",
+                "1",
+                "--device",
+                "cpu"
+                // Thêm các tham số khác nếu cần
+            ],
+            "console": "integratedTerminal", // Chạy trong terminal tích hợp của VS Code
+            "justMyCode": true             // true: chỉ debug code của bạn, false: debug cả thư viện
+        }
+        // Bạn có thể có các cấu hình khác ở đây
+    ]
+}
