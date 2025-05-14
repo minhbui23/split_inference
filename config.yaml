@@ -14,7 +14,7 @@ rabbit:
   virtual-host: /
 
 data: video.mp4
-log-path: .
+log-path: logs
 control-count: 10
 debug-mode: False
 

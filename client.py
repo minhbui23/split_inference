@@ -229,7 +229,7 @@ if __name__ == "__main__":
     layer_id_arg = args.layer_id
 
     # --- Logger ---
-    main_logger = src.Log.Logger(f"client_{client_uuid}_L{layer_id_arg}.log") 
+    main_logger = src.Log.Logger(f"logs/client_{client_uuid}_L{layer_id_arg}.log") 
     main_logger.log_info(f"Client {client_uuid} (Layer {layer_id_arg}) starting...")
 
     # --- Device ---

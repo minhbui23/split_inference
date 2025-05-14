@@ -19,7 +19,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2.0"
+          cpus: "1"
           memory: "2GB"
 
   server:
@@ -30,9 +30,10 @@ services:
     volumes:
       - ./config.yaml:/app/config.yaml  # Mount file cấu hình
       #- ./server_result:/app/result
+      - ./logs:/app/logs
     networks:
       - SI-network
-    command: ["sh", "-c", "sleep 10 && python -u server.py"]
+    command: ["sh", "-c", "sleep 5 && python -u server.py"]
 
 
   client1:
@@ -42,14 +43,15 @@ services:
       - server
     volumes:
       - ./config.yaml:/app/config.yaml  
+      - ./logs:/app/logs
     networks:
       - SI-network
-    command: ["sh", "-c", "sleep 20 && python client.py --layer_id 1 --device cpu"]
+    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu"]
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: "2GB"
+          cpus: "3"
+          memory: "3GB"
 
   client2:
     image: minhbui1/client-infer
@@ -58,14 +60,15 @@ services:
       - server
     volumes:
       - ./config.yaml:/app/config.yaml  
+      - ./logs:/app/logs
     networks:
       - SI-network
-    command: ["sh", "-c", "sleep 20 && python client.py --layer_id 2 --device cpu"]
+    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 2 --device cpu"]
     deploy:
       resources:
         limits:
-          cpus: "2"
-          memory: "2GB"
+          cpus: "3"
+          memory: "3GB"
 
 volumes:
   rabbitmq_data:

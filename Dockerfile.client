@@ -19,6 +19,7 @@ COPY src/Log.py src/
 COPY src/RpcClient.py src/
 COPY src/Scheduler.py src/
 COPY src/Model.py src/
+COPY src/Utils.py src/
 COPY cfg/ cfg/
 
 COPY video.mp4 /app/

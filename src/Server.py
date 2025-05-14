@@ -164,8 +164,7 @@ class Server:
                 "splits": current_split_params[0], # split_layer index cho SplitDetectionModel
                 "save_layers": current_split_params[1], # List các layer index cần save output
                 "batch_frame": batch_frame_from_config,
-                "num_layers": self.total_expected_clients, # Tổng số client tham gia
-                                                            # (hoặc số "phần" của model)
+                "num_layers": self.total_expected_clients, # Tổng số client tham gia                                       
                 "model_name": self.model_name,
                 "data": self.data_source_config, # Nguồn dữ liệu (ví dụ: video.mp4)
                 "debug_mode": self.debug_mode,
