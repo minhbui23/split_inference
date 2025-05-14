@@ -1,189 +1,191 @@
+# src/RpcClient.py (Cập nhật để đọc cấu trúc START phẳng từ server)
+import pika
+import uuid
 import pickle
 import time
 import base64
-import threading 
-
-import pika
-import torch # Giả sử vẫn cần cho type hinting hoặc lỗi import nếu bỏ
-import torch.nn as nn # Không cần thiết trực tiếp ở đây
-
-import src.Log
-from src.Model import SplitDetectionModel
-from ultralytics import YOLO
+import os
 
 class RpcClient:
-    def __init__(self, client_id, layer_id, address, username, password, virtual_host, inference_func, device):
+    def __init__(self, client_id, layer_id, address, username, password, virtual_host,
+                 logger_ref):
         self.client_id = client_id
         self.layer_id = layer_id
-        self.address = address
-        self.username = username
-        self.password = password
-        self.virtual_host = virtual_host
+        self.logger_ref = logger_ref
+        
+        self.initial_params = None
+        self.response_payload = None # Sẽ lưu toàn bộ dict response từ server
+        self.correlation_id = None
 
-        self.inference_func_ref = inference_func 
-        self.device = device
-
-        self.channel = None
-        self.connection = None
-        self.response_data = None # Dùng để lưu dữ liệu response
-        self.model = None
-        self.reply_queue_name = f"reply_{self.client_id}"
-        self._reply_received_event = threading.Event() 
-        self._consumer_tag = None 
-
-        self.connect() 
-
-    def _setup_reply_consumer(self):
-        """Khai báo queue và đăng ký consumer cho reply."""
-        try:
-            # Khai báo queue reply
-            self.channel.queue_declare(self.reply_queue_name, durable=False, exclusive=True) # exclusive=True để queue tự xóa khi client mất kết nối
-             # Đăng ký consumer, chỉ định hàm callback _handle_rpc_reply
-             # auto_ack=False để xác nhận thủ công sau khi xử lý
-            self._consumer_tag = self.channel.basic_consume(
-                queue=self.reply_queue_name,
-                on_message_callback=self._handle_rpc_reply,
-                auto_ack=False
+        self.credentials = pika.PlainCredentials(username, password)
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=address,
+                port=5672,
+                virtual_host=virtual_host,
+                credentials=self.credentials,
+                heartbeat=600,
+                blocked_connection_timeout=300
             )
-            src.Log.print_with_color(f"Client {self.client_id} waiting for reply on {self.reply_queue_name}", "yellow")
-        except Exception as e:
-            src.Log.print_with_color(f"Error setting up reply consumer: {e}", "red")
-            self._reply_received_event.set() # Set event để không bị block vô hạn nếu lỗi
+        )
+        self.channel = self.connection.channel()
+        result = self.channel.queue_declare(queue='', exclusive=True)
+        self.callback_queue_name = result.method.queue
 
-    def _handle_rpc_reply(self, ch, method, properties, body):
-        """Hàm callback xử lý message START từ server."""
-        src.Log.print_with_color(f"RPC Reply received!", "blue")
-        try:
-            # Xử lý message, load model
-            if self._process_start_message(body):
-                 # Chỉ ack nếu xử lý START thành công và load model xong
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-                src.Log.print_with_color(f"START message processed successfully.", "green")
-            else:
-                # Nếu xử lý START thất bại, không ack (hoặc có thể nack)
-                # Message có thể bị consume lại hoặc vào dead-letter nếu cấu hình
-                 src.Log.print_with_color(f"Failed to process START message.", "red")
+        self.channel.basic_consume(
+            queue=self.callback_queue_name,
+            on_message_callback=self.on_response_message,
+            auto_ack=True
+        )
+        self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Initialized. Waiting on queue '{self.callback_queue_name}'.")
 
-        except Exception as e:
-            src.Log.print_with_color(f"Error processing RPC reply: {e}", "red")
+    def on_response_message(self, ch, method, props, body):
+        if self.correlation_id == props.correlation_id:
+            try:
+                self.response_payload = pickle.loads(body) # response_payload là dict được server gửi
+                self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Received RPC response. CorrID: {props.correlation_id}")
 
-        finally:
-            self._reply_received_event.set()
-            if self._consumer_tag:
-                 try:
-                      ch.basic_cancel(consumer_tag=self._consumer_tag, callback=self._on_cancelok)
-                 except Exception as cancel_e:
-                      src.Log.print_with_color(f"Error cancelling consumer {self._consumer_tag}: {cancel_e}", "yellow")
+                if not isinstance(self.response_payload, dict):
+                    self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Error: Response is not a dictionary! Got type: {type(self.response_payload)}")
+                    self.initial_params = {"error": f"Response was not a dict: {type(self.response_payload)}"}
+                    return
 
-    def _on_cancelok(self, frame):
-         """Callback khi basic_cancel thành công."""
-         src.Log.print_with_color(f"RPC reply consumer {self._consumer_tag} cancelled.", "yellow")
+                action = self.response_payload.get("action")
+                server_message = self.response_payload.get("message") # Lấy message từ server (nếu có)
+                if server_message:
+                     self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Message from server: {server_message}")
+                
+                self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Action from server: {action}")
 
-    def _process_start_message(self, body):
-        """Xử lý nội dung message START và load model. Trả về True nếu thành công."""
-        try:
-            self.response_data = pickle.loads(body) 
-            src.Log.print_with_color(f"[<<<] Client received: {self.response_data['message']}", "blue")
-            action = self.response_data["action"]
+                if action == "START":
+                    # Server gửi các tham số ở dạng phẳng, trực tiếp trong self.response_payload
+                    self.initial_params = {
+                        "model_name": self.response_payload.get("model_name"),
+                        "num_layers": self.response_payload.get("num_layers"),
+                        "splits": self.response_payload.get("splits"),
+                        "save_layers": self.response_payload.get("save_layers"),
+                        "batch_frame": self.response_payload.get("batch_frame"),
+                        "encoded_model": self.response_payload.get("model"),    # Server dùng "model"
+                        "data_source": self.response_payload.get("data"),      # Server dùng "data"
+                        "debug_mode": self.response_payload.get("debug_mode", False),
+                        "imgsz": self.response_payload.get("imgsz")             # Server dùng "imgsz"
+                    }
+                    
+                    # Kiểm tra và xử lý các tham số cần thiết
+                    if self.initial_params.get("model_name") is None:
+                        self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] 'model_name' is missing in START parameters.")
+                        self.initial_params["error"] = "'model_name' missing in START parameters"
+                    else:
+                         self.initial_params["model_save_path"] = f'{self.initial_params["model_name"]}.pt'
 
-            if action == "START":
-                model_name = self.response_data["model_name"]
-                splits = self.response_data["splits"]
-                model_data_encoded = self.response_data["model"]
+                    # Lưu model nếu có
+                    encoded_model_str = self.initial_params.get("encoded_model")
+                    model_save_file_path = self.initial_params.get("model_save_path")
 
-                if model_data_encoded is not None:
-                    decoder = base64.b64decode(model_data_encoded)
-                    with open(f"{model_name}.pt", "wb") as f:
-                        f.write(decoder)
-                    src.Log.print_with_color(f"Loaded {model_name}.pt", "green")
+                    if encoded_model_str and model_save_file_path:
+                        if os.path.exists(model_save_file_path):
+                            self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Model file {model_save_file_path} already exists. Skipping download.")
+                        else:
+                            try:
+                                model_bytes = base64.b64decode(encoded_model_str)
+                                with open(model_save_file_path, "wb") as f:
+                                    f.write(model_bytes)
+                                self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Model successfully saved to {model_save_file_path}")
+                            except Exception as e:
+                                self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Error decoding/saving model: {e}")
+                                self.initial_params["error"] = f"Model saving error: {e}"
+                    elif not encoded_model_str:
+                        self.logger_ref.log_warning(f"[RpcClient L{self.layer_id}] No 'encoded_model' string found in START parameters.")
+                    elif not model_save_file_path: # Thường xảy ra nếu model_name thiếu
+                         self.logger_ref.log_warning(f"[RpcClient L{self.layer_id}] 'model_save_path' could not be determined.")
+
+                elif action == "REGISTERED":
+                    self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Successfully registered with server.")
+                    # self.initial_params vẫn là None, wait_response sẽ tiếp tục chờ START
+                
+                elif action == "ERROR":
+                    error_msg = server_message if server_message else self.response_payload.get('details', 'Unknown error from server')
+                    self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Received ERROR from server: {error_msg}")
+                    self.initial_params = {"error": error_msg}
+                
                 else:
-                    src.Log.print_with_color(f"Do not load model file.", "yellow")
+                    self.logger_ref.log_warning(f"[RpcClient L{self.layer_id}] Received unhandled action: {action}")
 
-                # Load model gốc và tạo model đã chia
-                pretrain_model = YOLO(f"{model_name}.pt").model
-                self.model = SplitDetectionModel(pretrain_model, split_layer=splits)
-                src.Log.print_with_color(f"Split model created for layer {self.layer_id}.", "green")
-                return True # Xử lý thành công
-            else:
-                src.Log.print_with_color(f"Received non-START action: {action}", "yellow")
-                return False # Action không mong muốn
+            except pickle.UnpicklingError as e:
+                self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Failed to unpickle response body: {e}. Body (first 100 bytes): {body[:100]}")
+                self.initial_params = {"error": f"Unpickling error: {e}"}
+            except KeyError as e: # Bắt lỗi nếu một key bắt buộc (ví dụ "action") không có trong self.response_payload
+                self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Missing key in response_payload: {e}. Payload: {self.response_payload}")
+                self.initial_params = {"error": f"Missing key in server response: {e}"}
+            except Exception as e:
+                self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Exception in on_response_message: {e}")
+                self.initial_params = {"error": f"General RpcClient error: {e}"}
+        else:
+            self.logger_ref.log_warning(f"[RpcClient L{self.layer_id}] Received message with mismatched correlation ID. Expected: {self.correlation_id}, Got: {props.correlation_id}. Body (first 100 bytes): {body[:100]}")
+
+    def send_to_server(self, message_dict):
+        self.response_payload = None
+        self.initial_params = None
+        self.correlation_id = str(uuid.uuid4())
+        
+        self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Sending message to 'rpc_queue_server'. CorrID: {self.correlation_id}, Action: {message_dict.get('action')}")
+
+        try:
+            self.channel.basic_publish(
+                exchange='',
+                routing_key='rpc_queue',
+                properties=pika.BasicProperties(
+                    reply_to=self.callback_queue_name,
+                    correlation_id=self.correlation_id,
+                ),
+                body=pickle.dumps(message_dict)
+            )
+            self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Message for action '{message_dict.get('action')}' published.")
         except Exception as e:
-            src.Log.print_with_color(f"Error in _process_start_message: {e}", "red")
-            return False # Xử lý lỗi
+            self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Failed to publish message: {e}")
+            # Cân nhắc thêm cơ chế retry hoặc báo lỗi nghiêm trọng hơn
 
-    def wait_for_start_command(self, timeout=300):
-        """Chờ nhận message START từ server bằng basic_consume."""
-        if not self.channel or self.channel.is_closed:
-             src.Log.print_with_color("Cannot wait for reply, channel is closed.", "red")
-             return None, None # Trả về None nếu channel đóng
-
-        self._reply_received_event.clear() # Reset event trước khi chờ
-        self._setup_reply_consumer() # Thiết lập consumer
-
+    def wait_response(self, timeout_seconds=300):
+        self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Waiting for server response (timeout: {timeout_seconds}s)...")
         start_time = time.time()
-        while not self._reply_received_event.is_set():
-             if timeout and time.time() - start_time > timeout:
-                  src.Log.print_with_color("Timeout waiting for RPC reply.", "red")
-                  # Hủy consumer nếu timeout
-                  if self._consumer_tag:
-                       try:
-                            self.channel.basic_cancel(self._consumer_tag)
-                       except Exception as cancel_e:
-                            src.Log.print_with_color(f"Error cancelling consumer on timeout: {cancel_e}", "yellow")
-                  return None, None # Trả về None nếu timeout
+
+        while True: # Vòng lặp sẽ được ngắt bởi return hoặc timeout
+            # Xử lý các sự kiện Pika
+            self.connection.process_data_events(time_limit=1)
+
+            # Kiểm tra điều kiện thoát dựa trên self.initial_params (được set trong on_response_message)
+            if self.initial_params:
+                if "error" in self.initial_params:
+                    self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Exiting wait_response due to error: {self.initial_params['error']}")
+                    return False # Có lỗi
+                if self.initial_params.get("model_name") is not None: # Điều kiện thành công chính
+                    self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] START signal processed. Parameters received.")
+                    return True # Thành công
+            
+            # Kiểm tra xem có nhận được "REGISTERED" và cần reset để chờ "START" không
+            # self.response_payload sẽ là dict đầy đủ từ server
+            if self.response_payload and self.response_payload.get("action") == "REGISTERED":
+                if self.initial_params is None: # Chỉ reset nếu chưa nhận START/ERROR
+                    self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Received REGISTERED, resetting response to wait for START.")
+                    self.response_payload = None # Reset để vòng lặp tiếp tục chờ message START thật sự
+                # Nếu initial_params đã có (ví dụ lỗi từ trước), không reset nữa
+
+            # Kiểm tra timeout
+            if time.time() - start_time > timeout_seconds:
+                self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Timeout waiting for server response after {timeout_seconds}s.")
+                # Thử kiểm tra self.initial_params một lần cuối trước khi báo timeout
+                if self.initial_params and self.initial_params.get("model_name"): return True
+                if self.initial_params and self.initial_params.get("error"): return False
+                return False # Timeout
+
+        # Code không nên tới đây nếu logic vòng lặp while True là đúng
+        return False
 
 
-             self.connection.process_data_events(time_limit=0.1)
-
-        return self.model, self.response_data
-
-    def connect(self):
-        """Thiết lập kết nối và channel."""
+    def close(self):
         try:
-             if self.connection and self.connection.is_open:
-                 return # Đã kết nối rồi thì thôi
-             credentials = pika.PlainCredentials(self.username, self.password)
-             self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.address, 5672, self.virtual_host, credentials, heartbeat=600, blocked_connection_timeout=300))
-             self.channel = self.connection.channel()
-             src.Log.print_with_color("Connection and channel established.", "green")
+            if self.connection and self.connection.is_open:
+                self.logger_ref.log_info(f"[RpcClient L{self.layer_id}] Closing RabbitMQ connection.")
+                self.connection.close()
         except Exception as e:
-             src.Log.print_with_color(f"Failed to connect: {e}", "red")
-             self.connection = None
-             self.channel = None
-
-
-    def send_to_server(self, message):
-        """Gửi message đăng ký đến server."""
-        if not self.channel or self.channel.is_closed:
-             # Nếu chưa connect hoặc channel đã đóng, thử connect lại
-             src.Log.print_with_color("Attempting to reconnect before sending...", "yellow")
-             self.connect()
-             if not self.channel: # Nếu vẫn không connect được thì báo lỗi
-                  src.Log.print_with_color("Cannot send message, channel unavailable.", "red")
-                  return False # Trả về False nếu không gửi được
-
-        try:
-            # Khai báo queue đích ('rpc_queue') - nên khai báo ở server là chính
-            # self.channel.queue_declare('rpc_queue', durable=False) # Có thể bỏ qua ở client
-
-            # Gửi message
-            self.channel.basic_publish(exchange='',
-                                       routing_key='rpc_queue',
-                                       body=pickle.dumps(message),
-                                       properties=pika.BasicProperties(
-                                            reply_to = self.reply_queue_name 
-                                       ))
-            src.Log.print_with_color("Registration message sent to server.", "red")
-            return True
-        except Exception as e:
-            src.Log.print_with_color(f"Error sending message to server: {e}", "red")
-            return False
-
-    def close_connection(self):
-         """Đóng kết nối."""
-         try:
-              if self.connection and self.connection.is_open:
-                   src.Log.print_with_color("Closing connection.", "yellow")
-                   self.connection.close()
-         except Exception as e:
-              src.Log.print_with_color(f"Error closing connection: {e}", "red")
+            self.logger_ref.log_error(f"[RpcClient L{self.layer_id}] Error closing RabbitMQ connection: {e}")

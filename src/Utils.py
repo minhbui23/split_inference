@@ -1,10 +1,93 @@
 
+import time
 import pika
 from requests.auth import HTTPBasicAuth
 import requests
 import logging 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class FPSLogger:
+    def __init__(self, layer_id: int, logger_obj, log_interval_seconds: int = 10, log_prefix: str = "Batch"):
+
+        self.layer_id = layer_id
+        self.logger = logger_obj
+        self.log_interval_seconds = log_interval_seconds
+        self.log_prefix = log_prefix
+
+        self.total_frames_processed = 0
+        self.total_inference_time = 0.0  # Tính bằng giây
+        self.last_cumulative_log_time = time.time()
+        
+        self._current_batch_start_time = None # Thời điểm bắt đầu xử lý batch hiện tại
+
+    def start_batch_timing(self):
+        """Ghi nhận thời điểm bắt đầu xử lý một batch."""
+        self._current_batch_start_time = time.time()
+
+    def end_batch_and_log_fps(self, frames_in_current_batch: int):
+        """
+        Ghi nhận thời điểm kết thúc xử lý batch, tính FPS cho batch,
+        cập nhật tổng tích lũy, và log FPS cho batch và có thể cả FPS tích lũy.
+        Args:
+            frames_in_current_batch: Số lượng frame đã xử lý trong batch này.
+        """
+        if self._current_batch_start_time is None:
+            if self.logger: # Kiểm tra logger tồn tại trước khi sử dụng
+                self.logger.log_warning(f"[FPSLogger L{self.layer_id}] end_batch_and_log_fps() được gọi mà không có start_batch_timing(). Bỏ qua log FPS cho batch này.")
+            return
+
+        batch_processing_time = time.time() - self._current_batch_start_time
+        self._current_batch_start_time = None  # Reset cho lần gọi tiếp theo
+
+        self.total_frames_processed += frames_in_current_batch
+        self.total_inference_time += batch_processing_time
+
+        # Log FPS cho batch hiện tại
+        if self.logger: # Kiểm tra logger tồn tại
+            if batch_processing_time > 0:
+                batch_fps = frames_in_current_batch / batch_processing_time
+                self.logger.log_info(
+                    f"[InferenceThread L{self.layer_id}] {self.log_prefix}: {frames_in_current_batch} frames processed in {batch_processing_time:.4f}s (FPS: {batch_fps:.2f})."
+                )
+            else:
+                self.logger.log_info(
+                    f"[InferenceThread L{self.layer_id}] {self.log_prefix}: {frames_in_current_batch} frames processed very quickly."
+                )
+
+        # Log FPS tích lũy định kỳ
+        current_time = time.time()
+        if self.total_frames_processed > 0 and \
+           (current_time - self.last_cumulative_log_time >= self.log_interval_seconds) and \
+           self.logger: # Kiểm tra logger tồn tại
+            if self.total_inference_time > 0:
+                cumulative_avg_fps = self.total_frames_processed / self.total_inference_time
+                self.logger.log_info(
+                    f"[InferenceThread L{self.layer_id}] CUMULATIVE: {self.total_frames_processed} frames in {self.total_inference_time:.4f}s (Avg FPS: {cumulative_avg_fps:.2f})."
+                )
+            self.last_cumulative_log_time = current_time
+
+    def log_overall_fps(self, process_description: str = "Processing finished"):
+        """Logs FPS trung bình tổng thể cuối cùng."""
+        if not self.logger: # Kiểm tra logger tồn tại
+            print(f"[FPSLogger L{self.layer_id}] Logger not available for final FPS log.")
+            return
+
+        if self.total_frames_processed == 0:
+            self.logger.log_info(f"[InferenceThread L{self.layer_id}] {process_description}. No frames were processed or timed.")
+            return
+            
+        if self.total_inference_time > 0:
+            overall_avg_fps = self.total_frames_processed / self.total_inference_time
+            self.logger.log_info(
+                f"[InferenceThread L{self.layer_id}] {process_description}. OVERALL: {self.total_frames_processed} frames in {self.total_inference_time:.4f}s (Avg FPS: {overall_avg_fps:.2f})."
+            )
+        else:
+            self.logger.log_info(
+                f"[InferenceThread L{self.layer_id}] {process_description}. {self.total_frames_processed} frames processed, but total inference time was zero or not recorded."
+            )
+
+
 
 def delete_old_queues(address, username, password, virtual_host):
     # Đảm bảo virtual_host được mã hóa đúng chuẩn URL (quan trọng nếu vhost không phải '/')
@@ -97,3 +180,4 @@ def delete_old_queues(address, username, password, virtual_host):
         if connection and connection.is_open:
             connection.close()
             logging.info("Cleanup: Đã đóng kết nối AMQP dọn dẹp.")
+
