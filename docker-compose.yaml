@@ -36,9 +36,9 @@ services:
     command: ["sh", "-c", "sleep 5 && python -u server.py"]
 
 
-  client1:
-    image: minhbui1/client-infer
-    container_name: client1
+  client11:
+    image: minhbui1/client-infer:latest
+    container_name: client11
     depends_on:
       - server
     volumes:
@@ -51,11 +51,27 @@ services:
       resources:
         limits:
           cpus: "3"
-          memory: "3GB"
+          memory: "2GB"
+  client13:
+    image: minhbui1/client-infer:latest
+    container_name: client13
+    depends_on:
+      - server
+    volumes:
+      - ./config.yaml:/app/config.yaml  
+      - ./logs:/app/logs
+    networks:
+      - SI-network
+    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu"]
+    deploy:
+      resources:
+        limits:
+          cpus: "3"
+          memory: "2GB"
 
-  client2:
-    image: minhbui1/client-infer
-    container_name: client2
+  client21:
+    image: minhbui1/client-infer:latest
+    container_name: client21
     depends_on:
       - server
     volumes:
@@ -67,7 +83,24 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3"
+          cpus: "5"
+          memory: "3GB"
+
+  client22:
+    image: minhbui1/client-infer:latest
+    container_name: client22
+    depends_on:
+      - server
+    volumes:
+      - ./config.yaml:/app/config.yaml  
+      - ./logs:/app/logs
+    networks:
+      - SI-network
+    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 2 --device cpu"]
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
           memory: "3GB"
 
 volumes:

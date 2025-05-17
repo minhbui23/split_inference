@@ -3,10 +3,10 @@ import sys
 import base64
 import pika
 import pickle
-import torch # Mặc dù không dùng trực tiếp, giữ lại cho ngữ cảnh
-import torch.nn as nn # Mặc dù không dùng trực tiếp, giữ lại cho ngữ cảnh
+import torch 
+import torch.nn as nn 
 
-import src.Model # Cần thiết nếu có type hinting hoặc kiểm tra
+import src.Model 
 import src.Log
 
 
@@ -25,7 +25,7 @@ class Server:
         # Tổng số client mong đợi là tổng của các giá trị trong list này.
         # Ví dụ: nếu clients: [1, 1] nghĩa là có 2 client, mỗi client xử lý 1 phần.
         self.total_expected_clients = sum(self.expected_clients_per_layer)
-
+        self.num_layers = len(self.expected_clients_per_layer)
 
         credentials = pika.PlainCredentials(username, password)
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(address, 5672, f'{virtual_host}', credentials))
@@ -35,6 +35,7 @@ class Server:
         # Lưu thông tin client: client_id -> {'layer_id': ..., 'reply_to': ..., 'correlation_id': ...}
         self.client_info = {} 
         self.registered_clients_count = 0
+        self.started_clients = set()
 
         self.channel.basic_qos(prefetch_count=1)
         # self.reply_channel = self.connection.channel() # Channel này sẽ được dùng để gửi reply
@@ -50,6 +51,29 @@ class Server:
         log_path = config["log-path"]
         self.logger = src.Log.Logger(f"{log_path}/server_app.log") # Server cũng nên có logger riêng
         self.logger.log_info(f"Application start. Server is waiting for {self.total_expected_clients} clients.")
+
+        self.initial_start_sent = False
+
+        self.encoded_model_payload = self._load_and_encode_model_once()
+        # ---------------------------------------------------------
+
+    def _load_and_encode_model_once(self):
+        """Tải model từ file và mã hóa base64 một lần duy nhất."""
+        model_file_path = f"{self.model_name}.pt" 
+        if os.path.exists(model_file_path):
+            self.logger.log_info(f"Loading and encoding model '{self.model_name}' from '{model_file_path}' for clients...")
+            try:
+                with open(model_file_path, "rb") as f:
+                    file_bytes = f.read()
+                encoded_weights = base64.b64encode(file_bytes).decode('utf-8')
+                self.logger.log_info(f"Model '{self.model_name}' encoded successfully.")
+                return encoded_weights
+            except Exception as e:
+                self.logger.log_error(f"Error reading or encoding model file {model_file_path}: {e}", exc_info=True)
+                return None
+        else:
+            self.logger.log_error(f"Model file {model_file_path} does not exist. Cannot send model to clients.")
+            return None
 
     def on_request(self, ch, method, props, body):
         message = pickle.loads(body)
@@ -86,14 +110,16 @@ class Server:
             # Kiểm tra xem đã đủ client đăng ký chưa
             # Logic này cần xem xét lại nếu `self.expected_clients_per_layer` phức tạp.
             # Hiện tại, chỉ cần tổng số client.
-            if self.registered_clients_count >= self.total_expected_clients:
+            if not self.initial_start_sent and self.registered_clients_count == self.total_expected_clients:
                 # Đảm bảo không gửi notify nhiều lần nếu có re-registration
                 # Có thể thêm một cờ self.notified = False ban đầu
                 self.logger.log_info("All expected clients are connected. Sending notifications.")
-                self.notify_clients()
-            else:
-                self.logger.log_info(f"Waiting for more clients. Currently {self.registered_clients_count}/{self.total_expected_clients}.")
+                self.notify_all_clients()
+                self.initial_start_sent = True
 
+            elif self.initial_start_sent and client_id not in self.started_clients:
+                self.logger.log_info(f"New client {client_id} joined after initial start. Sending START to this client only.")
+                self.send_start_signal_to_client(client_id)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -113,8 +139,16 @@ class Server:
         except Exception as e:
             self.logger.log_error(f"Error sending RPC reply to queue '{reply_to_queue}': {e}")
 
+    def send_start_signal_to_client(self, client_id):
+        if client_id in self.started_clients:
+            self.logger.log_info(f"Client {client_id} already started. Skipping.")
+            return
 
-    def notify_clients(self):
+        info = self.client_info.get(client_id)
+        if not info:
+            self.logger.log_warning(f"Tried to notify unregistered client {client_id}. Skipping.")
+            return
+        
         default_splits = {
             # Giá trị đầu tiên là split_layer index cho model, 
             # giá trị thứ hai là list các layer index cần save output (cho model.forward_head)
@@ -128,27 +162,30 @@ class Server:
             self.logger.log_error(f"Invalid cut-layer configuration: '{split_config_key}'. Using default 'a'.")
             split_config_key = "a" # Fallback to default
             
-        current_split_params = default_splits[split_config_key]
+        
         
         model_file_path = f"{self.model_name}.pt" # Model nên nằm ở thư mục server có thể truy cập
+
+
+
+        batch_frame_from_config = self.config["server"]["batch-frame"] # Lấy từ config
         encoded_model_weights = None
         if os.path.exists(model_file_path):
             self.logger.log_info(f"Loading model {self.model_name} from '{model_file_path}'.")
             with open(model_file_path, "rb") as f:
                 file_bytes = f.read()
                 encoded_model_weights = base64.b64encode(file_bytes).decode('utf-8')
+
         else:
             self.logger.log_error(f"Model file {model_file_path} does not exist. Cannot send model to clients.")
             # Không nên sys.exit() ở đây, có thể gửi lỗi cho client hoặc xử lý khác.
             # Hiện tại, sẽ gửi response không có model weights. Client cần xử lý điều này.
 
-        batch_frame_from_config = self.config["server"]["batch-frame"] # Lấy từ config
+        current_split_params = default_splits[split_config_key]
 
-        # Duyệt qua các client đã đăng ký và gửi thông báo START
-        for client_id, info in self.client_info.items():
-            client_layer_id = info['layer_id'] # Layer ID mà client này đã đăng ký
-            reply_to_queue = info['reply_to']
-            correlation_id = info['correlation_id']
+        client_layer_id = info['layer_id'] # Layer ID mà client này đã đăng ký
+        reply_to_queue = info['reply_to']
+        correlation_id = info['correlation_id']
 
             # Logic xác định `splits` và `save_layers` cho từng client có thể phức tạp hơn
             # nếu bạn muốn mỗi client nhận một phần khác nhau của model dựa trên layer_id của nó.
@@ -157,27 +194,28 @@ class Server:
             # Điều này phù hợp nếu `SplitDetectionModel` được thiết kế để client tự biết
             # nó là head hay tail dựa trên `layer_id` và `num_layers` mà server gửi.
 
-            response_payload = {
+        response_payload = {
                 "action": "START",
                 "message": "Server accepts the connection. Ready to start inference.",
-                "model": encoded_model_weights, # Có thể là None nếu file không tồn tại
+                "model": self.encoded_model_payload,  # Có thể là None nếu file không tồn tại
                 "splits": current_split_params[0], # split_layer index cho SplitDetectionModel
                 "save_layers": current_split_params[1], # List các layer index cần save output
                 "batch_frame": batch_frame_from_config,
-                "num_layers": self.total_expected_clients, # Tổng số client tham gia                                       
+                "num_layers": self.num_layers, # Tổng số client tham gia                                       
                 "model_name": self.model_name,
                 "data": self.data_source_config, # Nguồn dữ liệu (ví dụ: video.mp4)
                 "debug_mode": self.debug_mode,
                 "imgsz": self.imgsz # Kích thước ảnh đầu vào cho model
-            }
-            
-            self.logger.log_info(f"Preparing to send START to client {client_id} (Layer {client_layer_id}) on queue {reply_to_queue}")
-            self.send_rpc_reply(reply_to_queue, correlation_id, pickle.dumps(response_payload))
+        }
 
-        # Sau khi gửi thông báo, có thể reset để tránh gửi lại nếu có client đăng ký muộn/lại
-        # self.client_info = {} 
-        # self.registered_clients_count = 0
-        # Hoặc dùng một cờ self.notifications_sent = True
+        self.send_rpc_reply(reply_to_queue, correlation_id, pickle.dumps(response_payload))
+        self.started_clients.add(client_id)
+        self.logger.log_info(f"Sent START signal to client {client_id}")
+
+
+    def notify_all_clients(self):
+        for client_id in self.client_info:
+            self.send_start_signal_to_client(client_id)
 
     def start(self):
         self.logger.log_info("Server's RPC consumer starting. Waiting for client registrations...")

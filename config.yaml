@@ -2,7 +2,7 @@ name: YOLO
 server:
   cut-layer: a #or b, c
   clients:
-    - 1
+    - 2
     - 1
   model: yolov8n
   batch-frame: 20
@@ -18,4 +18,4 @@ log-path: logs
 control-count: 10
 debug-mode: False
 
-imgsz: 640  
+imgsz: 320  

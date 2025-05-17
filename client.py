@@ -85,6 +85,7 @@ def inference_worker_function(
 
                 fps_logger.end_batch_and_log_fps(frames_in_this_actual_batch)
 
+                y["l1_processed_timestamp"] = time.time()
                 y["layers_output"] = [t.cpu() if isinstance(t, torch.Tensor) else None for t in y["layers_output"]]
                 
                 if not is_last_layer: # Chỉ gửi nếu không phải layer cuối
@@ -105,10 +106,17 @@ def inference_worker_function(
             
             fps_logger.start_batch_timing()
 
+            arrival_ts_at_l2_inference = time.time() 
             # Giả định received_item là dict có key "data"
             y_from_prev = received_item["data"]
             y_from_prev["layers_output"] = [t.to(device) if t is not None else None for t in y_from_prev["layers_output"]]
+
+            send_ts_from_l1 = y_from_prev.get("l1_processed_timestamp")
             
+            if send_ts_from_l1:
+                propagation_time = arrival_ts_at_l2_inference - send_ts_from_l1
+                logger.log_info(f"[InferenceThread L{layer_id}] Packet propagation time from L1: {propagation_time:.4f}s")
+
             final_predictions = model_obj.forward_tail(y_from_prev)
 
             fps_logger.end_batch_and_log_fps(batch_frame_size) 
@@ -154,66 +162,100 @@ def io_worker_function(
         channel.basic_qos(prefetch_count=5) 
         logger.log_info(f"[IOThread L{layer_id}] Declared listen queue: {prev_q_name}, QOS set.")
 
-    while not stop_evt.is_set():
-        # 1. Gửi dữ liệu (nếu là layer 1 và có gì đó trong output_q)
-        if not is_last_layer: # Chỉ layer 1 gửi (trong mô hình 2 layer)
-            item_to_send = None
+    # Only layer cuối đăng ký consume
+    if is_last_layer and not is_first_layer:
+        def on_message(ch, method, properties, body):
+            received_message = pickle.loads(body)
+            if received_message == "STOP":
+                logger.log_info(f"[IOThread L{layer_id}] Received STOP from RabbitMQ on {prev_q_name}.")
+                input_q.put("STOP_FROM_PREVIOUS")
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+                stop_evt.set() # Stop thread tại đây
+            else:
+                input_q.put(received_message)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+
+        channel.basic_consume(queue=prev_q_name, on_message_callback=on_message)
+        logger.log_info(f"[IOThread L{layer_id}] Consumer callback registered.")
+
+    try:
+
+        while not stop_evt.is_set():
+            # 1. Gửi dữ liệu (nếu là layer 1 và có gì đó trong output_q)
+            if not is_last_layer: # Chỉ layer 1 gửi (trong mô hình 2 layer)
+                item_to_send = None
+                try:
+                    item_to_send = output_q.get(block=False, timeout=0.01) 
+                except queue.Empty:
+                    pass 
+
+                if item_to_send:
+                    data_payload, target_rabbit_q = item_to_send
+                    message_body = None
+                    if data_payload == "STOP_INFERENCE":
+                        logger.log_info(f"[IOThread L{layer_id}] Sending STOP to {target_rabbit_q}")
+                        message_body = pickle.dumps("STOP")
+                    else:
+                        message_body = pickle.dumps({"action": "OUTPUT", "data": data_payload})
+                    
+                    channel.basic_publish(exchange='', routing_key=target_rabbit_q, body=message_body)
+                    output_q.task_done()
+
+                # Cho phép xử lý events (gồm cả consume, heartbeat,...)
+            connection.process_data_events(time_limit=0.5)
+
+                # Điều kiện dừng riêng cho layer 1 sau khi gửi STOP
+            if is_first_layer and output_q.empty():
+                pass # Tuỳ thiết kế, có thể kiểm tra stop_evt từ main thread
+
+    finally:
+        if connection.is_open:
             try:
-                item_to_send = output_q.get(block=False, timeout=0.01) 
-            except queue.Empty:
-                pass 
+                channel.close()
+                connection.close()
+            except Exception as e:
+                logger.log_info(f"[IOThread L{layer_id}] Error closing connection: {e}")
+        logger.log_info(f"[IOThread L{layer_id}] Stopped and RabbitMQ connection closed.")
+    #             if data_payload == "STOP_INFERENCE":
+    #                 # Nếu layer 1 gửi STOP, nó có thể dừng phần gửi của mình
+    #                 if is_first_layer and is_last_layer: # Trường hợp chỉ có 1 layer duy nhất
+    #                      stop_evt.set() # Dừng hẳn nếu chỉ có 1 layer
+    #                 elif is_first_layer and not is_last_layer:
+    #                      pass # Vẫn chờ tín hiệu dừng chung từ stop_evt
+    #                 # break # Không break ở đây, để vòng lặp chính check stop_evt
 
-            if item_to_send:
-                data_payload, target_rabbit_q = item_to_send
-                message_body = None
-                if data_payload == "STOP_INFERENCE":
-                    logger.log_info(f"[IOThread L{layer_id}] Sending STOP to {target_rabbit_q}")
-                    message_body = pickle.dumps("STOP")
-                else:
-                    message_body = pickle.dumps({"action": "OUTPUT", "data": data_payload})
-                
-                channel.basic_publish(exchange='', routing_key=target_rabbit_q, body=message_body)
-                output_q.task_done()
-                if data_payload == "STOP_INFERENCE":
-                    # Nếu layer 1 gửi STOP, nó có thể dừng phần gửi của mình
-                    if is_first_layer and is_last_layer: # Trường hợp chỉ có 1 layer duy nhất
-                         stop_evt.set() # Dừng hẳn nếu chỉ có 1 layer
-                    elif is_first_layer and not is_last_layer:
-                         pass # Vẫn chờ tín hiệu dừng chung từ stop_evt
-                    # break # Không break ở đây, để vòng lặp chính check stop_evt
+    #     # 2. Nhận dữ liệu (nếu là layer cuối và không phải layer đầu)
+    #     if is_last_layer and not is_first_layer:
+    #         method_frame, properties, body = channel.basic_get(queue=prev_q_name, auto_ack=False) # Manual ack
+    #         if method_frame:
+    #             channel.basic_ack(delivery_tag=method_frame.delivery_tag) # Ack ngay
+    #             received_message = pickle.loads(body)
+    #             if received_message == "STOP":
+    #                 logger.log_info(f"[IOThread L{layer_id}] Received STOP from RabbitMQ on {prev_q_name}.")
+    #                 input_q.put("STOP_FROM_PREVIOUS")
+    #                 break # Thoát vòng lặp IOThread này vì đã nhận STOP cuối cùng
+    #             else:
+    #                 input_q.put(received_message)
+    #         # else: time.sleep(0.01) # Bỏ sleep nếu dùng blocking_connection.process_data_events
 
-        # 2. Nhận dữ liệu (nếu là layer cuối và không phải layer đầu)
-        if is_last_layer and not is_first_layer:
-            method_frame, properties, body = channel.basic_get(queue=prev_q_name, auto_ack=False) # Manual ack
-            if method_frame:
-                channel.basic_ack(delivery_tag=method_frame.delivery_tag) # Ack ngay
-                received_message = pickle.loads(body)
-                if received_message == "STOP":
-                    logger.log_info(f"[IOThread L{layer_id}] Received STOP from RabbitMQ on {prev_q_name}.")
-                    input_q.put("STOP_FROM_PREVIOUS")
-                    break # Thoát vòng lặp IOThread này vì đã nhận STOP cuối cùng
-                else:
-                    input_q.put(received_message)
-            # else: time.sleep(0.01) # Bỏ sleep nếu dùng blocking_connection.process_data_events
+    #     # Cho phép connection xử lý các sự kiện nền và check stop_evt
+    #     # connection.process_data_events(time_limit=0.01) # Quan trọng để BlockingConnection không bị block hoàn toàn
+    #     # Nếu không dùng process_data_events, vòng lặp sẽ quay nhanh nếu không có message, cần sleep
+    #     if not (method_frame if 'method_frame' in locals() else None) and not (item_to_send if 'item_to_send' in locals() else None):
+    #         time.sleep(0.05) # Ngủ nhẹ nếu không có gì xảy ra
 
-        # Cho phép connection xử lý các sự kiện nền và check stop_evt
-        # connection.process_data_events(time_limit=0.01) # Quan trọng để BlockingConnection không bị block hoàn toàn
-        # Nếu không dùng process_data_events, vòng lặp sẽ quay nhanh nếu không có message, cần sleep
-        if not (method_frame if 'method_frame' in locals() else None) and not (item_to_send if 'item_to_send' in locals() else None):
-            time.sleep(0.05) # Ngủ nhẹ nếu không có gì xảy ra
+    #     # Điều kiện dừng cho IO Thread:
+    #     # Layer 1: Khi đã gửi STOP và output_q trống (hoặc stop_evt)
+    #     # Layer cuối: Khi đã nhận STOP từ RabbitMQ (đã break ở trên) hoặc stop_evt
+    #     if is_first_layer and item_to_send and data_payload == "STOP_INFERENCE" and output_q.empty():
+    #          logger.log_info(f"[IOThread L{layer_id}] First layer sent STOP and output queue is empty. Signaling stop.")
+    #          # stop_evt.set() # Để stop_event ở main kiểm soát chung
+    #          pass # Chờ stop_event từ main
 
-        # Điều kiện dừng cho IO Thread:
-        # Layer 1: Khi đã gửi STOP và output_q trống (hoặc stop_evt)
-        # Layer cuối: Khi đã nhận STOP từ RabbitMQ (đã break ở trên) hoặc stop_evt
-        if is_first_layer and item_to_send and data_payload == "STOP_INFERENCE" and output_q.empty():
-             logger.log_info(f"[IOThread L{layer_id}] First layer sent STOP and output queue is empty. Signaling stop.")
-             # stop_evt.set() # Để stop_event ở main kiểm soát chung
-             pass # Chờ stop_event từ main
-
-    if connection.is_open:
-        channel.close()
-        connection.close()
-    logger.log_info(f"[IOThread L{layer_id}] Stopped and RabbitMQ connection closed.")
+    # if connection.is_open:
+    #     channel.close()
+    #     connection.close()
+    # logger.log_info(f"[IOThread L{layer_id}] Stopped and RabbitMQ connection closed.")
 
 
 if __name__ == "__main__":
