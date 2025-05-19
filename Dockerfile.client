@@ -17,7 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY client.py .
 COPY src/Log.py src/
 COPY src/RpcClient.py src/
-COPY src/Scheduler.py src/
+COPY src/Client_worker.py src/
+COPY src/Model_utils.py src/
 COPY src/Model.py src/
 COPY src/Utils.py src/
 COPY cfg/ cfg/

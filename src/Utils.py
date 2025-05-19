@@ -85,7 +85,6 @@ class FPSLogger:
             )
 
 
-
 def delete_old_queues(address, username, password, virtual_host):
     encoded_vhost = requests.utils.quote(virtual_host, safe='')
     mgmt_url = f'http://{address}:15672/api/queues/{encoded_vhost}'

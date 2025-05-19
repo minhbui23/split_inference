@@ -7,6 +7,7 @@ server:
   model: yolov8n
   batch-frame: 20
   save-output: False
+  
 rabbit:
   address: 192.168.10.130
   username: admin
@@ -18,4 +19,11 @@ log-path: logs
 control-count: 10
 debug-mode: False
 
-imgsz: 320  
+client:
+  imgsz: [480, 480]               # Target image size [width, height] for model input, or a single int for square.
+  internal_queue_maxsize: 20      # Max items in internal thread queues (input, output, ack).
+  io_prefetch_count: 5            # RabbitMQ consumer prefetch count for the IOThread.
+  rabbit_retry_delay: 5           # Seconds IOThread waits before retrying RabbitMQ connection.
+  io_process_events_timeout: 0.1  # Pika's process_data_events() timeout in IOThread (seconds).
+  io_output_q_timeout: 0.05       # Timeout for IOThread getting items from its output_q (seconds).
+  ack_queue_process_delay: 0.05   # Delay for IOThread's scheduled ack_queue processing (seconds).
