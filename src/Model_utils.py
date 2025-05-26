@@ -2,23 +2,22 @@
 import os
 import torch
 from ultralytics import YOLO
-# Giả sử SplitDetectionModel và SplitDetectionPredictor (hoặc DetectionPredictor chuẩn) nằm trong src.Model
 from src.Model import SplitDetectionModel, SplitDetectionPredictor
-from ultralytics.models.yolo.detect.predict import DetectionPredictor # Sử dụng predictor chuẩn
+from ultralytics.models.yolo.detect.predict import DetectionPredictor 
 
 def setup_inference_components(initial_params, device, logger):
     """
-    Tải model, khởi tạo SplitDetectionModel và predictor.
-    Trả về (model_obj_for_worker, predictor_obj_for_worker) hoặc (None, None) nếu lỗi.
+    Load the model, initialize SplitDetectionModel and predictor.
+    Return (model_obj_for_worker, predictor_obj_for_worker) or (None, None) on error.
     """
     model_file_path = initial_params.get("model_save_path")
-    splits_config = initial_params.get("splits") # Đây là split_layer index cho client này
+    splits_config = initial_params.get("splits") # This is the split_layer index for this client
     imgsz_tuple = initial_params.get("imgsz")
 
     if not (model_file_path and os.path.exists(model_file_path)):
         logger.log_error(f"[ModelUtils] Model file '{model_file_path}' not found or not specified.")
         return None, None
-    if splits_config is None: # splits_config có thể là 0, nhưng không được None
+    if splits_config is None: 
         logger.log_error("[ModelUtils] Split index ('splits') not provided by server.")
         return None, None
 
@@ -32,10 +31,9 @@ def setup_inference_components(initial_params, device, logger):
         model_obj_for_worker = SplitDetectionModel(pretrain_nn_module,
                                                    split_layer=splits_config)
         model_obj_for_worker.to(device)
-        model_obj_for_worker.eval() # Quan trọng: đặt model ở chế độ evaluation
+        model_obj_for_worker.eval() 
         logger.log_info(f"[ModelUtils] SplitDetectionModel initialized. Type: {type(model_obj_for_worker)}.")
 
-        # Khởi tạo predictor
         predictor_overrides = {
             "imgsz": imgsz_tuple,
             "device": device

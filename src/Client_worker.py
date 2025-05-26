@@ -131,18 +131,26 @@ class InferenceWorker(threading.Thread):
 
     def _process_batch(self, frames_batch, save_layers):
         """Process a batch of frames for Layer 1."""
-        self.fps_logger.start_batch_timing()
+        
         try:
+
             batch = torch.stack(frames_batch).to(self.device)
             batch_size = batch.size(0)
+
             self.predictor_obj.setup_source(batch)
             input_tensor = self._prepare_input_tensor(batch)
+
+            self.fps_logger.start_batch_timing()
+
             output = self.model_obj.forward_head(input_tensor, save_layers)
             output["l1_processed_timestamp"] = time.time()
             output["layers_output"] = [t.cpu() if isinstance(t, torch.Tensor) else None for t in output["layers_output"]]
+
             if self.layer_id < self.num_layers:
                 self.output_q.put((output, f"intermediate_queue_{self.layer_id + 1}"))
+                
             self.fps_logger.end_batch_and_log_fps(batch_size)
+
         except Exception as e:
             self.logger.log_error(f"[{self.name}] L1: Error processing batch: {e}")
             self.fps_logger._current_batch_start_time = None

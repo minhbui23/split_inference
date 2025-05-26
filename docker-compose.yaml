@@ -50,24 +50,24 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2"
-          memory: "2GB"
-  client12:
-    image: minhbui1/client-infer:latest
-    container_name: client12
-    depends_on:
-      - server
-    volumes:
-      - ./config.yaml:/app/config.yaml  
-      - ./logs:/app/logs
-    networks:
-      - SI-network
-    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu"]
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
-          memory: "2GB"
+          cpus: "6"
+          memory: "4GB"
+  # client12:
+  #   image: minhbui1/client-infer:latest
+  #   container_name: client12
+  #   depends_on:
+  #     - server
+  #   volumes:
+  #     - ./config.yaml:/app/config.yaml  
+  #     - ./logs:/app/logs
+  #   networks:
+  #     - SI-network
+  #   command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu"]
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "3"
+  #         memory: "3GB"
 
 
   client21:
@@ -84,8 +84,25 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3"
-          memory: "3GB"
+          cpus: "6"
+          memory: "4GB"
+
+  # client22:
+  #   image: minhbui1/client-infer:latest
+  #   container_name: client22
+  #   depends_on:
+  #     - server
+  #   volumes:
+  #     - ./config.yaml:/app/config.yaml  
+  #     - ./logs:/app/logs
+  #   networks:
+  #     - SI-network
+  #   command: ["sh", "-c", "sleep 5 && python client.py --layer_id 2 --device cpu"]
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "3"
+  #         memory: "3GB"
 
 
 volumes:
