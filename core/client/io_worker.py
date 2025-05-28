@@ -1,18 +1,34 @@
 
 import threading
-import torch
 import time
 import pickle
 import os
 import json
 import queue
-import cv2
 import pika
-from core.utils.fps_logger import FPSLogger
+
 from core.utils.data_transfer import RedisManager, HybridDataTransfer
 
 
 class BaseIOWorker(threading.Thread):
+    """Base class for I/O (Network and Redis) processing threads.
+
+    Manages RabbitMQ/Redis connections and the main loop for communicating
+    with other threads via queues.
+
+    Args:
+        layer_id (int): The ID of the layer this worker belongs to.
+        num_layers (int): The total number of layers in the pipeline.
+        rabbit_conn_params (dict): RabbitMQ connection parameters.
+        redis_conn_params (dict): Redis connection parameters.
+        initial_params (dict): Initialization parameters from the server.
+        input_q (queue.Queue): Queue for receiving data to be sent.
+        output_q (queue.Queue): Queue for holding processed data to be sent.
+        ack_trigger_q (queue.Queue): Queue for sending ACK signals.
+        stop_evt (threading.Event): Event to safely stop the thread.
+        logger: The logger instance.
+        name (str, optional): The name of the thread. Defaults to None.
+    """
     def __init__(self, layer_id, num_layers, rabbit_conn_params, redis_conn_params, initial_params,
                  input_q, output_q, ack_trigger_q, stop_evt, logger, name=None):
         super().__init__(name=name or f"IOThread-L{layer_id}")
@@ -36,6 +52,8 @@ class BaseIOWorker(threading.Thread):
         self._initialize_params()
 
     def _initialize_params(self):
+        """Initializes configuration parameters from the initial_params dictionary."""
+        ...
         self.prefetch_val = self.initial_params.get("io_prefetch_count", 5)
         self.rabbit_retry_delay = self.initial_params.get("rabbit_retry_delay", 5)
         self.process_events_timeout = self.initial_params.get("io_process_events_timeout", 0.1)
@@ -44,6 +62,12 @@ class BaseIOWorker(threading.Thread):
         self.redis_tensor_ttl = self.initial_params.get("redis_tensor_ttl_seconds", 300)
 
     def _connect(self):
+        """Establishes a connection to the RabbitMQ server.
+
+        Returns:
+            bool: True if the connection is successful, False otherwise.
+        """
+        ...
         try:
             credentials = pika.PlainCredentials(
                 self.rabbit_conn_params["username"], self.rabbit_conn_params["password"])
@@ -63,6 +87,8 @@ class BaseIOWorker(threading.Thread):
             return False
 
     def _setup_redis(self):
+        """Establishes connection to Redis and initializes HybridDataTransfer."""
+        ...
         try:
             self.redis_manager = RedisManager(
                 host=self.redis_conn_params["host"],
@@ -86,7 +112,14 @@ class BaseIOWorker(threading.Thread):
 
 
 class FirstLayerIOWorker(BaseIOWorker):
+    """I/O thread for the first layer client.
+
+    Its primary task is to get inference results from the `output_q` and
+    send them to the next layer via RabbitMQ.
+    """
     def run(self):
+        """The main loop of the thread, which sends data."""
+        ...
         if not self._connect():
             self.stop_evt.set()
             return
@@ -110,13 +143,26 @@ class FirstLayerIOWorker(BaseIOWorker):
 
 
 class MiddleLayerIOWorker(BaseIOWorker):
+    """I/O thread for intermediate layer clients.
+
+    Its tasks include receiving data from the previous layer and sending
+    processed data to the next layer.
+    """
     def run(self):
         self.logger.log_info(f"[{self.name}] Middle layer I/O - logic not implemented. Exiting thread.")
         self.stop_evt.set()
 
 
 class LastLayerIOWorker(BaseIOWorker):
+    """I/O thread for the last layer client.
+
+    Its primary task is to receive data from the previous layer via RabbitMQ,
+    fetch the payload using Redis (Claim Check pattern), and put it into the
+    `input_q` for the Inference thread.
+    """
     def run(self):
+        """Starts the consumer to listen for messages from RabbitMQ."""
+        ...
         if not self._connect():
             self.stop_evt.set()
             return
@@ -125,6 +171,15 @@ class LastLayerIOWorker(BaseIOWorker):
         self.channel.basic_qos(prefetch_count=self.prefetch_val)
 
         def _callback(ch, method, properties, body):
+            """Callback function invoked when a new message is received from RabbitMQ.
+
+            Args:
+                ch: The Pika channel.
+                method: Message delivery information.
+                properties: Message properties.
+                body: The message content (metadata).
+            """
+            ...
             try:
                 metadata_message = json.loads(body.decode())
                 if metadata_message == "STOP":

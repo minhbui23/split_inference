@@ -6,6 +6,25 @@ import cv2
 from core.utils.fps_logger import FPSLogger
 
 class BaseInferenceWorker(threading.Thread):
+    """Base class for inference processing threads.
+
+    Manages the model, computing device (CPU/CUDA), and the main loop for
+    processing data from queues.
+
+    Args:
+        layer_id (int): The ID of the layer this worker belongs to.
+        num_layers (int): The total number of layers in the pipeline.
+        device (str): The computing device ('cpu' or 'cuda').
+        model_obj: The initialized model object.
+        predictor_obj: The Ultralytics predictor object.
+        initial_params (dict): Initialization parameters from the server.
+        input_q (queue.Queue): Queue for receiving data for inference.
+        output_q (queue.Queue): Queue for holding results after inference.
+        ack_trigger_q (queue.Queue): Queue for sending ACK signals.
+        stop_evt (threading.Event): Event to safely stop the thread.
+        logger: The logger instance.
+        name (str, optional): The name of the thread. Defaults to None.
+    """
     def __init__(self, layer_id, num_layers, device, 
                  model_obj, predictor_obj, initial_params,
                  input_q, output_q, ack_trigger_q, 
@@ -26,6 +45,8 @@ class BaseInferenceWorker(threading.Thread):
         self._initialize_params()
 
     def _initialize_params(self):
+        """Initializes configuration parameters from the initial_params dictionary."""
+        ...
         self.batch_frame_size = self.initial_params.get("batch_frame", 1)
         imgsz = self.initial_params.get("imgsz", (640, 640))
         self.img_width, self.img_height = int(imgsz[0]), int(imgsz[1])
@@ -38,6 +59,12 @@ class BaseInferenceWorker(threading.Thread):
         )
 
     def _get_log_prefix(self):
+        """Creates a log prefix based on the layer's position.
+
+        Returns:
+            str: The prefix string for logs (e.g., "Batch (L1 Video)").
+        """
+        ...
         if self.layer_id == 1:
             return "Batch (L1 Video)"
         if self.layer_id == self.num_layers and self.layer_id > 1:
@@ -46,7 +73,15 @@ class BaseInferenceWorker(threading.Thread):
 
 
 class FirstLayerWorker(BaseInferenceWorker):
+    """Inference thread for the first layer client.
+
+    Its main task is to read data from a source (video), process frames,
+    perform the first part of the inference (`forward_head`), and put the
+    result into the `output_q`.
+    """
     def run(self):
+        """The main loop of the thread, reads video and performs inference."""
+        ...
         self.logger.log_info(f"[{self.name}] Starting First Layer")
         video_path = self.initial_params.get("data_source")
         if not video_path or not cv2.VideoCapture(video_path).isOpened():
@@ -85,6 +120,13 @@ class FirstLayerWorker(BaseInferenceWorker):
         self.fps_logger.log_overall_fps("L1: Video processing finished")
 
     def _process_batch(self, frames_batch, save_layers):
+        """Processes a single batch of frames.
+
+        Args:
+            frames_batch (list): A list of frame tensors.
+            save_layers (list): A list of layer indices whose output should be saved.
+        """
+        ...
         self.fps_logger.start_batch_timing()
         try:
             batch = torch.stack(frames_batch).to(self.device)
@@ -111,6 +153,15 @@ class FirstLayerWorker(BaseInferenceWorker):
             self.fps_logger._current_batch_start_time = None
 
     def _prepare_input_tensor(self, batch):
+        """Prepares the input tensor for the model from the predictor object.
+
+        Args:
+            batch (torch.Tensor): The input data batch.
+
+        Returns:
+            torch.Tensor: The tensor ready to be fed into the model.
+        """
+        ...
         for data in self.predictor_obj.dataset:
             if isinstance(data, tuple) and len(data) > 1:
                 return data[1].to(self.device) if isinstance(data[1], torch.Tensor) else data[1]
@@ -124,7 +175,14 @@ class MiddleLayerWorker(BaseInferenceWorker):
 
 
 class LastLayerWorker(BaseInferenceWorker):
+    """Inference thread for the last layer client.
+
+    Its main task is to get data from the `input_q`, perform the final
+    part of the inference (`forward_tail`), and trigger an ACK.
+    """
     def run(self):
+        """The main loop of the thread, receives and processes features."""
+        ...
         self.logger.log_info(f"[{self.name}] Starting Last Layer")
         is_last_layer = True
 
@@ -154,6 +212,14 @@ class LastLayerWorker(BaseInferenceWorker):
         self.fps_logger.log_overall_fps("L-Last: Feature processing finished")
 
     def _process_payload(self, payload, delivery_tag, is_last_layer):
+        """Processes the data payload from the previous layer.
+
+        Args:
+            payload (dict): The feature data from the previous layer.
+            delivery_tag (str): The RabbitMQ message tag for sending an ACK.
+            is_last_layer (bool): Flag to confirm this is the last layer.
+        """
+        ...
         self.fps_logger.start_batch_timing()
         ack_status = "failure"
         requeue = False

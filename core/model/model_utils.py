@@ -2,7 +2,7 @@
 import os
 import torch
 from ultralytics import YOLO
-from src.Model import SplitDetectionModel, SplitDetectionPredictor
+from core.model.model import SplitDetectionModel, SplitDetectionPredictor
 from ultralytics.models.yolo.detect.predict import DetectionPredictor 
 
 def setup_inference_components(initial_params, device, logger):

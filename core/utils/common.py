@@ -7,6 +7,20 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def delete_old_queues(address, username, password, virtual_host):
+    """Deletes application-specific queues from RabbitMQ for a clean start.
+
+    Uses the RabbitMQ Management API to list queues and Pika to delete them.
+
+    Args:
+        address (str): The RabbitMQ server address.
+        username (str): The RabbitMQ management username.
+        password (str): The RabbitMQ management password.
+        virtual_host (str): The RabbitMQ virtual host.
+    
+    Returns:
+        bool: True if cleanup was successful or partially successful, False on major error.
+    """
+    ...
     encoded_vhost = requests.utils.quote(virtual_host, safe='')
     mgmt_url = f'http://{address}:15672/api/queues/{encoded_vhost}'
     logging.info(f"Cleanup: Get queue list from API: {mgmt_url}")

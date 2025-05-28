@@ -19,6 +19,13 @@ virtual_host = config["rabbit"]["virtual-host"]
 
 
 def signal_handler(sig, frame):
+    """Handles the stop signal (Ctrl+C) to clean up queues and exit.
+
+    Args:
+        sig: The signal received.
+        frame: The current stack frame.
+    """
+    ...
     print("\nCatch stop signal Ctrl+C. Stop the program.")
     delete_old_queues(address, username, password, virtual_host)
     sys.exit(0)

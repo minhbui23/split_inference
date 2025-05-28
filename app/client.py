@@ -14,8 +14,8 @@ import os
 from core.utils.logger import Logger
 from core.rpc.rpc_client import RpcClient
 # Các lớp worker giờ sẽ được import từ file mới
-from app.client.inference_worker import FirstLayerWorker, LastLayerWorker, MiddleLayerWorker
-from app.client.io_worker import FirstLayerIOWorker, LastLayerIOWorker, MiddleLayerIOWorker
+from core.client.inference_worker import FirstLayerWorker, LastLayerWorker, MiddleLayerWorker
+from core.client.io_worker import FirstLayerIOWorker, LastLayerIOWorker, MiddleLayerIOWorker
 
 from core.model.model_utils import setup_inference_components
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     log_dir_from_config = config.get("log-path", "logs")
     client_log_file_name = f"client_{client_uuid}_L{layer_id_arg}.log"
     client_log_full_path = os.path.join(log_dir_from_config, client_log_file_name)
-    main_logger = src.Log.Logger(client_log_full_path)
+    main_logger = Logger(client_log_full_path)
     main_logger.log_info(f"Client {client_uuid} (L{layer_id_arg}) starting. Logging to: {client_log_full_path}")
 
     # --- Device ---

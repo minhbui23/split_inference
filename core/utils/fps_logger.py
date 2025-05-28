@@ -1,13 +1,19 @@
 import time
-import pika
-from requests.auth import HTTPBasicAuth
-import requests
 import logging 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class FPSLogger:
     def __init__(self, layer_id: int, logger_obj, log_interval_seconds: int = 10, log_prefix: str = "Batch"):
+        """Initializes the FPSLogger.
+
+        Args:
+            layer_id (int): The ID of the layer being logged.
+            logger_obj: The logger instance to be used for logging.
+            log_interval_seconds (int): The interval for logging cumulative FPS.
+            log_prefix (str): A prefix string for log messages.
+        """
+        ...
 
         self.layer_id = layer_id
         self.logger = logger_obj
