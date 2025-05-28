@@ -27,3 +27,8 @@ client:
   io_process_events_timeout: 0.1  # Pika's process_data_events() timeout in IOThread (seconds).
   io_output_q_timeout: 0.05       # Timeout for IOThread getting items from its output_q (seconds).
   ack_queue_process_delay: 0.05   # Delay for IOThread's scheduled ack_queue processing (seconds).
+
+redis:
+  host: "192.168.10.130"  # Redis server address
+  port: 6379         
+  db: 0  

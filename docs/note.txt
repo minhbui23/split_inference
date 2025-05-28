@@ -1,0 +1,1 @@
+send_out_put_data, cần có cơ chế retry khi lỗi 

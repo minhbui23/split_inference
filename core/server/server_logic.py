@@ -2,8 +2,8 @@ import os
 import pickle
 import base64
 import pika
-import src.Model
-import src.Log
+
+from core.utils.logger import Logger
 
 class Server:
     def __init__(self, config):
@@ -13,7 +13,7 @@ class Server:
             config (dict): Configuration dictionary containing RabbitMQ, model, and server settings.
         """
         self.config = config
-        self.logger = src.Log.Logger(f"{config['log-path']}/server_app.log")
+        self.logger = Logger(f"{config['log-path']}/server_app.log")
         self._initialize_rabbitmq()
         self._initialize_server_settings()
         self._initialize_client_tracking()

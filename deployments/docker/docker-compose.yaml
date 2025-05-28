@@ -12,8 +12,8 @@ services:
       RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ./rabbitmq-config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./rabbitmq-config/limits.conf:/etc/security/limits.conf
+      - ../../rabbitmq-config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ../../rabbitmq-config/limits.conf:/etc/security/limits.conf
     networks:
       - SI-network
     deploy:
@@ -28,9 +28,8 @@ services:
     depends_on:
       - rabbitmq
     volumes:
-      - ./config.yaml:/app/config.yaml  # Mount file cấu hình
-      #- ./server_result:/app/result
-      - ./logs:/app/logs
+      - ../../configs/config.yaml:/app/config.yaml  
+      - ../../logs:/app/logs
     networks:
       - SI-network
     command: ["sh", "-c", "sleep 5 && python -u server.py"]
@@ -42,8 +41,8 @@ services:
     depends_on:
       - server
     volumes:
-      - ./config.yaml:/app/config.yaml  
-      - ./logs:/app/logs
+      - ../../configs/config.yaml:/app/config.yaml  
+      - ../../logs:/app/logs
     networks:
       - SI-network
     command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu"]
@@ -58,8 +57,8 @@ services:
   #   depends_on:
   #     - server
   #   volumes:
-  #     - ./config.yaml:/app/config.yaml  
-  #     - ./logs:/app/logs
+  #    - ../../configs/config.yaml:/app/config.yaml  
+  #    - ../../logs:/app/logs
   #   networks:
   #     - SI-network
   #   command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu"]
@@ -76,8 +75,8 @@ services:
     depends_on:
       - server
     volumes:
-      - ./config.yaml:/app/config.yaml  
-      - ./logs:/app/logs
+      - ../../configs/config.yaml:/app/config.yaml  
+      - ../../logs:/app/logs
     networks:
       - SI-network
     command: ["sh", "-c", "sleep 10 && python client.py --layer_id 2 --device cpu"]

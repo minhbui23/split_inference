@@ -1,0 +1,91 @@
+@startuml
+
+title Pipeline Data and Ack (L1 -> L2) - Uses AckQueue_L2 internally
+
+participant "InferenceThread_L1" as InfL1
+
+
+participant "OutputQueueL1" as OQL1
+
+participant "IOThread_L1" as IOL1
+participant "Pika/RabbitMQ Server" as RabbitMQ
+
+
+participant "IOThread_L2" as IOL2
+participant "InputQueueL2" as IQL2
+participant "AckQueueL2" as AQL2
+participant "InferenceThread_L2" as InfL2
+
+
+activate InfL1
+== Processing at Client Layer 1 ==
+InfL1 -> InfL1: Read frame, preprocess
+InfL1 -> InfL1: model_obj.forward_head()
+InfL1 -> InfL1: Mount `l1_processed_timestamp`
+InfL1 -> OQL1: put((y_data_with_ts, target_q_name))
+deactivate InfL1
+
+activate IOL1
+IOL1 -> OQL1: get() item_to_send
+IOL1 -> IOL1: Pickle message
+IOL1 -> RabbitMQ: basic_publish(message_body)
+deactivate IOL1
+
+== Transmission and Processing at Client Layer 2 ==
+
+activate RabbitMQ
+RabbitMQ -> IOL2: (Pika callback: on_message(ch, method, props, body))
+deactivate RabbitMQ
+activate IOL2
+IOL2 -> IOL2: received_message = pickle.loads(body)
+IOL2 -> IOL2: delivery_tag = method.delivery_tag
+IOL2 -> IQL2: put({"payload": received_message["data"], "delivery_tag": delivery_tag})
+note right of IOL2: `received_message["data"]` is `y_data_with_ts` from L1.\nDo not ACK now.
+deactivate IOL2
+
+activate InfL2
+InfL2 -> IQL2: get() item_from_q (is {"payload": ..., "delivery_tag": ...})
+InfL2 -> InfL2: y_from_prev = item_from_q["payload"]
+InfL2 -> InfL2: current_delivery_tag = item_from_q["delivery_tag"]
+InfL2 -> InfL2: (Calculate propagation_time)
+InfL2 -> InfL2: model_obj.forward_tail(y_from_prev)
+note right of InfL2: Layer 2 main AI processing
+InfL2 -> InfL2: (Processing completed, decide status: success/failure)
+InfL2 -> AQL2: put({"delivery_tag": current_delivery_tag, "status": "success", "requeue": false})
+deactivate InfL2
+
+note over IOL2, RabbitMQ: IOThread_L2: process_ack_queue() (called by Pika via call_later)
+activate IOL2
+IOL2 -> AQL2: get_nowait() ack_info (which is {"delivery_tag": ..., "status": ..., "requeue": ...})
+alt ack_info["status"] == "success"
+IOL2 -> RabbitMQ: channel.basic_ack(delivery_tag=ack_info["delivery_tag"])
+note right of IOL2: Send ACK to RabbitMQ
+else ack_info["status"] == "failure"
+IOL2 -> RabbitMQ: channel.basic_nack(delivery_tag=ack_info["delivery_tag"], requeue=ack_info["requeue"]) 
+note right of IOL2: Send NACK to RabbitMQ
+end
+IOL2 -> IOL2: connection.call_later(delay, process_ack_queue)
+note right of IOL2: Schedule process_ack_queue to run again
+deactivate IOL2
+
+
+== STOP Signal Handling (Example - ACK message STOP in IOThread L2 on_message) ==
+IOL1 -> RabbitMQ: basic_publish("STOP")
+
+activate RabbitMQ
+RabbitMQ -> IOL2: (Pika callback: on_message() with body "STOP")
+deactivate RabbitMQ
+activate IOL2
+IOL2 -> IOL2: received_message = "STOP"
+IOL2 -> IQL2: put("STOP_FROM_PREVIOUS")
+IOL2 -> RabbitMQ: channel.basic_ack(delivery_tag_for_STOP_message)
+note right of IOL2: ACK for STOP message is done immediately by IOThread L2.
+IOL2 -> IOL2: stop_evt.set() (if logic stops like that)
+deactivate IOL2
+
+activate InfL2
+InfL2 -> IQL2: get() "STOP_FROM_PREVIOUS"
+InfL2 -> InfL2: (Log, cleanup)
+deactivate InfL2
+
+@enduml

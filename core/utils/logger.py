@@ -36,7 +36,6 @@ class Logger:
     def log_error(self, message):
         self.logger.error(message)
 
-
-def print_with_color(text, color):
-    color_code = Colors.COLORS.get(color.lower(), Colors.COLORS["end"])
-    print(f"{color_code}{text}{Colors.COLORS['end']}")
+    def print_with_color(text, color):
+        color_code = Colors.COLORS.get(color.lower(), Colors.COLORS["end"])
+        print(f"{color_code}{text}{Colors.COLORS['end']}")

@@ -11,12 +11,13 @@ import time
 import os
 # import cv2 # Không cần trực tiếp ở đây nữa
 
-import src.Log
-from src.RpcClient import RpcClient
+from core.utils.logger import Logger
+from core.rpc.rpc_client import RpcClient
 # Các lớp worker giờ sẽ được import từ file mới
-from src.Client_worker import InferenceWorker, IOWorker
-# Hàm tiện ích model sẽ được import từ file mới
-from src.Model_utils import setup_inference_components
+from app.client.inference_worker import FirstLayerWorker, LastLayerWorker, MiddleLayerWorker
+from app.client.io_worker import FirstLayerIOWorker, LastLayerIOWorker, MiddleLayerIOWorker
+
+from core.model.model_utils import setup_inference_components
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Split learning client")
