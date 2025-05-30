@@ -14,15 +14,14 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy file
-COPY server.py /app/
-COPY src/Log.py src/
-COPY src/Model.py src/
-COPY src/Server.py src/
-COPY src/Utils.py src/
+COPY models/ /app/models/ 
+COPY models/yolov8n.pt .
 
-RUN mkdir -p /app/result
+COPY app/server.py .
+# Core library code
+COPY core/ ./core/
+
 
 
 # Command chạy server
-CMD ["python", "server.py"]
+CMD ["python", "server.py", "--config", "config.yaml"]

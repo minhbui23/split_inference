@@ -14,17 +14,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY client.py .
-COPY src/Log.py src/
-COPY src/RpcClient.py src/
-COPY src/Client_worker.py src/
-COPY src/Model_utils.py src/
-COPY src/Model.py src/
-COPY src/Utils.py src/
-COPY cfg/ cfg/
+COPY models/ /app/models/ 
+COPY videos/video.mp4 video.mp4
 
-COPY video.mp4 /app/
+COPY app/client.py .
+COPY core/ ./core/
+
 
 
 # Command chạy client (layer_id mặc định là 1, có thể override khi chạy)
-CMD ["python", "client.py", "--layer_id", "1", "--device", "cpu"]
+CMD ["python", "client.py", "--config", "config.yaml", "--layer_id", "1", "--device", "cpu"]

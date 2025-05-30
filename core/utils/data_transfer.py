@@ -40,10 +40,10 @@ class RedisManager:
             self.redis_client.ping() # Verify connection
             self.logger.log_info(f"[RedisManager] Connected to Redis at {self.host}:{self.port}/{self.db}")
         except redis.exceptions.ConnectionError as e:
-            self.logger.log_error(f"[RedisManager] Failed to connect to Redis: {e}", exc_info=True)
+            self.logger.log_error(f"[RedisManager] Failed to connect to Redis: {e}")
             self.redis_client = None # Ensure client is None if connection failed
         except Exception as e: # Catch other potential errors like config issues
-            self.logger.log_error(f"[RedisManager] An unexpected error occurred during Redis connection: {e}", exc_info=True)
+            self.logger.log_error(f"[RedisManager] An unexpected error occurred during Redis connection: {e}")
             self.redis_client = None
 
     def is_connected(self) -> bool:
@@ -52,6 +52,7 @@ class RedisManager:
             return False
         try:
             return self.redis_client.ping()
+            self.logger.log_info("[RedisManager] Redis client is initialized." )
         except redis.exceptions.ConnectionError:
             return False
 
@@ -86,7 +87,7 @@ class RedisManager:
             if ttl_seconds:
                 self.redis_client.expire(redis_key, ttl_seconds)
             if self.logger:
-                self.logger.log_debug(f"[RedisManager] Stored data in Redis with key: {redis_key}, TTL: {ttl_seconds}s")
+                self.logger.log_info(f"[RedisManager] Stored data in Redis with key: {redis_key}, TTL: {ttl_seconds}s")
             return redis_key
         except Exception as e:
             if self.logger:
@@ -119,11 +120,11 @@ class RedisManager:
             except Exception: # Fallback to pickle
                 data = pickle.loads(serialized_data)
             
-            self.logger.log_debug(f"[RedisManager] Retrieved data from Redis for key: {redis_key}")
+            self.logger.log_info(f"[RedisManager] Retrieved data from Redis for key: {redis_key}")
             
             return data
         except Exception as e:
-            self.logger.log_error(f"[RedisManager] Error retrieving/deserializing data from Redis (key: {redis_key}): {e}", exc_info=True)
+            self.logger.log_error(f"[RedisManager] Error retrieving/deserializing data from Redis (key: {redis_key}): {e}")
             return None
 
     def delete_data(self, redis_key: str) -> bool:
@@ -133,10 +134,10 @@ class RedisManager:
             return False
         try:
             result = self.redis_client.delete(redis_key)
-            self.logger.log_debug(f"[RedisManager] Deleted data from Redis for key: {redis_key}. Result: {result}")
+            self.logger.log_info(f"[RedisManager] Deleted data from Redis for key: {redis_key}. Result: {result}")
             return result > 0
         except Exception as e:
-            self.logger.log_error(f"[RedisManager] Error deleting data from Redis (key: {redis_key}): {e}", exc_info=True)
+            self.logger.log_error(f"[RedisManager] Error deleting data from Redis (key: {redis_key}): {e}")
             return False
 
     def close(self):

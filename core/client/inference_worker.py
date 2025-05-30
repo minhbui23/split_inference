@@ -3,6 +3,7 @@ import torch
 import time
 import queue
 import cv2
+import uuid
 from core.utils.fps_logger import FPSLogger
 
 class BaseInferenceWorker(threading.Thread):
@@ -28,7 +29,7 @@ class BaseInferenceWorker(threading.Thread):
     def __init__(self, layer_id, num_layers, device, 
                  model_obj, predictor_obj, initial_params,
                  input_q, output_q, ack_trigger_q, 
-                 stop_evt, logger, name=None):
+                 stop_evt, logger, name=None, metrics_logger=None):
         
         super().__init__(name=name or f"InferenceThread-L{layer_id}")
         self.layer_id = layer_id
@@ -42,6 +43,7 @@ class BaseInferenceWorker(threading.Thread):
         self.ack_trigger_q = ack_trigger_q
         self.stop_evt = stop_evt
         self.logger = logger
+        self.metrics_logger = metrics_logger
         self._initialize_params()
 
     def _initialize_params(self):
@@ -97,10 +99,7 @@ class FirstLayerWorker(BaseInferenceWorker):
         while not self.stop_evt.is_set():
             ret, frame = cap.read()
             if not ret:
-                if frames_batch:
-                    self.logger.log_info(f"[{self.name}] Remaining frames not processed.")
-                if self.layer_id < self.num_layers:
-                    self.output_q.put(("STOP_INFERENCE", f"intermediate_queue_{self.layer_id + 1}"))
+                self.logger.log_info(f"[{self.name}] End of video stream or error reading frame.")
                 break
 
             frame_count += 1
@@ -128,6 +127,7 @@ class FirstLayerWorker(BaseInferenceWorker):
         """
         ...
         self.fps_logger.start_batch_timing()
+        t1_start = time.time()
         try:
             batch = torch.stack(frames_batch).to(self.device)
             batch_size = batch.size(0)
@@ -137,6 +137,8 @@ class FirstLayerWorker(BaseInferenceWorker):
 
             output = self.model_obj.forward_head(input_tensor, save_layers)
             self.fps_logger.end_batch_and_log_fps(batch_size)
+            
+            t1 = time.time() - t1_start
 
             output["layers_output"] = [
                 t.cpu() if isinstance(t, torch.Tensor) else None
@@ -144,6 +146,10 @@ class FirstLayerWorker(BaseInferenceWorker):
             ]
             item = {
                 "payload": output,
+                "metrics": {
+                    "t1": t1,
+                    "batch_id" : str(uuid.uuid4()),
+                },
                 "l1_inference_timestamp": time.time()
             }
             if self.layer_id < self.num_layers:
@@ -189,18 +195,8 @@ class LastLayerWorker(BaseInferenceWorker):
         while not self.stop_evt.is_set():
             try:
                 item = self.input_q.get(timeout=0.5)
-                if item == "STOP_FROM_PREVIOUS":
-                    self.logger.log_info(f"[{self.name}] Received STOP.")
-                    break
 
-                payload = item.get("payload")
-                delivery_tag = item.get("delivery_tag")
-                if not payload or not delivery_tag:
-                    self.logger.log_warning(f"[{self.name}] Invalid item")
-                    self.input_q.task_done()
-                    continue
-
-                self._process_payload(payload, delivery_tag, is_last_layer)
+                self._process_payload(item)
                 self.input_q.task_done()
 
             except queue.Empty:
@@ -211,29 +207,39 @@ class LastLayerWorker(BaseInferenceWorker):
 
         self.fps_logger.log_overall_fps("L-Last: Feature processing finished")
 
-    def _process_payload(self, payload, delivery_tag, is_last_layer):
-        """Processes the data payload from the previous layer.
+    def _process_payload(self, item): # Sửa tham số
+        # Trích xuất dữ liệu từ item
+        payload = item.get("payload")
+        delivery_tag = item.get("delivery_tag")
+        metrics = item.get("metrics", {})
+        
+        # Đo t4 và q2
+        put_time = item.get('put_to_l2_input_q_timestamp')
+        if put_time:
+            metrics['t4'] = time.time() - put_time
+        metrics['q2'] = self.input_q.qsize()
 
-        Args:
-            payload (dict): The feature data from the previous layer.
-            delivery_tag (str): The RabbitMQ message tag for sending an ACK.
-            is_last_layer (bool): Flag to confirm this is the last layer.
-        """
-        ...
-        self.fps_logger.start_batch_timing()
+        # Đo t5
+        t5_start = time.time()
         ack_status = "failure"
         requeue = False
+        self.fps_logger.start_batch_timing()
         try:
             payload["layers_output"] = [
                 t.to(self.device) if isinstance(t, torch.Tensor) else None
                 for t in payload["layers_output"]
             ]
-            if is_last_layer:
-                self.model_obj.forward_tail(payload)
+            self.model_obj.forward_tail(payload)
             ack_status = "success"
         except Exception as e:
             self.logger.log_error(f"[{self.name}] Error with payload {delivery_tag}: {e}")
         finally:
+            metrics['t5'] = time.time() - t5_start
+            
+            # GHI LOG CUỐI CÙNG
+            if self.metrics_logger:
+                self.metrics_logger.log(metrics)
+
             self.fps_logger.end_batch_and_log_fps(self.batch_frame_size)
             self.ack_trigger_q.put({
                 "delivery_tag": delivery_tag,

@@ -6,7 +6,9 @@ import base64
 import os
 
 class RpcClient:
-    def __init__(self, client_id, layer_id, address, username, password, virtual_host, logger_ref):
+    def __init__(self, client_id, layer_id, 
+                 address, username, password, virtual_host, 
+                 logger_ref,  main_stop_event):
         """Initialize the RPC client for communication with the server.
 
         Args:
@@ -24,6 +26,7 @@ class RpcClient:
         self.initial_params = None
         self.response_payload = None
         self.correlation_id = None
+        self.main_stop_event = main_stop_event
         self._initialize_rabbitmq(address, username, password, virtual_host)
 
     def _initialize_rabbitmq(self, address, username, password, virtual_host):
@@ -60,6 +63,24 @@ class RpcClient:
             props: Pika properties.
             body: Message body.
         """
+        decoded_message = None
+        try:
+            decoded_message = pickle.loads(body)
+        except pickle.UnpicklingError as e:
+            self.logger.log_error(f"[RpcClient L{self.layer_id}] Failed to unpickle message: {e}. Body: {body[:100]}")
+            return
+        except Exception as e: 
+            self.logger.log_error(f"[RpcClient L{self.layer_id}] General error unpickling message: {e}. Body: {body[:100]}")
+            return
+
+        if not isinstance(decoded_message, dict):
+            self.logger.log_warning(f"[RpcClient L{self.layer_id}] Received non-dict message: {decoded_message}")
+            return
+
+        if decoded_message.get("action") == "STOP":
+            self._handle_stop_signal(decoded_message)
+            return
+        
         if props.correlation_id != self.correlation_id:
             self.logger.log_warning(
                 f"[RpcClient L{self.layer_id}] Mismatched correlation ID. "
@@ -88,9 +109,10 @@ class RpcClient:
                 f"Response is not a dictionary. Got type: {type(self.response_payload)}"
             )
             return
-
+        
         action = self.response_payload.get("action")
         server_message = self.response_payload.get("message")
+        
         if server_message:
             self.logger.log_info(f"[RpcClient L{self.layer_id}] Server message: {server_message}")
 
@@ -113,11 +135,7 @@ class RpcClient:
             "num_layers": self.response_payload.get("num_layers"),
             "splits": self.response_payload.get("splits"),
             "save_layers": self.response_payload.get("save_layers"),
-            "batch_frame": self.response_payload.get("batch_frame"),
             "encoded_model": self.response_payload.get("model"),
-            "data_source": self.response_payload.get("data"),
-            "debug_mode": self.response_payload.get("debug_mode", False),
-            "imgsz": self.response_payload.get("imgsz")
         }
 
         if not params["model_name"]:
@@ -127,6 +145,15 @@ class RpcClient:
         params["model_save_path"] = f'{params["model_name"]}.pt'
         self._save_model(params["encoded_model"], params["model_save_path"])
         self.initial_params = params
+
+    def _handle_stop_signal(self, payload):
+        """Handles the STOP signal received from the server."""
+        reason = payload.get('reason', 'No reason provided.')
+        self.logger.log_warning(
+            f"[RpcClient L{self.layer_id}] Received STOP command from server. Reason: {reason}"
+        )
+        if self.main_stop_event:
+            self.main_stop_event.set()
 
     def _save_model(self, encoded_model, save_path):
         """Save the encoded model to a file.

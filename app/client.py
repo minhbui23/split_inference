@@ -17,22 +17,26 @@ from core.rpc.rpc_client import RpcClient
 from core.client.inference_worker import FirstLayerWorker, LastLayerWorker, MiddleLayerWorker
 from core.client.io_worker import FirstLayerIOWorker, LastLayerIOWorker, MiddleLayerIOWorker
 
+from core.utils.metric_logger import MetricsLogger
 from core.model.model_utils import setup_inference_components
+
+stop_event = threading.Event()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Split learning client")
     parser.add_argument('--layer_id', type=int, required=True, help='ID of layer')
     parser.add_argument('--device', type=str, required=False, help='Device (cpu or cuda)')
+    parser.add_argument('--config', type=str, default='config.yaml', help='Path to the configuration file')
     args = parser.parse_args()
 
     try:
-        with open('config.yaml', 'r') as file:
+        with open(args.config, 'r') as file:
             config = yaml.safe_load(file)
     except FileNotFoundError:
-        print("FATAL: config.yaml not found.")
+        print(f"FATAL: Config file not found at '{args.config}'.")
         exit(1)
     except yaml.YAMLError as e:
-        print(f"FATAL: Error parsing config.yaml: {e}")
+        print(f"FATAL: Error parsing config file: {e}")
         exit(1)
 
 
@@ -46,11 +50,13 @@ if __name__ == "__main__":
     main_logger = Logger(client_log_full_path)
     main_logger.log_info(f"Client {client_uuid} (L{layer_id_arg}) starting. Logging to: {client_log_full_path}")
 
+    metrics_logger = None
+
     # --- Device ---
     device_arg = args.device if args.device else ("cuda" if torch.cuda.is_available() else "cpu")
     main_logger.log_info(f"Using device: {device_arg}")
 
-    # --- RabbitMQ Connection Params (Cho RpcClient và IOThread) ---
+    # --- RabbitMQ and Redis Connection Params (Cho RpcClient và IOThread) ---
     rabbit_config = config.get("rabbit")
     if not rabbit_config:
         main_logger.log_error("FATAL: RabbitMQ configuration missing in config.yaml.")
@@ -63,6 +69,12 @@ if __name__ == "__main__":
         "virtual_host": rabbit_config.get("virtual-host", "/"),
         "port": rabbit_config.get("port", 5672)
     }
+    redis_conn_params = config.get("redis")
+
+    if not redis_conn_params:
+        main_logger.log_error("FATAL: Redis configuration missing in config.yaml.")
+        exit(1)
+
 
     # --- RPC Client ---
     rpc_client = None # Khởi tạo để có thể close trong finally
@@ -72,7 +84,7 @@ if __name__ == "__main__":
                                rabbit_conn_params_for_io["username"], 
                                rabbit_conn_params_for_io["password"],
                                rabbit_conn_params_for_io["virtual_host"], 
-                               main_logger)
+                               main_logger, stop_event)
 
         main_logger.log_info("Sending registration to server...")
         registration_data = {"action": "REGISTER", "client_id": client_uuid, "layer_id": layer_id_arg}
@@ -80,22 +92,30 @@ if __name__ == "__main__":
 
         if rpc_client.wait_response():
             initial_params_from_server = rpc_client.initial_params
+
             if initial_params_from_server and initial_params_from_server.get("model_name") and not initial_params_from_server.get("error"):
                 main_logger.log_info("Received START from server. Initializing components and worker threads...")
-
-                num_total_layers = initial_params_from_server.get("num_layers")
-                if num_total_layers is None: # Kiểm tra num_layers
-                    main_logger.log_error("'num_layers' from server is missing or invalid. Exiting.")
-                    if rpc_client: rpc_client.close(); exit(1)
                 
-                # Thêm device vào initial_params để các worker có thể sử dụng nếu cần
-                initial_params_from_server["device"] = device_arg 
-                initial_params_from_server["client_layer_id"] = layer_id_arg # Đảm bảo layer_id hiện tại cũng có trong đó
+                # Load Config from server response and config file 
+                params_for_workers = initial_params_from_server.copy()
 
+                server_config = config.get("server", {})
+                client_config = config.get("client", {})
+
+                params_for_workers["data_source"] = config.get("data")
+                params_for_workers["debug_mode"] = config.get("debug-mode", False)
+                params_for_workers["batch_frame"] = server_config.get("batch-frame")
+                
+                params_for_workers.update(client_config)
+
+                params_for_workers["device"] = device_arg
+                params_for_workers["client_layer_id"] = layer_id_arg
+
+                num_total_layers = params_for_workers.get("num_layers")
 
                 # --- Load Model và Predictor sử dụng hàm tiện ích ---
                 model_obj_for_worker, predictor_obj_for_worker = setup_inference_components(
-                    initial_params_from_server, device_arg, main_logger
+                    params_for_workers, device_arg, main_logger
                 )
 
                 if model_obj_for_worker is None or predictor_obj_for_worker is None:
@@ -104,29 +124,51 @@ if __name__ == "__main__":
 
 
                 # --- Queues & Event ---
-                q_maxsize = initial_params_from_server.get("internal_queue_size", 20)
+                q_maxsize = params_for_workers.get("internal_queue_size", 20)
                 input_data_queue = queue.Queue(maxsize=q_maxsize)
                 output_data_queue = queue.Queue(maxsize=q_maxsize)
                 ack_trigger_queue = queue.Queue(maxsize=q_maxsize * 2) # ack_q có thể cần lớn hơn một chút
-                stop_event = threading.Event()
+                
+
+                io_worker_class = None
+                inference_worker_class = None
+
+                if layer_id_arg == 1:
+                    io_worker_class = FirstLayerIOWorker
+                    inference_worker_class = FirstLayerWorker
+                elif layer_id_arg == num_total_layers:
+                    io_worker_class = LastLayerIOWorker
+                    inference_worker_class = LastLayerWorker
+                    # Khởi tạo metrics logger chỉ cho layer cuối
+                    metrics_fields = ['batch_id', 't1', 't2', 'q1', 't3', 't4', 'q2', 't5']
+                    metrics_log_name = f'metrics_L{layer_id_arg}.csv'
+                    metrics_log_full_path = os.path.join(log_dir_from_config, metrics_log_name)
+                    metrics_logger = MetricsLogger(metrics_log_full_path, metrics_fields)
+                    
+                else:
+                    io_worker_class = MiddleLayerIOWorker
+                    inference_worker_class = MiddleLayerWorker
+
 
                 # --- Khởi tạo và chạy Threads ---
-                io_thread = IOWorker(
+                io_thread = io_worker_class(
                     layer_id=layer_id_arg, num_layers=num_total_layers,
                     rabbit_conn_params=rabbit_conn_params_for_io,
-                    initial_params=initial_params_from_server, # Truyền full initial_params
+                    redis_conn_params=redis_conn_params,
+                    initial_params=params_for_workers, # Truyền full initial_params
                     input_q=input_data_queue, output_q=output_data_queue,
                     ack_trigger_q=ack_trigger_queue,
                     stop_evt=stop_event, logger=main_logger
                 )
 
-                inference_thread = InferenceWorker(
+                inference_thread = inference_worker_class(
                     layer_id=layer_id_arg, num_layers=num_total_layers, device=device_arg,
                     model_obj=model_obj_for_worker, predictor_obj=predictor_obj_for_worker,
-                    initial_params=initial_params_from_server,
+                    initial_params=params_for_workers,
                     input_q=input_data_queue, output_q=output_data_queue,
                     ack_trigger_q=ack_trigger_queue,
-                    stop_evt=stop_event, logger=main_logger
+                    stop_evt=stop_event, 
+                    logger=main_logger, metrics_logger=metrics_logger
                 )
                 
                 main_logger.log_info("Starting IO and Inference threads...")
@@ -136,6 +178,15 @@ if __name__ == "__main__":
                 
                 try:
                     while not stop_event.is_set():
+                        try:
+                            if rpc_client and rpc_client.connection and rpc_client.connection.is_open:
+                                rpc_client.connection.process_data_events(time_limit=0.1) 
+                        except pika.exceptions.AMQPConnectionError:
+                            main_logger.error("RPC connection lost while polling. Stopping client.")
+                            stop_event.set()
+                        except Exception as e: 
+                            main_logger.error(f"Error polling RPC events: {e}")
+                            stop_event.set()
                         if not inference_thread.is_alive() and not io_thread.is_alive():
                             main_logger.log_info("Both worker threads have finished.")
                             stop_event.set(); break
@@ -145,7 +196,7 @@ if __name__ == "__main__":
                         elif not io_thread.is_alive() and inference_thread.is_alive():
                             main_logger.log_warning(f"IOThread L{layer_id_arg} exited prematurely. Signaling stop to InferenceThread.")
                             stop_event.set()
-                        time.sleep(0.5)
+                        time.sleep(0.4)
                 except KeyboardInterrupt:
                     main_logger.log_info("Ctrl+C pressed. Signaling threads to stop...")
                     stop_event.set()

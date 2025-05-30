@@ -205,18 +205,8 @@ class Server:
             "model": self.encoded_model_payload,
             "splits": split_params[0],
             "save_layers": split_params[1],
-            "batch_frame": self.config["server"]["batch-frame"],
             "num_layers": self.num_layers,
-            "model_name": self.model_name,
-            "data": self.data_source,
-            "debug_mode": self.debug_mode,
-            "imgsz": client_config.get("imgsz", (640, 640)),
-            "internal_queue_size": client_config.get("internal_queue_size"),
-            "io_prefetch_count": client_config.get("io_prefetch_count", 5),
-            "rabbit_retry_delay": client_config.get("rabbit_retry_delay", 5),
-            "io_process_events_timeout": client_config.get("io_process_events_timeout", 0.1),
-            "io_output_q_timeout": client_config.get("io_output_q_timeout", 0.05),
-            "ack_queue_process_delay": client_config.get("ack_queue_process_delay", 0.05)
+            "model_name": self.model_name
         }
 
         self._send_rpc_reply(
@@ -245,3 +235,33 @@ class Server:
             if self.connection.is_open:
                 self.connection.close()
             self.logger.log_info("Server shutdown complete.")
+
+
+    # Stop signal handling
+    def _send_stop_signal_to_client(self, client_id, client_info):
+        """Sends a STOP signal to a specific client's callback queue."""
+        reply_to_queue = client_info.get('reply_to')
+        if not reply_to_queue:
+            self.logger.log_warning(f"Client {client_id} has no reply_to queue. Cannot send STOP.")
+            return
+
+        stop_payload = {"action": "STOP", "reason": "Server-initiated shutdown (timer or explicit command)."}
+        stop_body = pickle.dumps(stop_payload)
+        try:
+            self.channel.basic_publish(
+                exchange='', # Direct to queue
+                routing_key=reply_to_queue,
+                # No correlation_id needed for server-initiated commands unless a specific protocol is designed
+                properties=pika.BasicProperties(), 
+                body=stop_body
+            )
+            self.logger.log_info(f"Sent STOP signal to client {client_id} on queue {reply_to_queue}")
+        except Exception as e:
+            self.logger.log_error(f"Failed to send STOP to client {client_id} on queue {reply_to_queue}: {e}")
+
+    def _notify_all_clients_to_stop(self): # Hàm mới (hoặc có thể đổi tên _broadcast_stop_signal)
+        """Iterates through all clients and sends them a STOP signal."""
+        self.logger.log_info("Initiating STOP signal for all registered clients...")
+        clients_to_notify = list(self.client_info.items()) # Avoid issues if dict changes during iteration
+        for client_id, info in clients_to_notify:
+            self._send_stop_signal_to_client(client_id, info)
