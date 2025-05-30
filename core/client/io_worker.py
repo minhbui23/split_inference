@@ -108,6 +108,34 @@ class BaseIOWorker(threading.Thread):
             self.redis_manager = None
             self.data_transfer_handler = None
 
+    def _process_ack_queue(self):
+        """Process ACK/NACK triggers from ack_trigger_q."""
+        if self.stop_evt.is_set():
+            return
+
+        while not self.ack_trigger_q.empty():
+            try:
+                ack_info = self.ack_trigger_q.get_nowait()
+                delivery_tag = ack_info.get("delivery_tag")
+                status = ack_info.get("status")
+                requeue = ack_info.get("requeue", False)
+
+                if delivery_tag and self.channel and self.channel.is_open:
+                    if status == "success":
+                        self.channel.basic_ack(delivery_tag=delivery_tag)
+                    elif status == "failure":
+                        self.channel.basic_nack(delivery_tag=delivery_tag, requeue=requeue)
+                self.ack_trigger_q.task_done()
+            except queue.Empty:
+                break
+            except pika.exceptions.AMQPError as e:
+                self.logger.log_error(f"[{self.name}] AMQP error in ack processing: {e}")
+                break
+            except Exception as e:
+                self.logger.log_error(f"[{self.name}] Error in ack processing: {e}")
+
+        if self.connection and self.connection.is_open and not self.stop_evt.is_set():
+            self.connection.call_later(self.ack_queue_process_delay, self._process_ack_queue)
 
 class FirstLayerIOWorker(BaseIOWorker):
     """I/O thread for the first layer client.
@@ -245,6 +273,7 @@ class LastLayerIOWorker(BaseIOWorker):
                     return
                 
                 try:
+
                     metrics = json.loads(body.decode()) # Đây là metadata từ layer trước
 
                     # Logic xử lý STOP message (nếu còn) nên được loại bỏ ở đây,
@@ -253,6 +282,7 @@ class LastLayerIOWorker(BaseIOWorker):
                     l1_sent_time = metrics.get('l1_sent_timestamp') # Hoặc key tương ứng
                     if l1_sent_time:
                         metrics['t3'] = time.time() - l1_sent_time
+
 
                     redis_key = metrics.get("redis_key")
                     if not redis_key:
@@ -279,8 +309,9 @@ class LastLayerIOWorker(BaseIOWorker):
                         if not self.stop_evt.is_set():
                             try:
                                 self.input_q.put(item_for_inference, timeout=0.1) # Thêm timeout nhỏ
-                                ch.basic_ack(delivery_tag=method.delivery_tag) # ACK sau khi put thành công
-                                self.logger.log_info(f"[{self.name}] Callback: Message (tag: {method.delivery_tag}) processed, put to input_q, and acked.")
+
+                                metrics['q2'] = self.input_q.qsize() 
+
                             except queue.Full:
                                 self.logger.log_warning(f"[{self.name}] Callback: Input queue full. Nacking message (tag: {method.delivery_tag}) to requeue.")
                                 ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
@@ -313,7 +344,13 @@ class LastLayerIOWorker(BaseIOWorker):
             
             self.logger.log_info(f"[{self.name}] Checkpoint 7: Consumer started (tag: {self.consumer_tag}). Waiting for messages on '{source_queue_name}'.")
 
-            # ---- Vòng lặp Xử lý Sự kiện Chính ----
+            # ---  PROCESS ACK QUEUE ---
+            if self.connection and self.connection.is_open:
+                 self.logger.log_info(f"[{self.name}] Scheduling first call to _process_ack_queue.")
+                 self.connection.call_later(self.ack_queue_process_delay, self._process_ack_queue)
+            # ------------------------------------
+
+            # ---- MAIN LOOP ----
             self.logger.log_info(f"[{self.name}] Checkpoint 8: Entering main event loop.")
             while not self.stop_evt.is_set():
                 try:

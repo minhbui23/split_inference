@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
 
                 # --- Queues & Event ---
-                q_maxsize = params_for_workers.get("internal_queue_size", 20)
+                q_maxsize = params_for_workers.get("internal_queue_maxsize", 20)
                 input_data_queue = queue.Queue(maxsize=q_maxsize)
                 output_data_queue = queue.Queue(maxsize=q_maxsize)
                 ack_trigger_queue = queue.Queue(maxsize=q_maxsize * 2) # ack_q có thể cần lớn hơn một chút
@@ -140,11 +140,11 @@ if __name__ == "__main__":
                     io_worker_class = LastLayerIOWorker
                     inference_worker_class = LastLayerWorker
                     # Khởi tạo metrics logger chỉ cho layer cuối
-                    metrics_fields = ['batch_id', 't1', 't2', 'q1', 't3', 't4', 'q2', 't5']
+                    metrics_fields = ['batch_id', 't1', 't2', 'q1', 't3', 'q2', 't4', 't5']
                     metrics_log_name = f'metrics_L{layer_id_arg}.csv'
                     metrics_log_full_path = os.path.join(log_dir_from_config, metrics_log_name)
                     metrics_logger = MetricsLogger(metrics_log_full_path, metrics_fields)
-                    
+
                 else:
                     io_worker_class = MiddleLayerIOWorker
                     inference_worker_class = MiddleLayerWorker

@@ -217,7 +217,6 @@ class LastLayerWorker(BaseInferenceWorker):
         put_time = item.get('put_to_l2_input_q_timestamp')
         if put_time:
             metrics['t4'] = time.time() - put_time
-        metrics['q2'] = self.input_q.qsize()
 
         # Đo t5
         t5_start = time.time()
