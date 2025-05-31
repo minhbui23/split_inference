@@ -1,0 +1,545 @@
+2025-05-30 08:25:11,435 - my_logger - INFO - Client faa17190-5df7-4772-bbdd-fd4efb6f6149 (L1) starting. Logging to: logs/client_faa17190-5df7-4772-bbdd-fd4efb6f6149_L1.log
+2025-05-30 08:25:11,435 - my_logger - INFO - Using device: cpu
+2025-05-30 08:25:11,447 - my_logger - INFO - [RpcClient L1] Initialized. Waiting on queue 'amq.gen-MqTb-dg-TRgN-GP3WcOg1Q'.
+2025-05-30 08:25:11,447 - my_logger - INFO - Sending registration to server...
+2025-05-30 08:25:11,447 - my_logger - INFO - [RpcClient L1] Sent message to 'rpc_queue'. CorrID: 8c8f6504-8b35-443e-911d-8472b0c11e9c, Action: REGISTER
+2025-05-30 08:25:11,447 - my_logger - INFO - [RpcClient L1] Waiting for server response (timeout: 300s)...
+2025-05-30 08:25:11,530 - my_logger - INFO - [RpcClient L1] Received RPC response. CorrID: 8c8f6504-8b35-443e-911d-8472b0c11e9c
+2025-05-30 08:25:11,531 - my_logger - INFO - [RpcClient L1] Server message: Server accepts the connection. Ready to start inference.
+2025-05-30 08:25:11,531 - my_logger - INFO - [RpcClient L1] Action: START
+2025-05-30 08:25:11,531 - my_logger - INFO - [RpcClient L1] Model file yolov8n.pt already exists.
+2025-05-30 08:25:11,531 - my_logger - INFO - [RpcClient L1] START signal processed.
+2025-05-30 08:25:11,532 - my_logger - INFO - Received START from server. Initializing components and worker threads...
+2025-05-30 08:25:11,532 - my_logger - INFO - [ModelUtils] Loading pre-trained model from: yolov8n.pt
+2025-05-30 08:25:11,602 - my_logger - INFO - [ModelUtils] Pre-trained nn.Module type: <class 'ultralytics.nn.tasks.DetectionModel'>
+2025-05-30 08:25:11,603 - my_logger - INFO - [ModelUtils] Initializing SplitDetectionModel with split_layer: 10
+2025-05-30 08:25:11,611 - my_logger - INFO - [ModelUtils] SplitDetectionModel initialized. Type: <class 'core.model.model.SplitDetectionModel'>.
+2025-05-30 08:25:11,612 - my_logger - INFO - [ModelUtils] Predictor object initialized. Type: <class 'core.model.model.SplitDetectionPredictor'>
+2025-05-30 08:25:11,612 - my_logger - INFO - Starting IO and Inference threads...
+2025-05-30 08:25:11,613 - my_logger - INFO - [InferenceThread-L1] Starting First Layer
+2025-05-30 08:25:11,620 - my_logger - INFO - [IOThread-L1] RabbitMQ connected.
+2025-05-30 08:25:11,622 - my_logger - INFO - [RedisManager] Connected to Redis at 192.168.10.130:6379/0
+2025-05-30 08:25:11,623 - my_logger - INFO - [IOThread-L1] Redis connected.
+2025-05-30 08:25:13,500 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.7217s (FPS: 11.62).
+2025-05-30 08:25:13,586 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:2f2fd7ba-eab5-40f8-8107-0d14aad43916, TTL: 300s
+2025-05-30 08:25:13,587 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:2f2fd7ba-eab5-40f8-8107-0d14aad43916) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:15,339 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.7143s (FPS: 11.67).
+2025-05-30 08:25:15,484 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:9161d988-ece8-4f5e-8469-018f17a809de, TTL: 300s
+2025-05-30 08:25:15,488 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:9161d988-ece8-4f5e-8469-018f17a809de) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:17,114 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5837s (FPS: 12.63).
+2025-05-30 08:25:17,203 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e6c4004f-96e3-40b3-9db1-91b150f1db8c, TTL: 300s
+2025-05-30 08:25:17,208 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e6c4004f-96e3-40b3-9db1-91b150f1db8c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:18,969 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.7077s (FPS: 11.71).
+2025-05-30 08:25:19,056 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e01629f4-1a37-454e-a379-ad1d6bcedb88, TTL: 300s
+2025-05-30 08:25:19,058 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e01629f4-1a37-454e-a379-ad1d6bcedb88) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:20,771 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6435s (FPS: 12.17).
+2025-05-30 08:25:20,871 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e8e65265-1960-4933-aefd-b7559e6abd51, TTL: 300s
+2025-05-30 08:25:20,876 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e8e65265-1960-4933-aefd-b7559e6abd51) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:22,584 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6448s (FPS: 12.16).
+2025-05-30 08:25:22,584 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 120 frames in 10.0155s (Avg FPS: 11.98).
+2025-05-30 08:25:22,695 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e929b7b2-2f8c-4ef9-a838-6ebd5dd15d44, TTL: 300s
+2025-05-30 08:25:22,700 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e929b7b2-2f8c-4ef9-a838-6ebd5dd15d44) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:24,307 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5629s (FPS: 12.80).
+2025-05-30 08:25:24,400 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:473cd596-af6b-4a70-906c-f3738756bbf2, TTL: 300s
+2025-05-30 08:25:24,401 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:473cd596-af6b-4a70-906c-f3738756bbf2) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:26,094 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6322s (FPS: 12.25).
+2025-05-30 08:25:26,176 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:22ef75a5-8ecf-4299-a812-513712f0c6ef, TTL: 300s
+2025-05-30 08:25:26,178 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:22ef75a5-8ecf-4299-a812-513712f0c6ef) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:27,921 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6704s (FPS: 11.97).
+2025-05-30 08:25:28,091 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:8ceac433-225e-49ba-8d8c-2f3896c92a00, TTL: 300s
+2025-05-30 08:25:28,093 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:8ceac433-225e-49ba-8d8c-2f3896c92a00) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:29,731 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6369s (FPS: 12.22).
+2025-05-30 08:25:29,880 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:3106e65e-a852-45f8-8f3e-10a97daa22a3, TTL: 300s
+2025-05-30 08:25:29,882 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:3106e65e-a852-45f8-8f3e-10a97daa22a3) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:31,570 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6817s (FPS: 11.89).
+2025-05-30 08:25:31,671 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:9ca2246f-95ca-4bbf-a6cd-8dbb9ba86eb2, TTL: 300s
+2025-05-30 08:25:31,676 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:9ca2246f-95ca-4bbf-a6cd-8dbb9ba86eb2) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:33,317 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5770s (FPS: 12.68).
+2025-05-30 08:25:33,318 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 240 frames in 19.7767s (Avg FPS: 12.14).
+2025-05-30 08:25:33,477 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ccca76e1-3ce6-4d7a-9f9b-3a29d07da8db, TTL: 300s
+2025-05-30 08:25:33,482 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ccca76e1-3ce6-4d7a-9f9b-3a29d07da8db) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:35,105 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6312s (FPS: 12.26).
+2025-05-30 08:25:35,194 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:976c0636-f159-4299-93c2-1f5b58829ce4, TTL: 300s
+2025-05-30 08:25:35,196 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:976c0636-f159-4299-93c2-1f5b58829ce4) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:36,793 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5370s (FPS: 13.01).
+2025-05-30 08:25:36,914 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ce11fddf-2c40-4d46-baf9-026ec52a7e43, TTL: 300s
+2025-05-30 08:25:36,917 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ce11fddf-2c40-4d46-baf9-026ec52a7e43) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:38,644 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6875s (FPS: 11.85).
+2025-05-30 08:25:38,754 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5e59e136-64ed-4869-bb3a-9503e748dc7b, TTL: 300s
+2025-05-30 08:25:38,756 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5e59e136-64ed-4869-bb3a-9503e748dc7b) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:40,480 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6509s (FPS: 12.11).
+2025-05-30 08:25:40,578 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:287418ef-cf63-450a-8149-dc74d5a51876, TTL: 300s
+2025-05-30 08:25:40,583 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:287418ef-cf63-450a-8149-dc74d5a51876) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:42,235 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5874s (FPS: 12.60).
+2025-05-30 08:25:42,321 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:1c283e8e-89fa-469f-ab05-b59f16196ea3, TTL: 300s
+2025-05-30 08:25:42,325 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:1c283e8e-89fa-469f-ab05-b59f16196ea3) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:44,041 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6397s (FPS: 12.20).
+2025-05-30 08:25:44,041 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 360 frames in 29.5104s (Avg FPS: 12.20).
+2025-05-30 08:25:44,124 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:65498ac5-195d-4677-a65b-285f0253850f, TTL: 300s
+2025-05-30 08:25:44,126 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:65498ac5-195d-4677-a65b-285f0253850f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:45,800 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5830s (FPS: 12.63).
+2025-05-30 08:25:45,891 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d31135fa-69ff-4f7c-8416-c724e7562e0d, TTL: 300s
+2025-05-30 08:25:45,894 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d31135fa-69ff-4f7c-8416-c724e7562e0d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:47,616 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6669s (FPS: 12.00).
+2025-05-30 08:25:47,701 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e7233696-ecc3-48a0-96a7-5f73a4770714, TTL: 300s
+2025-05-30 08:25:47,703 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e7233696-ecc3-48a0-96a7-5f73a4770714) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:49,528 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.7460s (FPS: 11.46).
+2025-05-30 08:25:49,608 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:3084d4d2-72bc-4c7b-bf8f-7277b170a644, TTL: 300s
+2025-05-30 08:25:49,610 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:3084d4d2-72bc-4c7b-bf8f-7277b170a644) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:51,294 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6450s (FPS: 12.16).
+2025-05-30 08:25:51,392 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:acd0ae21-659c-44d5-9092-6076e7fa180c, TTL: 300s
+2025-05-30 08:25:51,395 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:acd0ae21-659c-44d5-9092-6076e7fa180c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:53,072 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6226s (FPS: 12.33).
+2025-05-30 08:25:53,163 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:30a0fe8b-37a3-43a4-a9ff-a3af8cc31f4b, TTL: 300s
+2025-05-30 08:25:53,168 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:30a0fe8b-37a3-43a4-a9ff-a3af8cc31f4b) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:54,869 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6430s (FPS: 12.17).
+2025-05-30 08:25:54,869 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 480 frames in 39.4168s (Avg FPS: 12.18).
+2025-05-30 08:25:54,974 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:7afacb30-cffe-4ac8-b946-126f9d43fe54, TTL: 300s
+2025-05-30 08:25:54,980 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:7afacb30-cffe-4ac8-b946-126f9d43fe54) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:56,674 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6315s (FPS: 12.26).
+2025-05-30 08:25:56,773 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5be380be-26bd-4aa6-b619-38c88d3d4e1d, TTL: 300s
+2025-05-30 08:25:56,779 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5be380be-26bd-4aa6-b619-38c88d3d4e1d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:25:58,333 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.4884s (FPS: 13.44).
+2025-05-30 08:25:58,413 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:14bd5bfc-76dc-401d-8681-4459a3c3d6af, TTL: 300s
+2025-05-30 08:25:58,415 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:14bd5bfc-76dc-401d-8681-4459a3c3d6af) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:00,167 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6796s (FPS: 11.91).
+2025-05-30 08:26:00,261 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:0cb979a9-b574-4b69-add7-ab061412fdb5, TTL: 300s
+2025-05-30 08:26:00,263 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:0cb979a9-b574-4b69-add7-ab061412fdb5) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:01,923 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5874s (FPS: 12.60).
+2025-05-30 08:26:02,091 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:1b913613-d2db-4316-abb2-6e53126d65ba, TTL: 300s
+2025-05-30 08:26:02,096 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:1b913613-d2db-4316-abb2-6e53126d65ba) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:03,743 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6590s (FPS: 12.06).
+2025-05-30 08:26:03,828 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ad1805fd-c3a3-4b55-a089-38f9dcd18886, TTL: 300s
+2025-05-30 08:26:03,832 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ad1805fd-c3a3-4b55-a089-38f9dcd18886) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:05,512 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5966s (FPS: 12.53).
+2025-05-30 08:26:05,513 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 600 frames in 49.0594s (Avg FPS: 12.23).
+2025-05-30 08:26:05,604 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:3beb560a-b132-4660-90da-388995121039, TTL: 300s
+2025-05-30 08:26:05,607 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:3beb560a-b132-4660-90da-388995121039) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:07,276 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6136s (FPS: 12.39).
+2025-05-30 08:26:07,363 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:a37942f4-0e94-47e4-87ba-e2e660d1f53a, TTL: 300s
+2025-05-30 08:26:07,365 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:a37942f4-0e94-47e4-87ba-e2e660d1f53a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:09,027 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5816s (FPS: 12.65).
+2025-05-30 08:26:09,180 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:41149a51-d8c2-49bd-a284-5b23fbfc2235, TTL: 300s
+2025-05-30 08:26:09,185 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:41149a51-d8c2-49bd-a284-5b23fbfc2235) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:10,817 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6103s (FPS: 12.42).
+2025-05-30 08:26:10,973 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e3f8c21b-743d-48c8-82b5-4819d9105fd7, TTL: 300s
+2025-05-30 08:26:10,978 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e3f8c21b-743d-48c8-82b5-4819d9105fd7) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:12,613 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6546s (FPS: 12.09).
+2025-05-30 08:26:12,724 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5820a886-daff-416d-ae95-7c04d5db0361, TTL: 300s
+2025-05-30 08:26:12,728 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5820a886-daff-416d-ae95-7c04d5db0361) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:14,479 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.7078s (FPS: 11.71).
+2025-05-30 08:26:14,570 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:912e804b-8b72-4f61-b26e-8a4cd7bec67d, TTL: 300s
+2025-05-30 08:26:14,572 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:912e804b-8b72-4f61-b26e-8a4cd7bec67d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:16,175 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5344s (FPS: 13.03).
+2025-05-30 08:26:16,177 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 720 frames in 58.7617s (Avg FPS: 12.25).
+2025-05-30 08:26:16,268 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:87f6bbb1-a23b-4db0-a1fa-48cd719c2b3e, TTL: 300s
+2025-05-30 08:26:16,270 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:87f6bbb1-a23b-4db0-a1fa-48cd719c2b3e) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:17,942 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6064s (FPS: 12.45).
+2025-05-30 08:26:18,054 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d8f0d5b0-5342-4d84-9783-a34f0e47b17f, TTL: 300s
+2025-05-30 08:26:18,056 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d8f0d5b0-5342-4d84-9783-a34f0e47b17f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:19,691 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5607s (FPS: 12.81).
+2025-05-30 08:26:19,782 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:024b098b-5f6c-42b6-a49f-e4efd8e7fadb, TTL: 300s
+2025-05-30 08:26:19,784 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:024b098b-5f6c-42b6-a49f-e4efd8e7fadb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:21,402 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5528s (FPS: 12.88).
+2025-05-30 08:26:21,487 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:b1dcf092-c93c-4442-928e-a0a54531fc73, TTL: 300s
+2025-05-30 08:26:21,489 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:b1dcf092-c93c-4442-928e-a0a54531fc73) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:23,035 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.4862s (FPS: 13.46).
+2025-05-30 08:26:23,167 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:63358553-e937-49ca-b70e-efdcdd68828a, TTL: 300s
+2025-05-30 08:26:23,169 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:63358553-e937-49ca-b70e-efdcdd68828a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:24,829 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6288s (FPS: 12.28).
+2025-05-30 08:26:24,928 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ca326563-cafc-455b-b8d6-3b58eb0c8eeb, TTL: 300s
+2025-05-30 08:26:24,931 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ca326563-cafc-455b-b8d6-3b58eb0c8eeb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:26,629 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6471s (FPS: 12.14).
+2025-05-30 08:26:26,629 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 840 frames in 68.2438s (Avg FPS: 12.31).
+2025-05-30 08:26:26,708 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:899b4af3-1c65-40ba-84f9-4e8b709494e8, TTL: 300s
+2025-05-30 08:26:26,710 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:899b4af3-1c65-40ba-84f9-4e8b709494e8) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:28,432 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6574s (FPS: 12.07).
+2025-05-30 08:26:28,551 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:94709f18-2016-4835-8e63-6ed695c24dfb, TTL: 300s
+2025-05-30 08:26:28,554 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:94709f18-2016-4835-8e63-6ed695c24dfb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:30,189 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5827s (FPS: 12.64).
+2025-05-30 08:26:30,300 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:b88aa7c6-7670-4f5f-8e6f-8189eda864af, TTL: 300s
+2025-05-30 08:26:30,306 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:b88aa7c6-7670-4f5f-8e6f-8189eda864af) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:31,987 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6340s (FPS: 12.24).
+2025-05-30 08:26:32,076 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:300ce260-114d-4b1e-8b1a-975dac83a3c8, TTL: 300s
+2025-05-30 08:26:32,078 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:300ce260-114d-4b1e-8b1a-975dac83a3c8) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:33,801 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6511s (FPS: 12.11).
+2025-05-30 08:26:33,981 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:387fb6a2-c477-4053-afe1-4512e4384783, TTL: 300s
+2025-05-30 08:26:33,985 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:387fb6a2-c477-4053-afe1-4512e4384783) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:35,579 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6244s (FPS: 12.31).
+2025-05-30 08:26:35,670 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:628e2411-3196-4d90-ad53-fbdaedb44d4d, TTL: 300s
+2025-05-30 08:26:35,672 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:628e2411-3196-4d90-ad53-fbdaedb44d4d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:37,327 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5871s (FPS: 12.60).
+2025-05-30 08:26:37,327 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 960 frames in 77.9805s (Avg FPS: 12.31).
+2025-05-30 08:26:37,471 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ec7945cd-cfbc-4b7e-b4de-5813df7c2b2f, TTL: 300s
+2025-05-30 08:26:37,475 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ec7945cd-cfbc-4b7e-b4de-5813df7c2b2f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:39,039 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5591s (FPS: 12.83).
+2025-05-30 08:26:39,164 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:689fdca5-27da-4538-8dca-d4218402f61c, TTL: 300s
+2025-05-30 08:26:39,166 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:689fdca5-27da-4538-8dca-d4218402f61c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:40,820 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6158s (FPS: 12.38).
+2025-05-30 08:26:40,896 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:c1ceaf4e-1756-4f1f-8198-89707374cb0c, TTL: 300s
+2025-05-30 08:26:40,899 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:c1ceaf4e-1756-4f1f-8198-89707374cb0c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:42,600 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6400s (FPS: 12.20).
+2025-05-30 08:26:42,692 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:a01b0b4a-f939-40d9-91f2-ed75258ab376, TTL: 300s
+2025-05-30 08:26:42,695 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:a01b0b4a-f939-40d9-91f2-ed75258ab376) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:44,373 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6244s (FPS: 12.31).
+2025-05-30 08:26:44,458 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:15b2a98d-f4a5-470f-a021-241a9c40cd97, TTL: 300s
+2025-05-30 08:26:44,460 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:15b2a98d-f4a5-470f-a021-241a9c40cd97) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:46,112 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5803s (FPS: 12.66).
+2025-05-30 08:26:46,202 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e40802dc-fef1-43a1-b763-c6b4a548d721, TTL: 300s
+2025-05-30 08:26:46,206 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e40802dc-fef1-43a1-b763-c6b4a548d721) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:47,865 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6020s (FPS: 12.48).
+2025-05-30 08:26:47,865 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1080 frames in 87.6021s (Avg FPS: 12.33).
+2025-05-30 08:26:47,958 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6517e677-e408-44db-9513-7f6a97ef7e69, TTL: 300s
+2025-05-30 08:26:47,960 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6517e677-e408-44db-9513-7f6a97ef7e69) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:49,626 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5973s (FPS: 12.52).
+2025-05-30 08:26:49,776 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:fb1d536e-a233-41b5-8f61-d8e5e40abfb7, TTL: 300s
+2025-05-30 08:26:49,780 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:fb1d536e-a233-41b5-8f61-d8e5e40abfb7) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:51,335 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5542s (FPS: 12.87).
+2025-05-30 08:26:51,472 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:8e0eed33-aa10-4a7f-bc20-b368d0c371ce, TTL: 300s
+2025-05-30 08:26:51,476 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:8e0eed33-aa10-4a7f-bc20-b368d0c371ce) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:53,121 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6274s (FPS: 12.29).
+2025-05-30 08:26:53,220 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:0e8ba168-b461-4518-92a4-718098d3c2f5, TTL: 300s
+2025-05-30 08:26:53,222 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:0e8ba168-b461-4518-92a4-718098d3c2f5) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:54,894 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6251s (FPS: 12.31).
+2025-05-30 08:26:54,980 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:4ed4c47e-cd89-4f8c-b3c6-a859b67357e0, TTL: 300s
+2025-05-30 08:26:54,982 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:4ed4c47e-cd89-4f8c-b3c6-a859b67357e0) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:56,700 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6528s (FPS: 12.10).
+2025-05-30 08:26:56,783 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:f78665ce-01c1-4bd9-96c1-fb07569e6d4b, TTL: 300s
+2025-05-30 08:26:56,785 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:f78665ce-01c1-4bd9-96c1-fb07569e6d4b) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:26:58,485 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6390s (FPS: 12.20).
+2025-05-30 08:26:58,486 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1200 frames in 97.2981s (Avg FPS: 12.33).
+2025-05-30 08:26:58,580 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:f1564cc9-125a-4b32-aa18-7973a79bfaca, TTL: 300s
+2025-05-30 08:26:58,582 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:f1564cc9-125a-4b32-aa18-7973a79bfaca) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:00,175 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5299s (FPS: 13.07).
+2025-05-30 08:27:00,268 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:f954ec4b-820a-4f02-a0a1-910585165e44, TTL: 300s
+2025-05-30 08:27:00,270 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:f954ec4b-820a-4f02-a0a1-910585165e44) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:01,950 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6079s (FPS: 12.44).
+2025-05-30 08:27:02,046 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:7d497ce8-4078-457d-a161-6799670bedf6, TTL: 300s
+2025-05-30 08:27:02,048 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:7d497ce8-4078-457d-a161-6799670bedf6) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:03,627 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5012s (FPS: 13.32).
+2025-05-30 08:27:03,769 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ffd98e6e-1cfc-4569-83df-015808628232, TTL: 300s
+2025-05-30 08:27:03,771 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ffd98e6e-1cfc-4569-83df-015808628232) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:05,351 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5797s (FPS: 12.66).
+2025-05-30 08:27:05,459 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:13168677-fff6-48a9-9a45-7a5f93a4b3d4, TTL: 300s
+2025-05-30 08:27:05,461 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:13168677-fff6-48a9-9a45-7a5f93a4b3d4) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:07,104 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5821s (FPS: 12.64).
+2025-05-30 08:27:07,187 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:bf8e67a5-b52b-403a-aa2a-6866e6abe44a, TTL: 300s
+2025-05-30 08:27:07,190 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:bf8e67a5-b52b-403a-aa2a-6866e6abe44a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:08,826 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5749s (FPS: 12.70).
+2025-05-30 08:27:08,826 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1320 frames in 106.6739s (Avg FPS: 12.37).
+2025-05-30 08:27:08,969 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e9f0f263-eb3e-4005-a1cb-646adaa0ab7a, TTL: 300s
+2025-05-30 08:27:08,972 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e9f0f263-eb3e-4005-a1cb-646adaa0ab7a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:10,618 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6405s (FPS: 12.19).
+2025-05-30 08:27:10,697 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:c3f41146-263b-49f3-b353-e3d4ca4ab54b, TTL: 300s
+2025-05-30 08:27:10,699 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:c3f41146-263b-49f3-b353-e3d4ca4ab54b) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:12,422 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6580s (FPS: 12.06).
+2025-05-30 08:27:12,514 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5be9c0e8-4102-486c-8e51-4eec0764de53, TTL: 300s
+2025-05-30 08:27:12,519 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5be9c0e8-4102-486c-8e51-4eec0764de53) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:14,106 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.4970s (FPS: 13.36).
+2025-05-30 08:27:14,192 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:f67f0a10-1292-4582-9d39-2312eac4439d, TTL: 300s
+2025-05-30 08:27:14,195 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:f67f0a10-1292-4582-9d39-2312eac4439d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:15,826 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5722s (FPS: 12.72).
+2025-05-30 08:27:15,915 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:2b9c0954-71cd-4196-b2a5-f0d6ae7217cc, TTL: 300s
+2025-05-30 08:27:15,918 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:2b9c0954-71cd-4196-b2a5-f0d6ae7217cc) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:17,584 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6105s (FPS: 12.42).
+2025-05-30 08:27:17,707 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:106fb512-656c-4d9e-818e-06e6bcf3e22a, TTL: 300s
+2025-05-30 08:27:17,712 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:106fb512-656c-4d9e-818e-06e6bcf3e22a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:19,321 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5748s (FPS: 12.70).
+2025-05-30 08:27:19,322 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1440 frames in 116.2269s (Avg FPS: 12.39).
+2025-05-30 08:27:19,412 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e2a39c2f-2d70-445f-8a56-092695af5926, TTL: 300s
+2025-05-30 08:27:19,416 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e2a39c2f-2d70-445f-8a56-092695af5926) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:21,096 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6269s (FPS: 12.29).
+2025-05-30 08:27:21,190 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:69546bce-f3a2-498b-b6ed-5c3fe6c5e484, TTL: 300s
+2025-05-30 08:27:21,192 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:69546bce-f3a2-498b-b6ed-5c3fe6c5e484) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:22,891 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6389s (FPS: 12.20).
+2025-05-30 08:27:22,986 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:b6ab0b00-47a4-4dc1-be2d-646dfe137dcb, TTL: 300s
+2025-05-30 08:27:22,988 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:b6ab0b00-47a4-4dc1-be2d-646dfe137dcb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:24,622 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5759s (FPS: 12.69).
+2025-05-30 08:27:24,702 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:dcc00b5d-f2cb-4af2-a06c-10b153d0d23f, TTL: 300s
+2025-05-30 08:27:24,704 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:dcc00b5d-f2cb-4af2-a06c-10b153d0d23f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:26,404 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6358s (FPS: 12.23).
+2025-05-30 08:27:26,487 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:72c32b20-aaaa-46b0-b26e-a8114521d7f9, TTL: 300s
+2025-05-30 08:27:26,490 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:72c32b20-aaaa-46b0-b26e-a8114521d7f9) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:28,209 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6576s (FPS: 12.07).
+2025-05-30 08:27:28,312 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e06426b3-61f5-4ec7-9846-62a174b3a160, TTL: 300s
+2025-05-30 08:27:28,314 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e06426b3-61f5-4ec7-9846-62a174b3a160) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:29,904 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5441s (FPS: 12.95).
+2025-05-30 08:27:29,904 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1560 frames in 125.9062s (Avg FPS: 12.39).
+2025-05-30 08:27:29,990 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:a039b30b-038f-4534-8795-5502eb521347, TTL: 300s
+2025-05-30 08:27:29,993 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:a039b30b-038f-4534-8795-5502eb521347) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:31,646 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5883s (FPS: 12.59).
+2025-05-30 08:27:31,738 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:18337249-6e41-4b22-9000-062ef135dc62, TTL: 300s
+2025-05-30 08:27:31,740 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:18337249-6e41-4b22-9000-062ef135dc62) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:33,388 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5937s (FPS: 12.55).
+2025-05-30 08:27:33,480 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:4e75e049-08d7-4640-aa6d-f58e05b9e384, TTL: 300s
+2025-05-30 08:27:33,482 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:4e75e049-08d7-4640-aa6d-f58e05b9e384) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:35,111 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5647s (FPS: 12.78).
+2025-05-30 08:27:35,204 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:206291ae-084a-4a38-94fd-9674bff2208f, TTL: 300s
+2025-05-30 08:27:35,206 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:206291ae-084a-4a38-94fd-9674bff2208f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:36,818 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5625s (FPS: 12.80).
+2025-05-30 08:27:36,977 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:1af0eb83-24eb-4367-a178-48efdb747314, TTL: 300s
+2025-05-30 08:27:36,981 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:1af0eb83-24eb-4367-a178-48efdb747314) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:38,638 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6536s (FPS: 12.09).
+2025-05-30 08:27:38,805 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:14b2e02b-dfea-44f3-8d3c-da928afb8ffb, TTL: 300s
+2025-05-30 08:27:38,808 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:14b2e02b-dfea-44f3-8d3c-da928afb8ffb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:40,433 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6278s (FPS: 12.29).
+2025-05-30 08:27:40,433 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1680 frames in 135.4968s (Avg FPS: 12.40).
+2025-05-30 08:27:40,526 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5fa467ef-fd4a-4582-9a64-60377d3f65d3, TTL: 300s
+2025-05-30 08:27:40,530 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5fa467ef-fd4a-4582-9a64-60377d3f65d3) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:42,283 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6943s (FPS: 11.80).
+2025-05-30 08:27:42,387 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:00b7a829-b7ce-451d-862b-5a67ec43f28e, TTL: 300s
+2025-05-30 08:27:42,393 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:00b7a829-b7ce-451d-862b-5a67ec43f28e) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:44,022 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5837s (FPS: 12.63).
+2025-05-30 08:27:44,202 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:9c6ca6d1-5df8-4ddd-8412-a2dc207b468b, TTL: 300s
+2025-05-30 08:27:44,209 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:9c6ca6d1-5df8-4ddd-8412-a2dc207b468b) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:45,777 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6134s (FPS: 12.40).
+2025-05-30 08:27:45,880 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:20eca9a4-13db-498d-bce5-b50b8d1e43aa, TTL: 300s
+2025-05-30 08:27:45,883 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:20eca9a4-13db-498d-bce5-b50b8d1e43aa) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:47,478 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5383s (FPS: 13.00).
+2025-05-30 08:27:47,605 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e6d95246-a942-4d11-9f6e-1fa820433a7a, TTL: 300s
+2025-05-30 08:27:47,608 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e6d95246-a942-4d11-9f6e-1fa820433a7a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:49,294 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6407s (FPS: 12.19).
+2025-05-30 08:27:49,382 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:4603c2c3-0da8-4aed-bf02-39b2620a11b5, TTL: 300s
+2025-05-30 08:27:49,385 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:4603c2c3-0da8-4aed-bf02-39b2620a11b5) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:51,071 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6239s (FPS: 12.32).
+2025-05-30 08:27:51,072 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1800 frames in 145.1912s (Avg FPS: 12.40).
+2025-05-30 08:27:51,163 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:67af81e9-1013-4130-afc7-1c981efeed1d, TTL: 300s
+2025-05-30 08:27:51,168 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:67af81e9-1013-4130-afc7-1c981efeed1d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:52,802 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5639s (FPS: 12.79).
+2025-05-30 08:27:52,907 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ef0a4c3b-6e16-4f60-a280-ec20afa848a3, TTL: 300s
+2025-05-30 08:27:52,909 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ef0a4c3b-6e16-4f60-a280-ec20afa848a3) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:54,567 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6113s (FPS: 12.41).
+2025-05-30 08:27:54,662 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e30925e4-b29f-4254-96e2-827b91c36fcb, TTL: 300s
+2025-05-30 08:27:54,665 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e30925e4-b29f-4254-96e2-827b91c36fcb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:56,395 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6621s (FPS: 12.03).
+2025-05-30 08:27:56,524 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6692c6a3-58d2-412d-81f6-b138f04ce7fa, TTL: 300s
+2025-05-30 08:27:56,526 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6692c6a3-58d2-412d-81f6-b138f04ce7fa) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:58,148 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5943s (FPS: 12.55).
+2025-05-30 08:27:58,242 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:32f960dc-39e4-4f1d-a290-3d841c0c7ebb, TTL: 300s
+2025-05-30 08:27:58,244 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:32f960dc-39e4-4f1d-a290-3d841c0c7ebb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:27:59,919 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6112s (FPS: 12.41).
+2025-05-30 08:28:00,080 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:53c4cc47-bf07-4938-a9cf-c972189a4a3a, TTL: 300s
+2025-05-30 08:28:00,091 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:53c4cc47-bf07-4938-a9cf-c972189a4a3a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:01,616 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5532s (FPS: 12.88).
+2025-05-30 08:28:01,619 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 1920 frames in 154.7871s (Avg FPS: 12.40).
+2025-05-30 08:28:01,768 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6bdcb99d-808f-421c-8722-2801e5e11191, TTL: 300s
+2025-05-30 08:28:01,774 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6bdcb99d-808f-421c-8722-2801e5e11191) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:03,336 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5722s (FPS: 12.72).
+2025-05-30 08:28:03,442 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:442e0521-2b5d-40df-afda-7c355717aa3b, TTL: 300s
+2025-05-30 08:28:03,444 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:442e0521-2b5d-40df-afda-7c355717aa3b) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:05,170 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6726s (FPS: 11.96).
+2025-05-30 08:28:05,258 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:422e38c9-4f76-4130-9175-684535008b64, TTL: 300s
+2025-05-30 08:28:05,259 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:422e38c9-4f76-4130-9175-684535008b64) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:06,925 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6028s (FPS: 12.48).
+2025-05-30 08:28:07,067 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:bfc78707-df81-4a53-943e-95730908f969, TTL: 300s
+2025-05-30 08:28:07,073 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:bfc78707-df81-4a53-943e-95730908f969) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:08,636 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5727s (FPS: 12.72).
+2025-05-30 08:28:08,736 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5e90d006-8f58-4a05-a534-160d4b0524cf, TTL: 300s
+2025-05-30 08:28:08,738 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5e90d006-8f58-4a05-a534-160d4b0524cf) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:10,419 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6129s (FPS: 12.40).
+2025-05-30 08:28:10,508 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:bc8254be-ab83-4b01-9f78-710ec796f979, TTL: 300s
+2025-05-30 08:28:10,509 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:bc8254be-ab83-4b01-9f78-710ec796f979) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:12,199 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6243s (FPS: 12.31).
+2025-05-30 08:28:12,199 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2040 frames in 164.4445s (Avg FPS: 12.41).
+2025-05-30 08:28:12,297 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5c0ab1b6-aaae-45af-ad1f-619fd1e9cc70, TTL: 300s
+2025-05-30 08:28:12,298 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5c0ab1b6-aaae-45af-ad1f-619fd1e9cc70) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:13,927 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5737s (FPS: 12.71).
+2025-05-30 08:28:14,008 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ab44f577-b81e-4380-8428-36c32d3a5aae, TTL: 300s
+2025-05-30 08:28:14,011 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ab44f577-b81e-4380-8428-36c32d3a5aae) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:15,688 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6155s (FPS: 12.38).
+2025-05-30 08:28:15,788 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:02c476ab-efff-4067-a575-4deb8501fa1c, TTL: 300s
+2025-05-30 08:28:15,792 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:02c476ab-efff-4067-a575-4deb8501fa1c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:17,476 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6334s (FPS: 12.24).
+2025-05-30 08:28:17,568 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:7877d2b0-2d4d-4fe2-b0a7-aa3c35f6f4d3, TTL: 300s
+2025-05-30 08:28:17,570 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:7877d2b0-2d4d-4fe2-b0a7-aa3c35f6f4d3) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:19,146 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5104s (FPS: 13.24).
+2025-05-30 08:28:19,243 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5cb54fc4-f7b3-4da3-aa9a-35d16eb454f2, TTL: 300s
+2025-05-30 08:28:19,246 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5cb54fc4-f7b3-4da3-aa9a-35d16eb454f2) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:20,894 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5837s (FPS: 12.63).
+2025-05-30 08:28:20,976 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e9defebc-07b3-429e-8f3b-2908cfa3ab4a, TTL: 300s
+2025-05-30 08:28:20,978 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e9defebc-07b3-429e-8f3b-2908cfa3ab4a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:22,692 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6459s (FPS: 12.15).
+2025-05-30 08:28:22,693 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2160 frames in 174.0070s (Avg FPS: 12.41).
+2025-05-30 08:28:22,789 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d88549f5-ebf4-4221-b8f2-62f3e17b4f5d, TTL: 300s
+2025-05-30 08:28:22,794 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d88549f5-ebf4-4221-b8f2-62f3e17b4f5d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:24,409 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5598s (FPS: 12.82).
+2025-05-30 08:28:24,491 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:c0907c87-1ad4-4948-a970-2dcea1053ea4, TTL: 300s
+2025-05-30 08:28:24,493 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:c0907c87-1ad4-4948-a970-2dcea1053ea4) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:26,197 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6412s (FPS: 12.19).
+2025-05-30 08:28:26,292 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:2060149c-b7c4-420a-821c-0c3aaca2ba18, TTL: 300s
+2025-05-30 08:28:26,294 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:2060149c-b7c4-420a-821c-0c3aaca2ba18) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:27,875 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5247s (FPS: 13.12).
+2025-05-30 08:28:27,974 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:72a51095-0ee1-4a66-b117-e04821b5dbfb, TTL: 300s
+2025-05-30 08:28:27,978 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:72a51095-0ee1-4a66-b117-e04821b5dbfb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:29,595 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5576s (FPS: 12.84).
+2025-05-30 08:28:29,681 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:c15491a0-97a3-4a0e-b809-c7b959dea5e6, TTL: 300s
+2025-05-30 08:28:29,684 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:c15491a0-97a3-4a0e-b809-c7b959dea5e6) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:31,384 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6403s (FPS: 12.19).
+2025-05-30 08:28:31,474 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:537743df-7b22-454a-aaff-d912a1323218, TTL: 300s
+2025-05-30 08:28:31,476 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:537743df-7b22-454a-aaff-d912a1323218) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:33,145 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6008s (FPS: 12.49).
+2025-05-30 08:28:33,145 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2280 frames in 183.5314s (Avg FPS: 12.42).
+2025-05-30 08:28:33,270 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:01ac2fb1-76ea-4322-9a39-5365365e2324, TTL: 300s
+2025-05-30 08:28:33,272 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:01ac2fb1-76ea-4322-9a39-5365365e2324) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:34,891 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5810s (FPS: 12.65).
+2025-05-30 08:28:34,978 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ffc075c3-75fe-4904-b289-ca0273512a8f, TTL: 300s
+2025-05-30 08:28:34,982 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ffc075c3-75fe-4904-b289-ca0273512a8f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:36,774 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.7232s (FPS: 11.61).
+2025-05-30 08:28:36,866 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:fbd17b4d-3e34-41b1-9652-dc35d84feb7f, TTL: 300s
+2025-05-30 08:28:36,872 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:fbd17b4d-3e34-41b1-9652-dc35d84feb7f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:38,517 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5814s (FPS: 12.65).
+2025-05-30 08:28:38,616 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:51c67b72-51ae-428d-adb2-0cdfdac2afb8, TTL: 300s
+2025-05-30 08:28:38,622 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:51c67b72-51ae-428d-adb2-0cdfdac2afb8) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:40,216 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5546s (FPS: 12.87).
+2025-05-30 08:28:40,313 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:708fc78f-fc7c-4a40-85e2-e324fbbd65f8, TTL: 300s
+2025-05-30 08:28:40,315 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:708fc78f-fc7c-4a40-85e2-e324fbbd65f8) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:42,000 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6294s (FPS: 12.27).
+2025-05-30 08:28:42,079 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:171b5a8a-b0bb-438d-a0d9-c3d1a83e5ef9, TTL: 300s
+2025-05-30 08:28:42,082 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:171b5a8a-b0bb-438d-a0d9-c3d1a83e5ef9) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:43,714 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5685s (FPS: 12.75).
+2025-05-30 08:28:43,715 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2400 frames in 193.1694s (Avg FPS: 12.42).
+2025-05-30 08:28:43,801 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:8d2516d0-8e22-4800-b48c-b1b353d1da7e, TTL: 300s
+2025-05-30 08:28:43,803 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:8d2516d0-8e22-4800-b48c-b1b353d1da7e) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:45,515 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6512s (FPS: 12.11).
+2025-05-30 08:28:45,600 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ba0d4c01-bee0-4511-95c8-4c9ea4160ab2, TTL: 300s
+2025-05-30 08:28:45,602 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ba0d4c01-bee0-4511-95c8-4c9ea4160ab2) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:47,300 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6382s (FPS: 12.21).
+2025-05-30 08:28:47,385 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:073981ae-f13b-4703-8a33-3a35bb2f9341, TTL: 300s
+2025-05-30 08:28:47,386 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:073981ae-f13b-4703-8a33-3a35bb2f9341) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:49,083 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6272s (FPS: 12.29).
+2025-05-30 08:28:49,168 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:280c7383-cc88-477b-8cb5-4999db0c5984, TTL: 300s
+2025-05-30 08:28:49,173 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:280c7383-cc88-477b-8cb5-4999db0c5984) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:50,806 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5716s (FPS: 12.73).
+2025-05-30 08:28:50,909 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:7b310f2a-4d62-4a56-b41f-b0dc6cdaa57f, TTL: 300s
+2025-05-30 08:28:50,912 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:7b310f2a-4d62-4a56-b41f-b0dc6cdaa57f) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:52,600 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6415s (FPS: 12.18).
+2025-05-30 08:28:52,696 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e2ee80b7-4c1e-49b8-a229-dc21982063f6, TTL: 300s
+2025-05-30 08:28:52,698 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e2ee80b7-4c1e-49b8-a229-dc21982063f6) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:54,314 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5605s (FPS: 12.82).
+2025-05-30 08:28:54,316 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2520 frames in 202.8597s (Avg FPS: 12.42).
+2025-05-30 08:28:54,398 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:af2ba7b0-15e0-47ad-8bf2-aa464f92e95e, TTL: 300s
+2025-05-30 08:28:54,399 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:af2ba7b0-15e0-47ad-8bf2-aa464f92e95e) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:56,079 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6199s (FPS: 12.35).
+2025-05-30 08:28:56,171 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:1f63e16f-7f38-465e-bc2c-cb953dc854d8, TTL: 300s
+2025-05-30 08:28:56,173 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:1f63e16f-7f38-465e-bc2c-cb953dc854d8) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:57,879 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6380s (FPS: 12.21).
+2025-05-30 08:28:57,978 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d90d4f7c-0625-44e5-8021-379290ae7dbe, TTL: 300s
+2025-05-30 08:28:57,982 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d90d4f7c-0625-44e5-8021-379290ae7dbe) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:28:59,529 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.4948s (FPS: 13.38).
+2025-05-30 08:28:59,667 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:40e7334e-3934-4780-be7b-394a33019bcc, TTL: 300s
+2025-05-30 08:28:59,671 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:40e7334e-3934-4780-be7b-394a33019bcc) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:01,236 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5576s (FPS: 12.84).
+2025-05-30 08:29:01,365 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ace259fa-eee2-4f8d-b26f-67accacbe40a, TTL: 300s
+2025-05-30 08:29:01,368 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ace259fa-eee2-4f8d-b26f-67accacbe40a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:03,005 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5975s (FPS: 12.52).
+2025-05-30 08:29:03,107 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:7f8f8eef-edc7-42b8-b4c3-1123f37c7077, TTL: 300s
+2025-05-30 08:29:03,108 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:7f8f8eef-edc7-42b8-b4c3-1123f37c7077) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:04,729 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5710s (FPS: 12.73).
+2025-05-30 08:29:04,730 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2640 frames in 212.3386s (Avg FPS: 12.43).
+2025-05-30 08:29:04,815 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d0272b01-e668-4d04-a0ae-89c6a6888eef, TTL: 300s
+2025-05-30 08:29:04,817 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d0272b01-e668-4d04-a0ae-89c6a6888eef) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:06,467 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5873s (FPS: 12.60).
+2025-05-30 08:29:06,566 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:e95465e0-7fb8-4e23-918a-25b6057a915e, TTL: 300s
+2025-05-30 08:29:06,569 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:e95465e0-7fb8-4e23-918a-25b6057a915e) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:08,176 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5401s (FPS: 12.99).
+2025-05-30 08:29:08,279 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:7a7f4448-7254-4536-93c1-782e6ab331a3, TTL: 300s
+2025-05-30 08:29:08,282 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:7a7f4448-7254-4536-93c1-782e6ab331a3) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:09,921 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5848s (FPS: 12.62).
+2025-05-30 08:29:10,076 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6d058f19-e9d4-4421-9a7e-e5ec6fbff7ee, TTL: 300s
+2025-05-30 08:29:10,084 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6d058f19-e9d4-4421-9a7e-e5ec6fbff7ee) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:11,643 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5700s (FPS: 12.74).
+2025-05-30 08:29:11,728 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:b36dd67e-9925-4ec6-b097-b4b22eeeafda, TTL: 300s
+2025-05-30 08:29:11,731 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:b36dd67e-9925-4ec6-b097-b4b22eeeafda) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:13,344 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5486s (FPS: 12.91).
+2025-05-30 08:29:13,464 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:81f9feb3-36cb-4f69-b64c-ae7dbf25cc7c, TTL: 300s
+2025-05-30 08:29:13,466 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:81f9feb3-36cb-4f69-b64c-ae7dbf25cc7c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:15,086 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6022s (FPS: 12.48).
+2025-05-30 08:29:15,086 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2760 frames in 221.7717s (Avg FPS: 12.45).
+2025-05-30 08:29:15,172 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:9a9ebcd5-3773-4312-9e32-931c9c7dd58c, TTL: 300s
+2025-05-30 08:29:15,175 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:9a9ebcd5-3773-4312-9e32-931c9c7dd58c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:16,836 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5968s (FPS: 12.53).
+2025-05-30 08:29:16,940 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:2443c968-1cba-4576-b009-873d34af1a0a, TTL: 300s
+2025-05-30 08:29:16,942 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:2443c968-1cba-4576-b009-873d34af1a0a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:18,577 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5499s (FPS: 12.90).
+2025-05-30 08:29:18,694 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:3329ca6f-c646-45d0-87f5-1fc0992cfa26, TTL: 300s
+2025-05-30 08:29:18,697 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:3329ca6f-c646-45d0-87f5-1fc0992cfa26) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:20,290 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5409s (FPS: 12.98).
+2025-05-30 08:29:20,383 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:8f093aee-178b-4c7c-8d2d-53b635db6861, TTL: 300s
+2025-05-30 08:29:20,386 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:8f093aee-178b-4c7c-8d2d-53b635db6861) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:22,017 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5678s (FPS: 12.76).
+2025-05-30 08:29:22,172 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:b539393d-5169-4a6b-8eb5-ff966fc70820, TTL: 300s
+2025-05-30 08:29:22,177 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:b539393d-5169-4a6b-8eb5-ff966fc70820) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:23,779 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6151s (FPS: 12.38).
+2025-05-30 08:29:23,864 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:ca73b7ef-dc43-41d5-96c9-7a9a13adb330, TTL: 300s
+2025-05-30 08:29:23,866 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:ca73b7ef-dc43-41d5-96c9-7a9a13adb330) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:25,531 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5867s (FPS: 12.60).
+2025-05-30 08:29:25,532 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 2880 frames in 231.2289s (Avg FPS: 12.46).
+2025-05-30 08:29:25,631 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:67088c87-60f9-475b-b0a0-cfb5446c6b87, TTL: 300s
+2025-05-30 08:29:25,633 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:67088c87-60f9-475b-b0a0-cfb5446c6b87) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:27,302 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5874s (FPS: 12.60).
+2025-05-30 08:29:27,486 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:b63d6077-779f-4517-a909-5cb3e74e2ccb, TTL: 300s
+2025-05-30 08:29:27,493 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:b63d6077-779f-4517-a909-5cb3e74e2ccb) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:29,043 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5823s (FPS: 12.64).
+2025-05-30 08:29:29,157 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:2288d111-896d-4af9-a98c-b2bb881c5969, TTL: 300s
+2025-05-30 08:29:29,159 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:2288d111-896d-4af9-a98c-b2bb881c5969) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:30,885 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6619s (FPS: 12.03).
+2025-05-30 08:29:30,978 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:73f2ed23-176b-4281-ba42-4c44d15dfb00, TTL: 300s
+2025-05-30 08:29:30,986 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:73f2ed23-176b-4281-ba42-4c44d15dfb00) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:32,582 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5411s (FPS: 12.98).
+2025-05-30 08:29:32,668 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6aaad7d4-917b-42c6-8e5f-5fbab8edfa5d, TTL: 300s
+2025-05-30 08:29:32,670 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6aaad7d4-917b-42c6-8e5f-5fbab8edfa5d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:34,387 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6479s (FPS: 12.14).
+2025-05-30 08:29:34,500 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6deda4f8-1c68-4c79-9e73-7f4c170a9a8d, TTL: 300s
+2025-05-30 08:29:34,506 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6deda4f8-1c68-4c79-9e73-7f4c170a9a8d) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:36,121 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5662s (FPS: 12.77).
+2025-05-30 08:29:36,121 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 3000 frames in 240.8157s (Avg FPS: 12.46).
+2025-05-30 08:29:36,200 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d70125d7-56a7-4962-9dc2-646d70d897b6, TTL: 300s
+2025-05-30 08:29:36,202 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d70125d7-56a7-4962-9dc2-646d70d897b6) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:37,837 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5725s (FPS: 12.72).
+2025-05-30 08:29:37,924 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:5d2f4fb8-aa7e-4f43-8d66-b2f65c3c4eed, TTL: 300s
+2025-05-30 08:29:37,927 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:5d2f4fb8-aa7e-4f43-8d66-b2f65c3c4eed) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:39,616 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6194s (FPS: 12.35).
+2025-05-30 08:29:39,702 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:fc2dd8e1-5b46-466a-bb67-3371baf10e65, TTL: 300s
+2025-05-30 08:29:39,708 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:fc2dd8e1-5b46-466a-bb67-3371baf10e65) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:41,419 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6463s (FPS: 12.15).
+2025-05-30 08:29:41,601 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:fdb203fd-3ea5-4af0-970a-c1609d39b867, TTL: 300s
+2025-05-30 08:29:41,606 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:fdb203fd-3ea5-4af0-970a-c1609d39b867) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:43,242 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6812s (FPS: 11.90).
+2025-05-30 08:29:43,323 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:0a15eb6a-54be-4971-a209-0fc578654688, TTL: 300s
+2025-05-30 08:29:43,326 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:0a15eb6a-54be-4971-a209-0fc578654688) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:44,988 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5661s (FPS: 12.77).
+2025-05-30 08:29:45,074 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:0dac94c8-de2f-4e59-9e6d-b70ff09255aa, TTL: 300s
+2025-05-30 08:29:45,077 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:0dac94c8-de2f-4e59-9e6d-b70ff09255aa) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:46,765 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6234s (FPS: 12.32).
+2025-05-30 08:29:46,766 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 3120 frames in 250.5248s (Avg FPS: 12.45).
+2025-05-30 08:29:46,857 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:a24c3b6e-0dbd-4023-a3c0-a8869cd1ec7c, TTL: 300s
+2025-05-30 08:29:46,859 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:a24c3b6e-0dbd-4023-a3c0-a8869cd1ec7c) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:48,482 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5523s (FPS: 12.88).
+2025-05-30 08:29:48,572 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:3cfb01b7-545b-44cd-97f7-80c8660fb197, TTL: 300s
+2025-05-30 08:29:48,574 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:3cfb01b7-545b-44cd-97f7-80c8660fb197) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:50,248 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6072s (FPS: 12.44).
+2025-05-30 08:29:50,384 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:073db130-6d5b-4d34-bbcb-8d1b043449fa, TTL: 300s
+2025-05-30 08:29:50,386 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:073db130-6d5b-4d34-bbcb-8d1b043449fa) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:52,009 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5841s (FPS: 12.63).
+2025-05-30 08:29:52,100 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d291c4e3-91da-40ea-9cf5-87a9f5da8af5, TTL: 300s
+2025-05-30 08:29:52,105 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d291c4e3-91da-40ea-9cf5-87a9f5da8af5) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:53,779 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6239s (FPS: 12.32).
+2025-05-30 08:29:53,871 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:334ceac8-d3d9-4411-847d-e5f871fee942, TTL: 300s
+2025-05-30 08:29:53,873 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:334ceac8-d3d9-4411-847d-e5f871fee942) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:55,432 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5074s (FPS: 13.27).
+2025-05-30 08:29:55,866 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:2229db2b-1be4-451a-a90f-4a42187eb087, TTL: 300s
+2025-05-30 08:29:55,868 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:2229db2b-1be4-451a-a90f-4a42187eb087) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:57,218 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.6619s (FPS: 12.03).
+2025-05-30 08:29:57,223 - my_logger - INFO - [InferenceThread L1] CUMULATIVE: 3240 frames in 260.0616s (Avg FPS: 12.46).
+2025-05-30 08:29:57,386 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:d2823df2-41a6-4fa8-875a-66ac70e52b4a, TTL: 300s
+2025-05-30 08:29:57,388 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:d2823df2-41a6-4fa8-875a-66ac70e52b4a) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:58,920 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5291s (FPS: 13.08).
+2025-05-30 08:29:59,021 - my_logger - INFO - [RedisManager] Stored data in Redis with key: data_chunk:6859ca8f-ee0c-4a84-831f-e2c27cf0a279, TTL: 300s
+2025-05-30 08:29:59,023 - my_logger - INFO - [HybridDataTransfer] Sent metadata (Redis key: data_chunk:6859ca8f-ee0c-4a84-831f-e2c27cf0a279) to RabbitMQ queue 'intermediate_queue_2'.
+2025-05-30 08:29:59,294 - my_logger - WARNING - [RpcClient L1] Received STOP command from server. Reason: Server-initiated shutdown (timer or explicit command).
+2025-05-30 08:29:59,697 - my_logger - INFO - Waiting for threads to join...
+2025-05-30 08:30:00,580 - my_logger - INFO - [InferenceThread L1] Batch (L1 Video): 20 frames processed in 1.5156s (FPS: 13.20).
+2025-05-30 08:30:00,582 - my_logger - INFO - [InferenceThread L1] L1: Video processing finished. OVERALL: 3280 frames in 263.1063s (Avg FPS: 12.47).
+2025-05-30 08:30:00,582 - my_logger - INFO - All threads joined. Overall active time: 288.9697s
+2025-05-30 08:30:00,583 - my_logger - INFO - [RpcClient L1] Closing RabbitMQ connection.
+2025-05-30 08:30:00,593 - my_logger - INFO - Client faa17190-5df7-4772-bbdd-fd4efb6f6149 (Layer 1) finished execution sequence.
