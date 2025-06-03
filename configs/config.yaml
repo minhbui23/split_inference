@@ -50,18 +50,22 @@ client:
   # Delay for the IOThread's scheduled ACK queue processing (seconds).
   ack_queue_process_delay: 0.05
 
+  compress: False
+
+  compression_level: 6 
+
 # ===================================================================
 # Infrastructure Connection Details
 # ===================================================================
 # RabbitMQ message broker connection settings.
 rabbit:
-  address: "192.168.10.130"
+  address: rabbitmq
   username: "admin"
   password: "admin"
   virtual-host: "/"
 
 # Redis server connection settings for the Claim Check pattern.
 redis:
-  host: "192.168.10.130"
+  host: redis
   port: 6379
   db: 0

@@ -28,7 +28,8 @@ class BaseIOWorker(threading.Thread):
         name (str, optional): The name of the thread. Defaults to None.
     """
     def __init__(self, layer_id, num_layers, rabbit_conn_params, redis_conn_params, initial_params,
-                 input_q, output_q, ack_trigger_q, stop_evt, logger, name=None):
+                 input_q, output_q, ack_trigger_q, stop_evt, logger, 
+                 name=None):
         super().__init__(name=name or f"IOThread-L{layer_id}")
         self.layer_id = layer_id
         self.num_layers = num_layers
@@ -58,6 +59,8 @@ class BaseIOWorker(threading.Thread):
         self.output_q_timeout = self.initial_params.get("io_output_q_timeout", 0.05)
         self.ack_queue_process_delay = self.initial_params.get("ack_queue_process_delay", 0.05)
         self.redis_tensor_ttl = self.initial_params.get("redis_tensor_ttl_seconds", 300)
+        self.compress = self.initial_params.get("compress", True)
+        self.compression_level = self.initial_params.get("compression_level", 6)
 
     def _connect_rabbitmq(self):
         """Establishes a connection to the RabbitMQ server.
@@ -185,7 +188,9 @@ class FirstLayerIOWorker(BaseIOWorker):
                 success = self.data_transfer_handler.send_data(
                     actual_data_payload=actual_payload,
                     rabbitmq_target_queue=target_queue_name,
-                    additional_metadata=metrics
+                    additional_metadata=metrics,
+                    compress = self.compress,
+                    compression_level= self.compression_level
                 )
                 if not success:
                     self.logger.log_error(f"[{self.name}] Failed to send data via Hybrid Transfer.")

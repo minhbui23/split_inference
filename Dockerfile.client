@@ -15,7 +15,6 @@ RUN pip install --no-cache-dir torch==2.5.1 torchvision==0.20.1 --index-url http
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY models/ /app/models/ 
-COPY videos/video.mp4 video.mp4
 
 COPY app/client.py .
 COPY core/ ./core/

@@ -20,7 +20,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: "2GB"
+          memory: "3GB"
 
   redis:
     image: redis:7-alpine
@@ -35,9 +35,9 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: "4GB"
+          memory: "5GB"
   server:
-    image: minhbui1/server-infer-test:latest
+    image: minhbui1/server-infer:v2.0
     container_name: server
     depends_on:
       - rabbitmq
@@ -50,38 +50,56 @@ services:
 
 
   client11:
-    image: minhbui1/client-infer-test:latest
+    image: minhbui1/client-infer:v2.0
     container_name: client11
-    depends_on:
-      - server
+    # depends_on:
+    #   - server
     volumes:
       - ../../configs/config.yaml:/app/config.yaml  
       - ../../logs:/app/logs
+      - ../../videos/video.mp4:/app/video.mp4
     networks:
       - SI-network
     command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu --config config.yaml"]
     deploy:
       resources:
         limits:
-          cpus: "5"
+          cpus: "4"
           memory: "4GB"
-
+  # client12:
+  #   image: minhbui1/client-infer:v2.0
+  #   container_name: client12
+  #   # depends_on:
+  #   #   - server
+  #   volumes:
+  #     - ../../configs/config.yaml:/app/config.yaml  
+  #     - ../../logs:/app/logs
+  #     - ../../videos/video.mp4:/app/video.mp4
+  #   networks:
+  #     - SI-network
+  #   command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu --config config.yaml"]
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "5"
+  #         memory: "4GB"
 
   client21:
-    image: minhbui1/client-infer-test:latest
+    image: minhbui1/client-infer:v2.0
     container_name: client21
     depends_on:
       - server
     volumes:
       - ../../configs/config.yaml:/app/config.yaml  
       - ../../logs:/app/logs
+      - ../../videos/video.mp4:/app/video.mp4
     networks:
       - SI-network
     command: ["sh", "-c", "sleep 10 && python client.py --layer_id 2 --device cpu --config config.yaml"]
     deploy:
       resources:
         limits:
-          cpus: "5"
+          cpus: "4"
           memory: "4GB"
 
 

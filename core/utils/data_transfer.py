@@ -7,6 +7,7 @@ import torch
 import pika
 import json
 from typing import Any, Dict, Optional
+import zstandard
 
 # You'll need to add 'redis' to your requirements.txt
 # pip install redis
@@ -56,76 +57,57 @@ class RedisManager:
         except redis.exceptions.ConnectionError:
             return False
 
-    def store_tensor_data(self, data: Any, prefix: str = "tensor_batch", ttl_seconds: Optional[int] = 300) -> Optional[str]:
+    # For compress data before storing in Redis
+    def store_raw_bytes(self, data_bytes: bytes, prefix: str = "data_chunk", ttl_seconds: Optional[int] = 300) -> Optional[str]:
         """
-        Serializes and stores data (e.g., a tensor or dictionary of tensors) in Redis.
+        Stores raw bytes directly in Redis.
         Args:
-            data: The data to store.
+            data_bytes: The raw bytes to store.
             prefix: A prefix for the generated Redis key.
             ttl_seconds: Time-to-live for the key in seconds. If None, no TTL.
         Returns:
             The Redis key if successful, None otherwise.
         """
         if not self.is_connected():
-            if self.logger: self.logger.log_error("[RedisManager] Cannot store data: Not connected to Redis.")
+            if self.logger: self.logger.log_error("[RedisManager] Cannot store raw bytes: Not connected to Redis.")
             return None
         
         redis_key = f"{prefix}:{uuid.uuid4()}"
         try:
-            # Serialize data (e.g., PyTorch tensors are best saved with torch.save to bytes)
-            # For generic Python objects, pickle can be used.
-            # If 'data' is a PyTorch tensor or dict of tensors:
-            if hasattr(torch, 'is_tensor') and (torch.is_tensor(data) or (isinstance(data, dict) and any(torch.is_tensor(v) for v in data.values()))):
-                import io
-                buffer = io.BytesIO()
-                torch.save(data, buffer)
-                serialized_data = buffer.getvalue()
-            else: # Fallback to pickle for other types
-                 serialized_data = pickle.dumps(data)
-
-            self.redis_client.set(redis_key, serialized_data)
+            self.redis_client.set(redis_key, data_bytes)
             if ttl_seconds:
                 self.redis_client.expire(redis_key, ttl_seconds)
             if self.logger:
-                self.logger.log_info(f"[RedisManager] Stored data in Redis with key: {redis_key}, TTL: {ttl_seconds}s")
+                self.logger.log_info(f"[RedisManager] Stored raw bytes in Redis with key: {redis_key}, TTL: {ttl_seconds}s, Size: {len(data_bytes)} bytes")
             return redis_key
         except Exception as e:
             if self.logger:
-                self.logger.log_error(f"[RedisManager] Error storing data in Redis (key: {redis_key}): {e}")
+                self.logger.log_error(f"[RedisManager] Error storing raw bytes in Redis (key: {redis_key}): {e}")
             return None
 
-    def retrieve_tensor_data(self, redis_key: str) -> Any:
+    def retrieve_raw_bytes(self, redis_key: str) -> Optional[bytes]:
         """
-        Retrieves and deserializes data from Redis using the given key.
+        Retrieves raw bytes from Redis using the given key.
         Args:
             redis_key: The key to retrieve data from Redis.
         Returns:
-            The deserialized data if successful, None otherwise.
+            The raw bytes if successful, None otherwise.
         """
         if not self.is_connected():
-            self.logger.log_error("[RedisManager] Cannot retrieve data: Not connected to Redis.")
+            self.logger.log_error("[RedisManager] Cannot retrieve raw bytes: Not connected to Redis.")
             return None
         
         try:
             serialized_data = self.redis_client.get(redis_key)
             if serialized_data is None:
-                self.logger.log_warning(f"[RedisManager] No data found in Redis for key: {redis_key}")
+                self.logger.log_warning(f"[RedisManager] No raw bytes found in Redis for key: {redis_key}")
                 return None
-            
-            # Try deserializing with torch.load first, then pickle
-            try:
-                import io
-                buffer = io.BytesIO(serialized_data)
-                data = torch.load(buffer) # Assumes data was saved with torch.save
-            except Exception: # Fallback to pickle
-                data = pickle.loads(serialized_data)
-            
-            self.logger.log_info(f"[RedisManager] Retrieved data from Redis for key: {redis_key}")
-            
-            return data
+            self.logger.log_info(f"[RedisManager] Retrieved raw bytes from Redis for key: {redis_key}, Size: {len(serialized_data)} bytes")
+            return serialized_data
         except Exception as e:
-            self.logger.log_error(f"[RedisManager] Error retrieving/deserializing data from Redis (key: {redis_key}): {e}")
+            self.logger.log_error(f"[RedisManager] Error retrieving raw bytes from Redis (key: {redis_key}): {e}")
             return None
+
 
     def delete_data(self, redis_key: str) -> bool:
         """Deletes data from Redis for a given key."""
@@ -179,10 +161,37 @@ class HybridDataTransfer:
             # Optionally raise an exception here if Redis is critical
             # raise ValueError("RedisManager must be provided and connected.")
 
+    def _serialize_payload(self, payload: Any) -> bytes:
+        """Serializes the payload to bytes (pickle or torch.save)."""
+        if hasattr(torch, 'is_tensor') and \
+           (torch.is_tensor(payload) or \
+            (isinstance(payload, dict) and any(torch.is_tensor(v) for v in payload.values()))):
+            import io
+            buffer = io.BytesIO()
+            torch.save(payload, buffer)
+            return buffer.getvalue()
+        else:
+            return pickle.dumps(payload)
+
+    def _deserialize_payload(self, data_bytes: bytes) -> Any:
+        """Deserializes bytes back to the original payload."""
+        try:
+            import io
+            buffer = io.BytesIO(data_bytes)
+            return torch.load(buffer)
+        except Exception: # Fallback to pickle
+            try:
+                return pickle.loads(data_bytes)
+            except Exception as e_deserialize:
+                self.logger.log_error(f"[HybridDataTransfer] Failed to deserialize final payload: {e_deserialize}")
+                return None
+
     def send_data(self, actual_data_payload: Any, rabbitmq_target_queue: str,
                   additional_metadata: Optional[Dict] = None,
                   redis_key_prefix: str = "data_chunk",
-                  data_ttl_seconds: Optional[int] = None) -> bool:
+                  data_ttl_seconds: Optional[int] = None,
+                  compress: bool = True,
+                  compression_level: int = 3) -> bool:
         """
         Stores the actual_data_payload in Redis and sends metadata (including Redis key)
         to the specified RabbitMQ queue.
@@ -202,10 +211,34 @@ class HybridDataTransfer:
             self.logger.log_error("[HybridDataTransfer] Cannot send data: Pika channel not open.")
             return False
 
+        try:
+            serialized_payload_bytes = self._serialize_payload(actual_data_payload)
+        except Exception as e_serialize:
+            self.logger.log_error(f"[HybridDataTransfer] Failed to serialize payload: {e_serialize}")
+            return False
+        
+        original_size = len(serialized_payload_bytes)
+        data_to_store_in_redis = serialized_payload_bytes
+        is_compressed_flag = False
+
+        if compress and serialized_payload_bytes:
+            try:
+                cctx = zstandard.ZstdCompressor(level=compression_level)
+                compressed_bytes = cctx.compress(serialized_payload_bytes)
+                data_to_store_in_redis = compressed_bytes
+                is_compressed_flag = True
+                compressed_size = len(compressed_bytes)
+                self.logger.log_info(f"[HybridDataTransfer] Payload compressed with Zstd (L{compression_level}): "
+                                     f"Original: {original_size} bytes, Compressed: {compressed_size} bytes. "
+                                     f"Ratio: {original_size / compressed_size if compressed_size > 0 else float('inf'):.2f}x")
+            except Exception as e_compress:
+                self.logger.log_error(f"[HybridDataTransfer] Failed to compress payload, sending uncompressed. Error: {e_compress}")
+             
+
         ttl_to_use = data_ttl_seconds if data_ttl_seconds is not None else self.default_ttl_seconds
         
         # 1. Store large data payload in Redis
-        redis_key = self.redis_manager.store_tensor_data(actual_data_payload,
+        redis_key = self.redis_manager.store_raw_bytes(data_to_store_in_redis,
                                                          prefix=redis_key_prefix,
                                                          ttl_seconds=ttl_to_use)
         if not redis_key:
@@ -214,7 +247,8 @@ class HybridDataTransfer:
 
         # 2. Prepare metadata message for RabbitMQ
         metadata_message = {
-            "redis_key": redis_key
+            "redis_key": redis_key,
+            "is_compressed": is_compressed_flag
         }
         if additional_metadata: # additional_metadata cũng phải chứa các kiểu tương thích JSON
             metadata_message.update(additional_metadata)
@@ -233,12 +267,17 @@ class HybridDataTransfer:
                     content_type=self.metadata_content_type
                 )
             )
-            self.logger.log_info(f"[HybridDataTransfer] Sent metadata (Redis key: {redis_key}) to RabbitMQ queue '{rabbitmq_target_queue}'.")
+            log_compression_info = f"Compressed: {is_compressed_flag}"
+            if is_compressed_flag:
+                 log_compression_info += f" (Original: {original_size}B -> Stored: {len(data_to_store_in_redis)}B)"
+
+            self.logger.log_info(f"[HybridDataTransfer] Sent metadata (Redis key: {redis_key}, {log_compression_info}) to RabbitMQ queue '{rabbitmq_target_queue}'.")
+            
             return True
         except Exception as e:
             self.logger.log_error(f"[HybridDataTransfer] Error sending metadata to RabbitMQ queue '{rabbitmq_target_queue}': {e}")
-            # Consider deleting the already stored Redis data if RabbitMQ publish fails, to avoid orphaned data
-            # self.redis_manager.delete_data(redis_key) # Optional cleanup
+            # Delete the already stored Redis data if RabbitMQ publish fails, to avoid orphaned data
+            self.redis_manager.delete_data(redis_key) 
             return False
 
     def receive_data_from_metadata(self, metadata_message: Dict, delete_after_retrieval: bool = True) -> Any:
@@ -263,10 +302,30 @@ class HybridDataTransfer:
             self.logger.log_error("[HybridDataTransfer] 'redis_key' not found in metadata_message.")
             return None
 
-        # Retrieve data from Redis
-        actual_data_payload = self.redis_manager.retrieve_tensor_data(redis_key)
+        retrieved_bytes = self.redis_manager.retrieve_raw_bytes(redis_key) # Sử dụng hàm mới
 
-        if actual_data_payload is not None and delete_after_retrieval:
-            self.redis_manager.delete_data(redis_key) # Clean up Redis
+        if retrieved_bytes is None:
+            self.logger.log_warning(f"[HybridDataTransfer] No data found in Redis for key {redis_key}.")
+            return None
 
-        return actual_data_payload
+        payload_to_deserialize = retrieved_bytes
+        was_compressed = metadata_message.get("is_compressed", False)
+
+        if was_compressed:
+            try:
+                dctx = zstandard.ZstdDecompressor()
+                decompressed_bytes = dctx.decompress(retrieved_bytes)
+                payload_to_deserialize = decompressed_bytes
+                self.logger.log_info(f"[HybridDataTransfer] Payload decompressed with Zstd for key {redis_key}: "
+                                     f"Compressed: {len(retrieved_bytes)} bytes, Original: {len(decompressed_bytes)} bytes.")
+            except Exception as e_decompress:
+                self.logger.log_error(f"[HybridDataTransfer] Failed to decompress payload for key {redis_key}. "
+                                     "Attempting to deserialize raw (possibly compressed) data. Error: {e_decompress}" )
+
+        final_payload = self._deserialize_payload(payload_to_deserialize)
+
+        if final_payload is not None and delete_after_retrieval:
+            if not self.redis_manager.delete_data(redis_key):
+                 self.logger.log_warning(f"[HybridDataTransfer] Failed to delete data from Redis for key {redis_key} after retrieval.")
+        
+        return final_payload

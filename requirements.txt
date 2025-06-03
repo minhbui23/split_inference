@@ -12,3 +12,4 @@ opencv-python-headless==4.9.0.80
 
 # Utilities
 requests~=2.32.3
+zstandard
