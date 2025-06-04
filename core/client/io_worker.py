@@ -28,7 +28,7 @@ class BaseIOWorker(threading.Thread):
         name (str, optional): The name of the thread. Defaults to None.
     """
     def __init__(self, layer_id, num_layers, rabbit_conn_params, redis_conn_params, initial_params,
-                 input_q, output_q, ack_trigger_q, stop_evt, logger, 
+                 input_q, output_q, stop_evt, logger, 
                  name=None):
         super().__init__(name=name or f"IOThread-L{layer_id}")
         self.layer_id = layer_id
@@ -38,7 +38,6 @@ class BaseIOWorker(threading.Thread):
         self.initial_params = initial_params
         self.input_q = input_q
         self.output_q = output_q
-        self.ack_trigger_q = ack_trigger_q
         self.stop_evt = stop_evt
         self.logger = logger
         self.is_first_layer = layer_id == 1
@@ -57,10 +56,7 @@ class BaseIOWorker(threading.Thread):
         self.rabbit_retry_delay = self.initial_params.get("rabbit_retry_delay", 5)
         self.process_events_timeout = self.initial_params.get("io_process_events_timeout", 0.1)
         self.output_q_timeout = self.initial_params.get("io_output_q_timeout", 0.05)
-        self.ack_queue_process_delay = self.initial_params.get("ack_queue_process_delay", 0.05)
         self.redis_tensor_ttl = self.initial_params.get("redis_tensor_ttl_seconds", 300)
-        self.compress = self.initial_params.get("compress", True)
-        self.compression_level = self.initial_params.get("compression_level", 6)
 
     def _connect_rabbitmq(self):
         """Establishes a connection to the RabbitMQ server.
@@ -111,34 +107,6 @@ class BaseIOWorker(threading.Thread):
             self.redis_manager = None
             self.data_transfer_handler = None
 
-    def _process_ack_queue(self):
-        """Process ACK/NACK triggers from ack_trigger_q."""
-        if self.stop_evt.is_set():
-            return
-
-        while not self.ack_trigger_q.empty():
-            try:
-                ack_info = self.ack_trigger_q.get_nowait()
-                delivery_tag = ack_info.get("delivery_tag")
-                status = ack_info.get("status")
-                requeue = ack_info.get("requeue", False)
-
-                if delivery_tag and self.channel and self.channel.is_open:
-                    if status == "success":
-                        self.channel.basic_ack(delivery_tag=delivery_tag)
-                    elif status == "failure":
-                        self.channel.basic_nack(delivery_tag=delivery_tag, requeue=requeue)
-                self.ack_trigger_q.task_done()
-            except queue.Empty:
-                break
-            except pika.exceptions.AMQPError as e:
-                self.logger.log_error(f"[{self.name}] AMQP error in ack processing: {e}")
-                break
-            except Exception as e:
-                self.logger.log_error(f"[{self.name}] Error in ack processing: {e}")
-
-        if self.connection and self.connection.is_open and not self.stop_evt.is_set():
-            self.connection.call_later(self.ack_queue_process_delay, self._process_ack_queue)
 
 class FirstLayerIOWorker(BaseIOWorker):
     """I/O thread for the first layer client.
@@ -188,9 +156,7 @@ class FirstLayerIOWorker(BaseIOWorker):
                 success = self.data_transfer_handler.send_data(
                     actual_data_payload=actual_payload,
                     rabbitmq_target_queue=target_queue_name,
-                    additional_metadata=metrics,
-                    compress = self.compress,
-                    compression_level= self.compression_level
+                    additional_metadata=metrics
                 )
                 if not success:
                     self.logger.log_error(f"[{self.name}] Failed to send data via Hybrid Transfer.")
@@ -317,6 +283,7 @@ class LastLayerIOWorker(BaseIOWorker):
 
                                 metrics['q2'] = self.input_q.qsize() 
 
+                                ch.basic_ack(delivery_tag=method.delivery_tag) # Auto ack after get message
                             except queue.Full:
                                 self.logger.log_warning(f"[{self.name}] Callback: Input queue full. Nacking message (tag: {method.delivery_tag}) to requeue.")
                                 ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
@@ -349,11 +316,6 @@ class LastLayerIOWorker(BaseIOWorker):
             
             self.logger.log_info(f"[{self.name}] Checkpoint 7: Consumer started (tag: {self.consumer_tag}). Waiting for messages on '{source_queue_name}'.")
 
-            # ---  PROCESS ACK QUEUE ---
-            if self.connection and self.connection.is_open:
-                 self.logger.log_info(f"[{self.name}] Scheduling first call to _process_ack_queue.")
-                 self.connection.call_later(self.ack_queue_process_delay, self._process_ack_queue)
-            # ------------------------------------
 
             # ---- MAIN LOOP ----
             self.logger.log_info(f"[{self.name}] Checkpoint 8: Entering main event loop.")
@@ -384,9 +346,5 @@ class LastLayerIOWorker(BaseIOWorker):
                     self.logger.log_info(f"[{self.name}] Consumer cancelled.")
                 except Exception as e_cancel:
                     self.logger.error(f"[{self.name}] Error cancelling consumer: {e_cancel}")
-            
-            # Việc đóng connection thường được quản lý bởi luồng chính của client sau khi join tất cả các thread.
-            # Hoặc nếu luồng này sở hữu connection một cách độc quyền và cần tự đóng.
-            # Hiện tại, giả định connection được quản lý/đóng bởi luồng chính.
             
             self.logger.log_info(f"[{self.name}] Checkpoint 11: Run method finished execution.")

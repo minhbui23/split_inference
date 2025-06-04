@@ -1,6 +1,7 @@
 import os
 import pickle
 import base64
+import time
 import pika
 
 from core.utils.logger import Logger
@@ -18,6 +19,7 @@ class Server:
         self._initialize_server_settings()
         self._initialize_client_tracking()
         self.encoded_model_payload = self._load_and_encode_model()
+        self.should_stop_server = False
 
     def _initialize_rabbitmq(self):
         """Set up RabbitMQ connection and channel."""
@@ -225,16 +227,58 @@ class Server:
     def start(self):
         """Start the server's RPC consumer to listen for client registrations."""
         self.logger.log_info("Starting server's RPC consumer...")
+
+        run_duration = self.config.get("app", {}).get("run_duration_seconds", 0)
+        start_time = time.time()
+
         try:
-            self.channel.start_consuming()
+            # Thay vì channel.start_consuming(), dùng vòng lặp với process_data_events
+            # để có thể kiểm tra điều kiện dừng.
+            while not self.should_stop_server:
+                # Xử lý sự kiện mạng trong một khoảng thời gian ngắn
+                # Timeout này quan trọng để vòng lặp không bị block quá lâu
+                # và có thể kiểm tra điều kiện dừng thường xuyên.
+                try:
+                    if self.connection and self.connection.is_open:
+                        self.connection.process_data_events(time_limit=1.0) # Xử lý sự kiện trong 1 giây
+                    else:
+                        self.logger.log_warning("Connection not open in main server loop. Attempting to re-establish or stop.")
+                        self.should_stop_server = True # Dừng nếu mất kết nối
+                        break
+                except pika.exceptions.AMQPConnectionError as e:
+                    self.logger.log_error(f"AMQP Connection Error in server loop: {e}. Stopping server.", exc_info=True)
+                    self.should_stop_server = True
+                    break
+                except Exception as e_proc:
+                    self.logger.log_error(f"Error in process_data_events: {e_proc}. Stopping server.", exc_info=True)
+                    self.should_stop_server = True
+                    break
+
+                # Kiểm tra điều kiện dừng theo thời gian
+                if run_duration > 0 and (time.time() - start_time) >= run_duration:
+                    self.logger.log_info(f"Run duration of {run_duration} seconds reached.")
+                    self._notify_all_clients_to_stop() # Hàm này sẽ set self.should_stop_server = True
+                    # Vòng lặp sẽ thoát ở lần kiểm tra self.should_stop_server tiếp theo
+                
+                # Có thể thêm một sleep nhỏ ở đây nếu process_data_events trả về ngay lập tức
+                # và không có sự kiện nào, để tránh CPU busy-loop.
+                # Tuy nhiên, time_limit=1.0 đã làm việc đó rồi.
+
         except KeyboardInterrupt:
-            self.logger.log_info("Server stopped by KeyboardInterrupt.")
+            self.logger.log_info("Server_logic: KeyboardInterrupt received. Initiating shutdown.")
+            self._notify_all_clients_to_stop() # Thông báo cho client dừng
         except Exception as e:
-            self.logger.log_error(f"Server stopped due to error: {e}")
+            self.logger.log_error(f"Server_logic: Unhandled exception in start(): {e}", exc_info=True)
+            self._notify_all_clients_to_stop() # Cố gắng thông báo cho client dừng
         finally:
-            if self.connection.is_open:
-                self.connection.close()
-            self.logger.log_info("Server shutdown complete.")
+            self.logger.log_info("Server_logic: Main loop ended. Cleaning up...")
+            if self.connection and self.connection.is_open:
+                try:
+                    self.connection.close()
+                    self.logger.log_info("Server_logic: RabbitMQ connection closed.")
+                except Exception as e_close:
+                    self.logger.log_error(f"Server_logic: Error closing RabbitMQ connection: {e_close}", exc_info=True)
+            self.logger.log_info("Server_logic: Shutdown complete.")
 
 
     # Stop signal handling
@@ -265,3 +309,6 @@ class Server:
         clients_to_notify = list(self.client_info.items()) # Avoid issues if dict changes during iteration
         for client_id, info in clients_to_notify:
             self._send_stop_signal_to_client(client_id, info)
+        
+        self.should_stop_server = True
+        self.logger.log_info("All clients notified to STOP. Server will shut down soon.")

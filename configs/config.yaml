@@ -11,7 +11,7 @@ debug-mode: False
 control-count: 10
 
 app:
-  run_duration_seconds: 300 # Duration to run the pipeline in seconds.
+  run_duration_seconds: 200 # Duration to run the pipeline in seconds.
 
 # ===================================================================
 # Server-Side Configuration
@@ -38,7 +38,7 @@ client:
   # Target image size [width, height] for model input.
   imgsz: [640, 640]
   # Max items in the client's internal thread queues (input, output, ack = 2x).
-  internal_queue_maxsize: 20
+  internal_queue_maxsize: 50
   # RabbitMQ consumer prefetch count for the IOThread.
   io_prefetch_count: 5
   # Seconds the IOThread waits before retrying a failed RabbitMQ connection.
@@ -47,12 +47,7 @@ client:
   io_process_events_timeout: 0.1
   # Timeout for the IOThread when getting items from its output queue (seconds).
   io_output_q_timeout: 0.05
-  # Delay for the IOThread's scheduled ACK queue processing (seconds).
-  ack_queue_process_delay: 0.05
 
-  compress: False
-
-  compression_level: 6 
 
 # ===================================================================
 # Infrastructure Connection Details

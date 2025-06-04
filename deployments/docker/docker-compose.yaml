@@ -1,8 +1,8 @@
-version: '3'
+version: '3.8' # Sử dụng phiên bản hỗ trợ depends_on.condition
 
 services:
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:3-management-alpine # Sử dụng alpine image cho nhẹ hơn
     container_name: rabbitmq
     ports:
       - "5672:5672"   # RabbitMQ main port
@@ -12,15 +12,21 @@ services:
       RABBITMQ_DEFAULT_PASS: admin
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      # Đảm bảo đường dẫn này chính xác so với vị trí file docker-compose.yaml
       - ../../rabbitmq-config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ../../rabbitmq-config/limits.conf:/etc/security/limits.conf
     networks:
-      - SI-network
+      - si_network
     deploy:
       resources:
         limits:
           cpus: "1"
           memory: "3GB"
+    healthcheck: # Thêm healthcheck cho RabbitMQ
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -30,83 +36,107 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - SI-network
+      - si_network
     deploy:
       resources:
         limits:
           cpus: "0.5"
           memory: "5GB"
+    healthcheck: # Thêm healthcheck cho Redis
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   server:
     image: minhbui1/server-infer:v2.0
     container_name: server
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy 
+      redis:
+        condition: service_healthy 
     volumes:
-      - ../../configs/config.yaml:/app/config.yaml  
+      # Đường dẫn mount: host_path:container_path
+      # Giả sử config.yaml trên host là ../../configs/config.yaml và được mount vào /app/configs/config.yaml trong container
+      - ../../configs/config.yaml:/app/configs/config.yaml  
       - ../../logs:/app/logs
+      - ../../models:/app/models # Nếu server cần truy cập trực tiếp file model
     networks:
-      - SI-network
-    command: ["sh", "-c", "sleep 5 && python -u server.py --config config.yaml"]
+      - si_network
+    # Đường dẫn --config trỏ đến vị trí file config trong container
+    command: ["sh", "-c", "sleep 5 && python -u server.py --config /app/configs/config.yaml"]
+    environment:
+      RABBITMQ_HOST: rabbitmq # Server sẽ dùng tên service để kết nối
+      REDIS_HOST: redis
 
-
-  client11:
+  client11: # Client Edge
     image: minhbui1/client-infer:v2.0
     container_name: client11
-    # depends_on:
-    #   - server
+    depends_on:
+      - server
     volumes:
-      - ../../configs/config.yaml:/app/config.yaml  
+      - ../../configs/config.yaml:/app/configs/config.yaml  
       - ../../logs:/app/logs
-      - ../../videos/video.mp4:/app/video.mp4
+      - ../../videos/video.mp4:/app/video.mp4 
     networks:
-      - SI-network
-    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu --config config.yaml"]
+      - si_network
+    command: ["sh", "-c", "sleep 15 && python client.py --layer_id 1 --device cpu --config /app/configs/config.yaml"] 
     deploy:
       resources:
         limits:
           cpus: "4"
           memory: "4GB"
-  # client12:
-  #   image: minhbui1/client-infer:v2.0
-  #   container_name: client12
-  #   # depends_on:
-  #   #   - server
-  #   volumes:
-  #     - ../../configs/config.yaml:/app/config.yaml  
-  #     - ../../logs:/app/logs
-  #     - ../../videos/video.mp4:/app/video.mp4
-  #   networks:
-  #     - SI-network
-  #   command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu --config config.yaml"]
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: "5"
-  #         memory: "4GB"
 
-  client21:
+  client21: # Client Cloud
     image: minhbui1/client-infer:v2.0
     container_name: client21
     depends_on:
       - server
     volumes:
-      - ../../configs/config.yaml:/app/config.yaml  
+      - ../../configs/config.yaml:/app/configs/config.yaml  
       - ../../logs:/app/logs
-      - ../../videos/video.mp4:/app/video.mp4
     networks:
-      - SI-network
-    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 2 --device cpu --config config.yaml"]
+      - si_network
+    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 2 --device cpu --config /app/configs/config.yaml"]
     deploy:
       resources:
         limits:
           cpus: "4"
           memory: "4GB"
 
+  # =====  PUMBA CONTAINER =====
+  pumba:
+    image: gaiaadm/pumba:latest
+    container_name: pumba
+
+    command: [
+      "netem",
+      "--duration", "1h",  
+      "delay", "--time", "7", 
+      "--jitter", "1",       
+      "loss", "--percent", "0.1", 
+      "rate", "--rate", "500mbit",
+      "client11"          
+    ]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    networks:
+      - si_network 
+    depends_on:
+      client11: 
+        condition: service_started 
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "128MB"
+  # ==============================
 
 volumes:
   rabbitmq_data:
   redis_data:
 
 networks:
-  SI-network:
+  si_network:
     driver: bridge

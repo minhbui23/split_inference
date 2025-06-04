@@ -127,7 +127,6 @@ if __name__ == "__main__":
                 q_maxsize = params_for_workers.get("internal_queue_maxsize", 20)
                 input_data_queue = queue.Queue(maxsize=q_maxsize)
                 output_data_queue = queue.Queue(maxsize=q_maxsize)
-                ack_trigger_queue = queue.Queue(maxsize=q_maxsize * 2) # ack_q có thể cần lớn hơn một chút
                 
 
                 io_worker_class = None
@@ -157,7 +156,6 @@ if __name__ == "__main__":
                     redis_conn_params=redis_conn_params,
                     initial_params=params_for_workers, # Truyền full initial_params
                     input_q=input_data_queue, output_q=output_data_queue,
-                    ack_trigger_q=ack_trigger_queue,
                     stop_evt=stop_event, logger=main_logger
                 )
 
@@ -166,7 +164,6 @@ if __name__ == "__main__":
                     model_obj=model_obj_for_worker, predictor_obj=predictor_obj_for_worker,
                     initial_params=params_for_workers,
                     input_q=input_data_queue, output_q=output_data_queue,
-                    ack_trigger_q=ack_trigger_queue,
                     stop_evt=stop_event, 
                     logger=main_logger, metrics_logger=metrics_logger
                 )

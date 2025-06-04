@@ -54,16 +54,6 @@ def main():
 
     server = Server(config)
 
-        
-    run_duration = config.get("app", {}).get("run_duration_seconds", 0)
-    
-    if run_duration > 0:
-        print(f"Pipeline will automatically be signaled to stop in {run_duration} seconds.")
-        # Timer sẽ gọi hàm _notify_all_clients_to_stop của đối tượng server
-        shutdown_timer = threading.Timer(run_duration, server._notify_all_clients_to_stop)
-        shutdown_timer.daemon = True 
-        shutdown_timer.start()
-
     server.start()
 
     Logger.print_with_color("Ok, ready!", "green")

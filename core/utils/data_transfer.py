@@ -189,9 +189,7 @@ class HybridDataTransfer:
     def send_data(self, actual_data_payload: Any, rabbitmq_target_queue: str,
                   additional_metadata: Optional[Dict] = None,
                   redis_key_prefix: str = "data_chunk",
-                  data_ttl_seconds: Optional[int] = None,
-                  compress: bool = True,
-                  compression_level: int = 3) -> bool:
+                  data_ttl_seconds: Optional[int] = None) -> bool:
         """
         Stores the actual_data_payload in Redis and sends metadata (including Redis key)
         to the specified RabbitMQ queue.
@@ -217,28 +215,10 @@ class HybridDataTransfer:
             self.logger.log_error(f"[HybridDataTransfer] Failed to serialize payload: {e_serialize}")
             return False
         
-        original_size = len(serialized_payload_bytes)
-        data_to_store_in_redis = serialized_payload_bytes
-        is_compressed_flag = False
-
-        if compress and serialized_payload_bytes:
-            try:
-                cctx = zstandard.ZstdCompressor(level=compression_level)
-                compressed_bytes = cctx.compress(serialized_payload_bytes)
-                data_to_store_in_redis = compressed_bytes
-                is_compressed_flag = True
-                compressed_size = len(compressed_bytes)
-                self.logger.log_info(f"[HybridDataTransfer] Payload compressed with Zstd (L{compression_level}): "
-                                     f"Original: {original_size} bytes, Compressed: {compressed_size} bytes. "
-                                     f"Ratio: {original_size / compressed_size if compressed_size > 0 else float('inf'):.2f}x")
-            except Exception as e_compress:
-                self.logger.log_error(f"[HybridDataTransfer] Failed to compress payload, sending uncompressed. Error: {e_compress}")
-             
-
         ttl_to_use = data_ttl_seconds if data_ttl_seconds is not None else self.default_ttl_seconds
         
         # 1. Store large data payload in Redis
-        redis_key = self.redis_manager.store_raw_bytes(data_to_store_in_redis,
+        redis_key = self.redis_manager.store_raw_bytes(serialized_payload_bytes,
                                                          prefix=redis_key_prefix,
                                                          ttl_seconds=ttl_to_use)
         if not redis_key:
@@ -247,8 +227,7 @@ class HybridDataTransfer:
 
         # 2. Prepare metadata message for RabbitMQ
         metadata_message = {
-            "redis_key": redis_key,
-            "is_compressed": is_compressed_flag
+            "redis_key": redis_key
         }
         if additional_metadata: # additional_metadata cũng phải chứa các kiểu tương thích JSON
             metadata_message.update(additional_metadata)
@@ -267,11 +246,7 @@ class HybridDataTransfer:
                     content_type=self.metadata_content_type
                 )
             )
-            log_compression_info = f"Compressed: {is_compressed_flag}"
-            if is_compressed_flag:
-                 log_compression_info += f" (Original: {original_size}B -> Stored: {len(data_to_store_in_redis)}B)"
-
-            self.logger.log_info(f"[HybridDataTransfer] Sent metadata (Redis key: {redis_key}, {log_compression_info}) to RabbitMQ queue '{rabbitmq_target_queue}'.")
+            self.logger.log_info(f"[HybridDataTransfer] Sent metadata (Redis key: {redis_key}) to RabbitMQ queue '{rabbitmq_target_queue}'.")
             
             return True
         except Exception as e:
@@ -308,21 +283,7 @@ class HybridDataTransfer:
             self.logger.log_warning(f"[HybridDataTransfer] No data found in Redis for key {redis_key}.")
             return None
 
-        payload_to_deserialize = retrieved_bytes
-        was_compressed = metadata_message.get("is_compressed", False)
-
-        if was_compressed:
-            try:
-                dctx = zstandard.ZstdDecompressor()
-                decompressed_bytes = dctx.decompress(retrieved_bytes)
-                payload_to_deserialize = decompressed_bytes
-                self.logger.log_info(f"[HybridDataTransfer] Payload decompressed with Zstd for key {redis_key}: "
-                                     f"Compressed: {len(retrieved_bytes)} bytes, Original: {len(decompressed_bytes)} bytes.")
-            except Exception as e_decompress:
-                self.logger.log_error(f"[HybridDataTransfer] Failed to decompress payload for key {redis_key}. "
-                                     "Attempting to deserialize raw (possibly compressed) data. Error: {e_decompress}" )
-
-        final_payload = self._deserialize_payload(payload_to_deserialize)
+        final_payload = self._deserialize_payload(retrieved_bytes)
 
         if final_payload is not None and delete_after_retrieval:
             if not self.redis_manager.delete_data(redis_key):

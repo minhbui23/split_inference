@@ -28,7 +28,7 @@ class BaseInferenceWorker(threading.Thread):
     """
     def __init__(self, layer_id, num_layers, device, 
                  model_obj, predictor_obj, initial_params,
-                 input_q, output_q, ack_trigger_q, 
+                 input_q, output_q,  
                  stop_evt, logger, name=None, metrics_logger=None):
         
         super().__init__(name=name or f"InferenceThread-L{layer_id}")
@@ -40,7 +40,6 @@ class BaseInferenceWorker(threading.Thread):
         self.initial_params = initial_params
         self.input_q = input_q
         self.output_q = output_q
-        self.ack_trigger_q = ack_trigger_q
         self.stop_evt = stop_evt
         self.logger = logger
         self.metrics_logger = metrics_logger
@@ -240,8 +239,4 @@ class LastLayerWorker(BaseInferenceWorker):
                 self.metrics_logger.log(metrics)
 
             self.fps_logger.end_batch_and_log_fps(self.batch_frame_size)
-            self.ack_trigger_q.put({
-                "delivery_tag": delivery_tag,
-                "status": ack_status,
-                "requeue": requeue
-            })
+
