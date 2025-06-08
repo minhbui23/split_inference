@@ -1,0 +1,876 @@
+2025-06-05 07:02:01,104 - my_logger - INFO - Client 0eaec8db-fc4b-44d0-b4d7-6c78093f435f (L2) starting. Logging to: logs/client_0eaec8db-fc4b-44d0-b4d7-6c78093f435f_L2.log
+2025-06-05 07:02:01,105 - my_logger - INFO - Using device: cpu
+2025-06-05 07:02:01,141 - my_logger - INFO - [RpcClient L2] Initialized. Waiting on queue 'amq.gen-ZsfvYFK1unSjwLBwPg09IQ'.
+2025-06-05 07:02:01,141 - my_logger - INFO - Sending registration to server...
+2025-06-05 07:02:01,142 - my_logger - INFO - [RpcClient L2] Sent message to 'rpc_queue'. CorrID: f44e2a76-5479-464a-aeac-3a89d241f53c, Action: REGISTER
+2025-06-05 07:02:01,142 - my_logger - INFO - [RpcClient L2] Waiting for server response (timeout: 300s)...
+2025-06-05 07:02:01,260 - my_logger - INFO - [RpcClient L2] Received RPC response. CorrID: f44e2a76-5479-464a-aeac-3a89d241f53c
+2025-06-05 07:02:01,260 - my_logger - INFO - [RpcClient L2] Server message: Server accepts the connection. Ready to start inference.
+2025-06-05 07:02:01,261 - my_logger - INFO - [RpcClient L2] Action: START
+2025-06-05 07:02:01,261 - my_logger - INFO - [RpcClient L2] Model file yolov8n.pt already exists.
+2025-06-05 07:02:01,261 - my_logger - INFO - [RpcClient L2] START signal processed.
+2025-06-05 07:02:01,261 - my_logger - INFO - Received START from server. Initializing components and worker threads...
+2025-06-05 07:02:01,261 - my_logger - INFO - [ModelUtils] Loading pre-trained model from: yolov8n.pt
+2025-06-05 07:02:01,688 - my_logger - INFO - [ModelUtils] Pre-trained nn.Module type: <class 'ultralytics.nn.tasks.DetectionModel'>
+2025-06-05 07:02:01,689 - my_logger - INFO - [ModelUtils] Initializing SplitDetectionModel with split_layer: 10
+2025-06-05 07:02:01,728 - my_logger - INFO - [ModelUtils] SplitDetectionModel initialized. Type: <class 'core.model.model.SplitDetectionModel'>.
+2025-06-05 07:02:01,733 - my_logger - INFO - [ModelUtils] Predictor object initialized. Type: <class 'core.model.model.SplitDetectionPredictor'>
+2025-06-05 07:02:01,741 - my_logger - INFO - Starting IO and Inference threads...
+2025-06-05 07:02:01,742 - my_logger - INFO - [IOThread-L2] Checkpoint 0: Run method started.
+2025-06-05 07:02:01,743 - my_logger - INFO - [InferenceThread-L2] Starting Last Layer
+2025-06-05 07:02:01,753 - my_logger - INFO - [IOThread-L2] RabbitMQ connected.
+2025-06-05 07:02:01,753 - my_logger - INFO - [IOThread-L2] Checkpoint 1: RabbitMQ connected successfully.
+2025-06-05 07:02:01,755 - my_logger - INFO - [RedisManager] Connected to Redis at redis:6379/0
+2025-06-05 07:02:01,756 - my_logger - INFO - [IOThread-L2] Redis connected.
+2025-06-05 07:02:01,756 - my_logger - INFO - [IOThread-L2] Checkpoint 2: Redis and Data Handler setup complete.
+2025-06-05 07:02:01,757 - my_logger - INFO - [IOThread-L2] Checkpoint 3: Declaring queue 'intermediate_queue_2'.
+2025-06-05 07:02:01,758 - my_logger - INFO - [IOThread-L2] Checkpoint 4: Setting QOS (prefetch_count=5).
+2025-06-05 07:02:01,759 - my_logger - INFO - [IOThread-L2] Checkpoint 5: Queue 'intermediate_queue_2' declared and QOS set.
+2025-06-05 07:02:01,759 - my_logger - INFO - [IOThread-L2] Checkpoint 6: Setting up consumer for queue 'intermediate_queue_2'.
+2025-06-05 07:02:01,760 - my_logger - INFO - [IOThread-L2] Checkpoint 7: Consumer started (tag: ctag1.1c915d019b844ccc8c4b4a9f5cd7f576). Waiting for messages on 'intermediate_queue_2'.
+2025-06-05 07:02:01,760 - my_logger - INFO - [IOThread-L2] Checkpoint 8: Entering main event loop.
+2025-06-05 07:02:02,823 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 1, Size: 263 bytes.
+2025-06-05 07:02:03,060 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:74171e20-f694-4837-8a1e-97f911afdfcf, Size: 32257113 bytes
+2025-06-05 07:02:03,151 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:74171e20-f694-4837-8a1e-97f911afdfcf. Result: 1
+2025-06-05 07:02:04,484 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 2, Size: 264 bytes.
+2025-06-05 07:02:04,766 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:9ead6c83-6888-4815-b0b7-77edd269e9d6, Size: 32257113 bytes
+2025-06-05 07:02:04,861 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:9ead6c83-6888-4815-b0b7-77edd269e9d6. Result: 1
+2025-06-05 07:02:04,940 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.7881s (FPS: 11.19).
+2025-06-05 07:02:06,186 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 3, Size: 263 bytes.
+2025-06-05 07:02:06,445 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c844290c-041b-4cff-973b-3756ee7a8b00, Size: 32257113 bytes
+2025-06-05 07:02:06,488 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c844290c-041b-4cff-973b-3756ee7a8b00. Result: 1
+2025-06-05 07:02:06,522 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5821s (FPS: 12.64).
+2025-06-05 07:02:07,919 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 4, Size: 264 bytes.
+2025-06-05 07:02:07,975 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4494s (FPS: 13.80).
+2025-06-05 07:02:08,148 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:75c5b307-ec77-4dc5-b70c-ef6e724ada7e, Size: 32257113 bytes
+2025-06-05 07:02:08,234 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:75c5b307-ec77-4dc5-b70c-ef6e724ada7e. Result: 1
+2025-06-05 07:02:09,628 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 5, Size: 265 bytes.
+2025-06-05 07:02:09,668 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4292s (FPS: 13.99).
+2025-06-05 07:02:09,946 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a57eb4d9-9bb2-4650-b385-441e12af26ff, Size: 32257113 bytes
+2025-06-05 07:02:09,982 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a57eb4d9-9bb2-4650-b385-441e12af26ff. Result: 1
+2025-06-05 07:02:11,237 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 6, Size: 265 bytes.
+2025-06-05 07:02:11,489 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5019s (FPS: 13.32).
+2025-06-05 07:02:11,550 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:808058da-731d-457a-9f00-1c3714b503c9, Size: 32257113 bytes
+2025-06-05 07:02:11,600 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:808058da-731d-457a-9f00-1c3714b503c9. Result: 1
+2025-06-05 07:02:12,978 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 7, Size: 263 bytes.
+2025-06-05 07:02:13,017 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4130s (FPS: 14.15).
+2025-06-05 07:02:13,018 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 120 frames in 9.1637s (Avg FPS: 13.10).
+2025-06-05 07:02:13,249 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:190fd251-0486-4bc4-92ad-d783854ef56d, Size: 32257113 bytes
+2025-06-05 07:02:13,281 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:190fd251-0486-4bc4-92ad-d783854ef56d. Result: 1
+2025-06-05 07:02:14,647 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 8, Size: 264 bytes.
+2025-06-05 07:02:14,921 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:90a6ddd0-afbd-4dc6-8371-5238c777f39a, Size: 32257113 bytes
+2025-06-05 07:02:14,922 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6283s (FPS: 12.28).
+2025-06-05 07:02:14,960 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:90a6ddd0-afbd-4dc6-8371-5238c777f39a. Result: 1
+2025-06-05 07:02:16,426 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 9, Size: 264 bytes.
+2025-06-05 07:02:16,497 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5370s (FPS: 13.01).
+2025-06-05 07:02:16,660 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a1db7a7e-6579-4da8-95ad-d4ba67668fe5, Size: 32257113 bytes
+2025-06-05 07:02:16,745 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a1db7a7e-6579-4da8-95ad-d4ba67668fe5. Result: 1
+2025-06-05 07:02:18,079 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 10, Size: 262 bytes.
+2025-06-05 07:02:18,180 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4349s (FPS: 13.94).
+2025-06-05 07:02:18,346 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1e0a5d4e-ed07-4f9b-a60d-e597749bc311, Size: 32257113 bytes
+2025-06-05 07:02:18,377 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1e0a5d4e-ed07-4f9b-a60d-e597749bc311. Result: 1
+2025-06-05 07:02:19,796 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 11, Size: 264 bytes.
+2025-06-05 07:02:19,942 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5615s (FPS: 12.81).
+2025-06-05 07:02:20,057 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:0c960063-caa2-4ec9-835a-1d594b5a1b43, Size: 32257113 bytes
+2025-06-05 07:02:20,125 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:0c960063-caa2-4ec9-835a-1d594b5a1b43. Result: 1
+2025-06-05 07:02:21,581 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4513s (FPS: 13.78).
+2025-06-05 07:02:21,612 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 12, Size: 263 bytes.
+2025-06-05 07:02:21,856 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:833d7eaf-98ce-48a7-81e9-11632119f022, Size: 32257113 bytes
+2025-06-05 07:02:21,939 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:833d7eaf-98ce-48a7-81e9-11632119f022. Result: 1
+2025-06-05 07:02:23,320 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 13, Size: 262 bytes.
+2025-06-05 07:02:23,330 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.3896s (FPS: 14.39).
+2025-06-05 07:02:23,330 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 240 frames in 18.1663s (Avg FPS: 13.21).
+2025-06-05 07:02:23,560 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3cf1461d-a0d2-4c27-8faa-e01674460819, Size: 32257113 bytes
+2025-06-05 07:02:23,638 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3cf1461d-a0d2-4c27-8faa-e01674460819. Result: 1
+2025-06-05 07:02:25,082 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 14, Size: 264 bytes.
+2025-06-05 07:02:25,195 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5560s (FPS: 12.85).
+2025-06-05 07:02:25,360 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:44c96993-c22c-4c09-bad5-89ff28e3fc66, Size: 32257113 bytes
+2025-06-05 07:02:25,437 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:44c96993-c22c-4c09-bad5-89ff28e3fc66. Result: 1
+2025-06-05 07:02:26,885 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4451s (FPS: 13.84).
+2025-06-05 07:02:26,915 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 15, Size: 263 bytes.
+2025-06-05 07:02:27,164 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:99f94689-6358-4d2a-8c19-ac75854de0d3, Size: 32257113 bytes
+2025-06-05 07:02:27,236 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:99f94689-6358-4d2a-8c19-ac75854de0d3. Result: 1
+2025-06-05 07:02:28,708 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 16, Size: 260 bytes.
+2025-06-05 07:02:28,735 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4985s (FPS: 13.35).
+2025-06-05 07:02:28,962 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:89c25946-a89b-4f8b-a04f-0f9400f7c7aa, Size: 32257113 bytes
+2025-06-05 07:02:29,036 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:89c25946-a89b-4f8b-a04f-0f9400f7c7aa. Result: 1
+2025-06-05 07:02:30,408 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 17, Size: 265 bytes.
+2025-06-05 07:02:30,429 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.3921s (FPS: 14.37).
+2025-06-05 07:02:30,861 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:b9ae896b-4353-4ec1-b6e1-12106ebdc3f6, Size: 32257113 bytes
+2025-06-05 07:02:30,952 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:b9ae896b-4353-4ec1-b6e1-12106ebdc3f6. Result: 1
+2025-06-05 07:02:32,451 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4974s (FPS: 13.36).
+2025-06-05 07:02:32,482 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 18, Size: 264 bytes.
+2025-06-05 07:02:32,667 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f84391d7-1f18-48b5-906b-51d479aef017, Size: 32257113 bytes
+2025-06-05 07:02:32,744 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f84391d7-1f18-48b5-906b-51d479aef017. Result: 1
+2025-06-05 07:02:34,092 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 19, Size: 264 bytes.
+2025-06-05 07:02:34,274 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5299s (FPS: 13.07).
+2025-06-05 07:02:34,275 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 360 frames in 27.0852s (Avg FPS: 13.29).
+2025-06-05 07:02:34,365 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1bed885d-8c49-4706-b06d-629725ad7c3f, Size: 32257113 bytes
+2025-06-05 07:02:34,445 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1bed885d-8c49-4706-b06d-629725ad7c3f. Result: 1
+2025-06-05 07:02:35,875 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4293s (FPS: 13.99).
+2025-06-05 07:02:35,908 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 20, Size: 265 bytes.
+2025-06-05 07:02:36,151 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:aca3d898-7875-4134-8367-6d2c8dfece6f, Size: 32257113 bytes
+2025-06-05 07:02:36,197 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:aca3d898-7875-4134-8367-6d2c8dfece6f. Result: 1
+2025-06-05 07:02:37,677 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 21, Size: 264 bytes.
+2025-06-05 07:02:37,689 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4834s (FPS: 13.48).
+2025-06-05 07:02:37,945 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6eb3588d-7afd-46ad-a3ac-725d1014e3e3, Size: 32257113 bytes
+2025-06-05 07:02:37,965 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6eb3588d-7afd-46ad-a3ac-725d1014e3e3. Result: 1
+2025-06-05 07:02:39,367 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 22, Size: 263 bytes.
+2025-06-05 07:02:39,470 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5043s (FPS: 13.30).
+2025-06-05 07:02:39,564 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:e4bc73f7-dc5d-439c-84d8-c55c402dbdc5, Size: 32257113 bytes
+2025-06-05 07:02:39,634 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:e4bc73f7-dc5d-439c-84d8-c55c402dbdc5. Result: 1
+2025-06-05 07:02:41,124 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4878s (FPS: 13.44).
+2025-06-05 07:02:41,176 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 23, Size: 264 bytes.
+2025-06-05 07:02:41,351 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c2ec22d8-3bd6-46b7-99c8-49d6fc97e9d6, Size: 32257113 bytes
+2025-06-05 07:02:41,398 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c2ec22d8-3bd6-46b7-99c8-49d6fc97e9d6. Result: 1
+2025-06-05 07:02:42,859 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4501s (FPS: 13.79).
+2025-06-05 07:02:42,991 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 24, Size: 264 bytes.
+2025-06-05 07:02:43,252 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:03a1e51a-c14e-4fd1-974f-8587c6ebc0c0, Size: 32257113 bytes
+2025-06-05 07:02:43,285 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:03a1e51a-c14e-4fd1-974f-8587c6ebc0c0. Result: 1
+2025-06-05 07:02:44,795 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 25, Size: 265 bytes.
+2025-06-05 07:02:44,835 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5414s (FPS: 12.98).
+2025-06-05 07:02:44,835 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 480 frames in 35.9814s (Avg FPS: 13.34).
+2025-06-05 07:02:45,052 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6572b10a-065d-4c8a-a89a-483f4bf93b02, Size: 32257113 bytes
+2025-06-05 07:02:45,090 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6572b10a-065d-4c8a-a89a-483f4bf93b02. Result: 1
+2025-06-05 07:02:46,463 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 26, Size: 264 bytes.
+2025-06-05 07:02:46,597 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5015s (FPS: 13.32).
+2025-06-05 07:02:46,733 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:54fc04ae-802b-4a3b-95cf-8df62f637422, Size: 32257113 bytes
+2025-06-05 07:02:46,761 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:54fc04ae-802b-4a3b-95cf-8df62f637422. Result: 1
+2025-06-05 07:02:48,327 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 27, Size: 265 bytes.
+2025-06-05 07:02:48,329 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5662s (FPS: 12.77).
+2025-06-05 07:02:48,600 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:27976e8c-b887-4f7d-91f6-dc30ddfacece, Size: 32257113 bytes
+2025-06-05 07:02:48,660 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:27976e8c-b887-4f7d-91f6-dc30ddfacece. Result: 1
+2025-06-05 07:02:49,957 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 28, Size: 262 bytes.
+2025-06-05 07:02:50,107 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4468s (FPS: 13.82).
+2025-06-05 07:02:50,240 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:cf17e4f0-70c0-41ac-90d7-35c8e67ab308, Size: 32257113 bytes
+2025-06-05 07:02:50,267 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:cf17e4f0-70c0-41ac-90d7-35c8e67ab308. Result: 1
+2025-06-05 07:02:51,773 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5045s (FPS: 13.29).
+2025-06-05 07:02:51,825 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 29, Size: 263 bytes.
+2025-06-05 07:02:52,040 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:dfe4eeca-50a8-4efa-86a2-622919abcbb8, Size: 32257113 bytes
+2025-06-05 07:02:52,063 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:dfe4eeca-50a8-4efa-86a2-622919abcbb8. Result: 1
+2025-06-05 07:02:53,615 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 30, Size: 264 bytes.
+2025-06-05 07:02:53,631 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5667s (FPS: 12.77).
+2025-06-05 07:02:53,945 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c44b6845-aad1-4adc-bad2-3af694029fec, Size: 32257113 bytes
+2025-06-05 07:02:53,965 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c44b6845-aad1-4adc-bad2-3af694029fec. Result: 1
+2025-06-05 07:02:55,327 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 31, Size: 264 bytes.
+2025-06-05 07:02:55,553 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5868s (FPS: 12.60).
+2025-06-05 07:02:55,553 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 600 frames in 45.1539s (Avg FPS: 13.29).
+2025-06-05 07:02:55,615 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a0fe27bf-af66-4b12-957e-fd3d46408b9f, Size: 32257113 bytes
+2025-06-05 07:02:55,650 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a0fe27bf-af66-4b12-957e-fd3d46408b9f. Result: 1
+2025-06-05 07:02:57,114 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4630s (FPS: 13.67).
+2025-06-05 07:02:57,143 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 32, Size: 263 bytes.
+2025-06-05 07:02:57,354 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:73394322-1ea8-4e49-b1b8-3a8dd640c11f, Size: 32257113 bytes
+2025-06-05 07:02:57,409 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:73394322-1ea8-4e49-b1b8-3a8dd640c11f. Result: 1
+2025-06-05 07:02:58,803 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 33, Size: 264 bytes.
+2025-06-05 07:02:59,034 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6238s (FPS: 12.32).
+2025-06-05 07:02:59,067 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ce6ea86d-c1fd-4889-9e0a-16a3c192c7a3, Size: 32257113 bytes
+2025-06-05 07:02:59,145 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ce6ea86d-c1fd-4889-9e0a-16a3c192c7a3. Result: 1
+2025-06-05 07:03:00,694 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5483s (FPS: 12.92).
+2025-06-05 07:03:00,789 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 34, Size: 265 bytes.
+2025-06-05 07:03:01,046 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:12a2906a-565c-4cb6-9948-112158259108, Size: 32257113 bytes
+2025-06-05 07:03:01,067 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:12a2906a-565c-4cb6-9948-112158259108. Result: 1
+2025-06-05 07:03:02,522 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 35, Size: 265 bytes.
+2025-06-05 07:03:02,615 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5456s (FPS: 12.94).
+2025-06-05 07:03:02,834 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:56cfc38e-52d8-49f1-831c-e1b3e654c7ca, Size: 32257113 bytes
+2025-06-05 07:03:02,862 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:56cfc38e-52d8-49f1-831c-e1b3e654c7ca. Result: 1
+2025-06-05 07:03:04,426 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5634s (FPS: 12.79).
+2025-06-05 07:03:04,477 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 36, Size: 264 bytes.
+2025-06-05 07:03:04,655 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:bdc90610-0d76-4e2b-8b84-3a06b9564455, Size: 32257113 bytes
+2025-06-05 07:03:04,701 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:bdc90610-0d76-4e2b-8b84-3a06b9564455. Result: 1
+2025-06-05 07:03:06,158 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 37, Size: 263 bytes.
+2025-06-05 07:03:06,453 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:9f30a4f5-7cb0-4ead-a54e-698b105a7279, Size: 32257113 bytes
+2025-06-05 07:03:06,507 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:9f30a4f5-7cb0-4ead-a54e-698b105a7279. Result: 1
+2025-06-05 07:03:06,532 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.8274s (FPS: 10.94).
+2025-06-05 07:03:06,533 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 720 frames in 54.7253s (Avg FPS: 13.16).
+2025-06-05 07:03:07,907 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 38, Size: 263 bytes.
+2025-06-05 07:03:08,170 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1d62776c-a6b9-44a6-837a-911a68856508, Size: 32257113 bytes
+2025-06-05 07:03:08,172 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6389s (FPS: 12.20).
+2025-06-05 07:03:08,236 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1d62776c-a6b9-44a6-837a-911a68856508. Result: 1
+2025-06-05 07:03:09,713 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 39, Size: 264 bytes.
+2025-06-05 07:03:09,729 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4917s (FPS: 13.41).
+2025-06-05 07:03:09,899 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:bcd8b468-3308-41e9-af99-960621f8db21, Size: 32257113 bytes
+2025-06-05 07:03:09,957 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:bcd8b468-3308-41e9-af99-960621f8db21. Result: 1
+2025-06-05 07:03:11,474 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5153s (FPS: 13.20).
+2025-06-05 07:03:11,587 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 40, Size: 265 bytes.
+2025-06-05 07:03:11,839 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:216572e6-f613-4436-a37c-c592ec3571e9, Size: 32257113 bytes
+2025-06-05 07:03:11,862 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:216572e6-f613-4436-a37c-c592ec3571e9. Result: 1
+2025-06-05 07:03:13,238 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 41, Size: 264 bytes.
+2025-06-05 07:03:13,445 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5822s (FPS: 12.64).
+2025-06-05 07:03:13,530 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:36ca8932-0d22-4404-9dc0-f2e8e184f64f, Size: 32257113 bytes
+2025-06-05 07:03:13,556 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:36ca8932-0d22-4404-9dc0-f2e8e184f64f. Result: 1
+2025-06-05 07:03:15,050 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 42, Size: 265 bytes.
+2025-06-05 07:03:15,070 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5128s (FPS: 13.22).
+2025-06-05 07:03:15,262 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a652b26b-df0e-481e-8826-158c74a67427, Size: 32257113 bytes
+2025-06-05 07:03:15,330 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a652b26b-df0e-481e-8826-158c74a67427. Result: 1
+2025-06-05 07:03:16,797 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4657s (FPS: 13.64).
+2025-06-05 07:03:16,798 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 840 frames in 63.9320s (Avg FPS: 13.14).
+2025-06-05 07:03:16,888 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 43, Size: 265 bytes.
+2025-06-05 07:03:17,135 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:85f80c6d-7235-4f9b-a8f7-db715eed5d8d, Size: 32257113 bytes
+2025-06-05 07:03:17,164 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:85f80c6d-7235-4f9b-a8f7-db715eed5d8d. Result: 1
+2025-06-05 07:03:18,617 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 44, Size: 264 bytes.
+2025-06-05 07:03:18,683 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5184s (FPS: 13.17).
+2025-06-05 07:03:18,835 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d5288c66-ce48-403e-8217-3ce818536112, Size: 32257113 bytes
+2025-06-05 07:03:18,864 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d5288c66-ce48-403e-8217-3ce818536112. Result: 1
+2025-06-05 07:03:20,394 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 45, Size: 263 bytes.
+2025-06-05 07:03:20,446 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5810s (FPS: 12.65).
+2025-06-05 07:03:20,631 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:62e4d84b-59f4-4a24-b711-394c59bc0ead, Size: 32257113 bytes
+2025-06-05 07:03:20,660 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:62e4d84b-59f4-4a24-b711-394c59bc0ead. Result: 1
+2025-06-05 07:03:22,080 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 46, Size: 264 bytes.
+2025-06-05 07:03:22,183 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5220s (FPS: 13.14).
+2025-06-05 07:03:22,255 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4eef35b6-b318-4718-8f6f-1aa90862d48c, Size: 32257113 bytes
+2025-06-05 07:03:22,326 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4eef35b6-b318-4718-8f6f-1aa90862d48c. Result: 1
+2025-06-05 07:03:23,857 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5275s (FPS: 13.09).
+2025-06-05 07:03:23,874 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 47, Size: 264 bytes.
+2025-06-05 07:03:24,041 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f71d3e54-b847-4ad9-9bfa-bd95215f6182, Size: 32257113 bytes
+2025-06-05 07:03:24,083 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f71d3e54-b847-4ad9-9bfa-bd95215f6182. Result: 1
+2025-06-05 07:03:25,511 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 48, Size: 264 bytes.
+2025-06-05 07:03:25,631 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5448s (FPS: 12.95).
+2025-06-05 07:03:25,748 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c4d83de0-d86a-4d7a-8038-c86e68a22af5, Size: 32257113 bytes
+2025-06-05 07:03:25,772 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c4d83de0-d86a-4d7a-8038-c86e68a22af5. Result: 1
+2025-06-05 07:03:27,332 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 49, Size: 263 bytes.
+2025-06-05 07:03:27,402 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6256s (FPS: 12.30).
+2025-06-05 07:03:27,403 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 960 frames in 73.2512s (Avg FPS: 13.11).
+2025-06-05 07:03:27,638 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:5b8a10e4-05b8-4aed-9087-f54b5ed5ec54, Size: 32257113 bytes
+2025-06-05 07:03:27,666 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:5b8a10e4-05b8-4aed-9087-f54b5ed5ec54. Result: 1
+2025-06-05 07:03:29,039 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 50, Size: 265 bytes.
+2025-06-05 07:03:29,297 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:34013cc7-65cb-4527-9be2-f41e7c1dc59a, Size: 32257113 bytes
+2025-06-05 07:03:29,356 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:34013cc7-65cb-4527-9be2-f41e7c1dc59a. Result: 1
+2025-06-05 07:03:29,357 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6889s (FPS: 11.84).
+2025-06-05 07:03:30,824 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 51, Size: 264 bytes.
+2025-06-05 07:03:30,900 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5422s (FPS: 12.97).
+2025-06-05 07:03:31,060 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:390b326e-a4dc-4af3-8b67-abedbca95f34, Size: 32257113 bytes
+2025-06-05 07:03:31,128 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:390b326e-a4dc-4af3-8b67-abedbca95f34. Result: 1
+2025-06-05 07:03:32,494 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 52, Size: 263 bytes.
+2025-06-05 07:03:32,630 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4993s (FPS: 13.34).
+2025-06-05 07:03:32,750 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f61eaed5-f542-4a9e-b268-597b5fdae696, Size: 32257113 bytes
+2025-06-05 07:03:32,777 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f61eaed5-f542-4a9e-b268-597b5fdae696. Result: 1
+2025-06-05 07:03:34,149 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 53, Size: 263 bytes.
+2025-06-05 07:03:34,446 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ba4c967c-087d-4189-85fb-2a3ef445b847, Size: 32257113 bytes
+2025-06-05 07:03:34,451 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6715s (FPS: 11.97).
+2025-06-05 07:03:34,468 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ba4c967c-087d-4189-85fb-2a3ef445b847. Result: 1
+2025-06-05 07:03:35,969 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 54, Size: 265 bytes.
+2025-06-05 07:03:36,011 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5406s (FPS: 12.98).
+2025-06-05 07:03:36,240 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:70ad0364-e4dc-463d-abef-7c1f49bfbef5, Size: 32257113 bytes
+2025-06-05 07:03:36,263 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:70ad0364-e4dc-463d-abef-7c1f49bfbef5. Result: 1
+2025-06-05 07:03:37,664 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 55, Size: 264 bytes.
+2025-06-05 07:03:37,860 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4d801b77-de36-4bba-8e24-fb5bfa30708f, Size: 32257113 bytes
+2025-06-05 07:03:37,929 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4d801b77-de36-4bba-8e24-fb5bfa30708f. Result: 1
+2025-06-05 07:03:37,945 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6812s (FPS: 11.90).
+2025-06-05 07:03:37,946 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1080 frames in 82.8750s (Avg FPS: 13.03).
+2025-06-05 07:03:39,336 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 56, Size: 264 bytes.
+2025-06-05 07:03:39,589 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4dab3ffc-3894-456c-8b2f-d2e5bbc139f9, Size: 32257113 bytes
+2025-06-05 07:03:39,591 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6443s (FPS: 12.16).
+2025-06-05 07:03:39,645 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4dab3ffc-3894-456c-8b2f-d2e5bbc139f9. Result: 1
+2025-06-05 07:03:41,173 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5280s (FPS: 13.09).
+2025-06-05 07:03:41,179 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 57, Size: 264 bytes.
+2025-06-05 07:03:41,348 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4752ab73-f57e-4a03-8ede-d7758ce3044a, Size: 32257113 bytes
+2025-06-05 07:03:41,372 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4752ab73-f57e-4a03-8ede-d7758ce3044a. Result: 1
+2025-06-05 07:03:42,886 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 58, Size: 262 bytes.
+2025-06-05 07:03:42,979 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6024s (FPS: 12.48).
+2025-06-05 07:03:43,064 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:92d0add4-14df-4092-87cd-164c17cf8247, Size: 32257113 bytes
+2025-06-05 07:03:43,131 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:92d0add4-14df-4092-87cd-164c17cf8247. Result: 1
+2025-06-05 07:03:44,598 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4661s (FPS: 13.64).
+2025-06-05 07:03:44,698 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 59, Size: 265 bytes.
+2025-06-05 07:03:44,943 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d429abe7-876d-4933-92f5-56e2500b5c9f, Size: 32257113 bytes
+2025-06-05 07:03:44,963 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d429abe7-876d-4933-92f5-56e2500b5c9f. Result: 1
+2025-06-05 07:03:46,379 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 60, Size: 263 bytes.
+2025-06-05 07:03:46,643 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:948f96f8-1f90-4048-808e-269b9ca9eaa6, Size: 32257113 bytes
+2025-06-05 07:03:46,675 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:948f96f8-1f90-4048-808e-269b9ca9eaa6. Result: 1
+2025-06-05 07:03:46,708 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.7434s (FPS: 11.47).
+2025-06-05 07:03:48,199 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 61, Size: 263 bytes.
+2025-06-05 07:03:48,344 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6327s (FPS: 12.25).
+2025-06-05 07:03:48,345 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1200 frames in 92.4920s (Avg FPS: 12.97).
+2025-06-05 07:03:48,454 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a620708f-7973-4236-92b9-7ebeb43e4bb2, Size: 32257113 bytes
+2025-06-05 07:03:48,505 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a620708f-7973-4236-92b9-7ebeb43e4bb2. Result: 1
+2025-06-05 07:03:50,079 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 62, Size: 262 bytes.
+2025-06-05 07:03:50,083 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5738s (FPS: 12.71).
+2025-06-05 07:03:50,238 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:099ed9e1-1112-472f-a5ac-796977ee5a5a, Size: 32257113 bytes
+2025-06-05 07:03:50,263 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:099ed9e1-1112-472f-a5ac-796977ee5a5a. Result: 1
+2025-06-05 07:03:51,852 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5891s (FPS: 12.59).
+2025-06-05 07:03:51,890 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 63, Size: 262 bytes.
+2025-06-05 07:03:52,065 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ceed042f-4228-4414-8223-5b6854e86952, Size: 32257113 bytes
+2025-06-05 07:03:52,123 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ceed042f-4228-4414-8223-5b6854e86952. Result: 1
+2025-06-05 07:03:53,597 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 64, Size: 265 bytes.
+2025-06-05 07:03:53,713 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5868s (FPS: 12.60).
+2025-06-05 07:03:53,852 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ca3ed62f-b97d-4568-9687-66601e71cd9b, Size: 32257113 bytes
+2025-06-05 07:03:53,906 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ca3ed62f-b97d-4568-9687-66601e71cd9b. Result: 1
+2025-06-05 07:03:55,370 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4622s (FPS: 13.68).
+2025-06-05 07:03:55,433 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 65, Size: 263 bytes.
+2025-06-05 07:03:55,566 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1ed5e25f-4d6c-4f33-960c-83dd2f1451bc, Size: 32257113 bytes
+2025-06-05 07:03:55,638 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1ed5e25f-4d6c-4f33-960c-83dd2f1451bc. Result: 1
+2025-06-05 07:03:57,115 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4753s (FPS: 13.56).
+2025-06-05 07:03:57,154 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 66, Size: 263 bytes.
+2025-06-05 07:03:57,282 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:e90dc6b7-bf01-450c-b6d4-8b3c70a57896, Size: 32257113 bytes
+2025-06-05 07:03:57,339 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:e90dc6b7-bf01-450c-b6d4-8b3c70a57896. Result: 1
+2025-06-05 07:03:58,876 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5364s (FPS: 13.02).
+2025-06-05 07:03:58,878 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1320 frames in 101.7156s (Avg FPS: 12.98).
+2025-06-05 07:03:58,917 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 67, Size: 261 bytes.
+2025-06-05 07:03:59,053 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:53712674-a8ac-44b4-8737-b7409e2254dc, Size: 32257113 bytes
+2025-06-05 07:03:59,093 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:53712674-a8ac-44b4-8737-b7409e2254dc. Result: 1
+2025-06-05 07:04:00,644 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5480s (FPS: 12.92).
+2025-06-05 07:04:00,747 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 68, Size: 261 bytes.
+2025-06-05 07:04:00,862 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:01678eac-e15b-4d72-9ff8-ef257b71c024, Size: 32257113 bytes
+2025-06-05 07:04:00,929 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:01678eac-e15b-4d72-9ff8-ef257b71c024. Result: 1
+2025-06-05 07:04:02,426 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4962s (FPS: 13.37).
+2025-06-05 07:04:02,516 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 69, Size: 262 bytes.
+2025-06-05 07:04:02,744 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:9231bc1d-848e-4fb0-aaa9-c00958041f72, Size: 32257113 bytes
+2025-06-05 07:04:02,765 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:9231bc1d-848e-4fb0-aaa9-c00958041f72. Result: 1
+2025-06-05 07:04:04,291 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 70, Size: 263 bytes.
+2025-06-05 07:04:04,336 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5705s (FPS: 12.73).
+2025-06-05 07:04:04,459 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:046cfaa0-3e85-4ec2-a791-8c53c8fcfb94, Size: 32257113 bytes
+2025-06-05 07:04:04,518 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:046cfaa0-3e85-4ec2-a791-8c53c8fcfb94. Result: 1
+2025-06-05 07:04:06,019 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4980s (FPS: 13.35).
+2025-06-05 07:04:06,067 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 71, Size: 263 bytes.
+2025-06-05 07:04:06,248 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:60990abe-9e4f-4944-95e9-0506181d498a, Size: 32257113 bytes
+2025-06-05 07:04:06,274 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:60990abe-9e4f-4944-95e9-0506181d498a. Result: 1
+2025-06-05 07:04:07,860 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 72, Size: 263 bytes.
+2025-06-05 07:04:07,876 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5982s (FPS: 12.51).
+2025-06-05 07:04:08,028 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ad8de29a-5f2b-4e86-8088-791d45e521a7, Size: 32257113 bytes
+2025-06-05 07:04:08,055 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ad8de29a-5f2b-4e86-8088-791d45e521a7. Result: 1
+2025-06-05 07:04:09,568 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 73, Size: 264 bytes.
+2025-06-05 07:04:09,591 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5356s (FPS: 13.02).
+2025-06-05 07:04:09,592 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1440 frames in 110.9620s (Avg FPS: 12.98).
+2025-06-05 07:04:09,747 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:38ac2ebe-2fc1-42b8-aaea-dd65de4ed455, Size: 32257113 bytes
+2025-06-05 07:04:09,775 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:38ac2ebe-2fc1-42b8-aaea-dd65de4ed455. Result: 1
+2025-06-05 07:04:11,367 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 74, Size: 264 bytes.
+2025-06-05 07:04:11,382 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6010s (FPS: 12.49).
+2025-06-05 07:04:11,545 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ed2c39e9-bd97-4caa-9b4d-a5c16e296641, Size: 32257113 bytes
+2025-06-05 07:04:11,565 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ed2c39e9-bd97-4caa-9b4d-a5c16e296641. Result: 1
+2025-06-05 07:04:13,135 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5685s (FPS: 12.75).
+2025-06-05 07:04:13,270 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 75, Size: 264 bytes.
+2025-06-05 07:04:13,444 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:9161f90e-4ed3-41d9-8841-451ae664ef55, Size: 32257113 bytes
+2025-06-05 07:04:13,482 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:9161f90e-4ed3-41d9-8841-451ae664ef55. Result: 1
+2025-06-05 07:04:14,977 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 76, Size: 263 bytes.
+2025-06-05 07:04:15,093 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6082s (FPS: 12.44).
+2025-06-05 07:04:15,165 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d9da81b9-3521-4c1d-8666-c3638b4452da, Size: 32257113 bytes
+2025-06-05 07:04:15,230 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d9da81b9-3521-4c1d-8666-c3638b4452da. Result: 1
+2025-06-05 07:04:16,771 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5398s (FPS: 12.99).
+2025-06-05 07:04:16,808 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 77, Size: 265 bytes.
+2025-06-05 07:04:16,960 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6fc25fba-f6d6-4a59-8405-1b3a906be53a, Size: 32257113 bytes
+2025-06-05 07:04:17,028 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6fc25fba-f6d6-4a59-8405-1b3a906be53a. Result: 1
+2025-06-05 07:04:18,515 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4846s (FPS: 13.47).
+2025-06-05 07:04:18,646 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 78, Size: 265 bytes.
+2025-06-05 07:04:18,753 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:5c8222c1-725d-464f-9143-867417ae28f9, Size: 32257113 bytes
+2025-06-05 07:04:18,798 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:5c8222c1-725d-464f-9143-867417ae28f9. Result: 1
+2025-06-05 07:04:20,330 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5290s (FPS: 13.08).
+2025-06-05 07:04:20,330 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1560 frames in 120.2933s (Avg FPS: 12.97).
+2025-06-05 07:04:20,401 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 79, Size: 264 bytes.
+2025-06-05 07:04:20,630 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6dbd152b-b6d2-4c7c-beb7-b4a5ccae1555, Size: 32257113 bytes
+2025-06-05 07:04:20,662 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6dbd152b-b6d2-4c7c-beb7-b4a5ccae1555. Result: 1
+2025-06-05 07:04:22,176 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 80, Size: 265 bytes.
+2025-06-05 07:04:22,275 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6119s (FPS: 12.41).
+2025-06-05 07:04:22,352 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8b8a4cec-e67d-48d6-9763-99cfb167cd56, Size: 32257113 bytes
+2025-06-05 07:04:22,393 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8b8a4cec-e67d-48d6-9763-99cfb167cd56. Result: 1
+2025-06-05 07:04:23,948 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5499s (FPS: 12.90).
+2025-06-05 07:04:24,011 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 81, Size: 265 bytes.
+2025-06-05 07:04:24,163 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:5c6ee1cd-06e7-4f2f-a558-7eb9ddb46a30, Size: 32257113 bytes
+2025-06-05 07:04:24,297 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:5c6ee1cd-06e7-4f2f-a558-7eb9ddb46a30. Result: 1
+2025-06-05 07:04:25,794 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4928s (FPS: 13.40).
+2025-06-05 07:04:25,853 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 82, Size: 265 bytes.
+2025-06-05 07:04:25,969 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:843270c7-50b4-40b4-96ac-84cbb3a66169, Size: 32257113 bytes
+2025-06-05 07:04:26,194 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:843270c7-50b4-40b4-96ac-84cbb3a66169. Result: 1
+2025-06-05 07:04:27,592 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 83, Size: 264 bytes.
+2025-06-05 07:04:27,717 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5207s (FPS: 13.15).
+2025-06-05 07:04:27,839 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4da84a3a-90ec-4cff-a4b6-73fdcef860c7, Size: 32257113 bytes
+2025-06-05 07:04:28,009 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4da84a3a-90ec-4cff-a4b6-73fdcef860c7. Result: 1
+2025-06-05 07:04:29,408 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 84, Size: 263 bytes.
+2025-06-05 07:04:29,487 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4727s (FPS: 13.58).
+2025-06-05 07:04:29,647 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:08bbaf46-0263-4e43-8afe-9690d5582327, Size: 32257113 bytes
+2025-06-05 07:04:29,779 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:08bbaf46-0263-4e43-8afe-9690d5582327. Result: 1
+2025-06-05 07:04:31,148 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 85, Size: 262 bytes.
+2025-06-05 07:04:31,363 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:146d372c-dd57-43c8-b70e-f9ce4b998f54, Size: 32257113 bytes
+2025-06-05 07:04:31,452 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6709s (FPS: 11.97).
+2025-06-05 07:04:31,452 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1680 frames in 129.6120s (Avg FPS: 12.96).
+2025-06-05 07:04:31,595 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:146d372c-dd57-43c8-b70e-f9ce4b998f54. Result: 1
+2025-06-05 07:04:32,824 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 86, Size: 264 bytes.
+2025-06-05 07:04:33,047 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4c7e8d9e-ff7a-47e0-aaf6-431cbbcce282, Size: 32257113 bytes
+2025-06-05 07:04:33,206 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4c7e8d9e-ff7a-47e0-aaf6-431cbbcce282. Result: 1
+2025-06-05 07:04:33,256 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6548s (FPS: 12.09).
+2025-06-05 07:04:34,592 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 87, Size: 263 bytes.
+2025-06-05 07:04:34,800 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5431s (FPS: 12.96).
+2025-06-05 07:04:34,861 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4ffc9a5b-08ef-4588-9856-2f9b75adf087, Size: 32257113 bytes
+2025-06-05 07:04:35,111 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4ffc9a5b-08ef-4588-9856-2f9b75adf087. Result: 1
+2025-06-05 07:04:36,424 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 88, Size: 264 bytes.
+2025-06-05 07:04:36,645 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c081142a-9627-4f27-a190-0a1393986433, Size: 32257113 bytes
+2025-06-05 07:04:36,776 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6594s (FPS: 12.05).
+2025-06-05 07:04:36,790 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c081142a-9627-4f27-a190-0a1393986433. Result: 1
+2025-06-05 07:04:38,266 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 89, Size: 263 bytes.
+2025-06-05 07:04:38,304 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5025s (FPS: 13.31).
+2025-06-05 07:04:38,550 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:778b93f4-67cc-4c6e-8988-cc52ade89d86, Size: 32257113 bytes
+2025-06-05 07:04:38,697 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:778b93f4-67cc-4c6e-8988-cc52ade89d86. Result: 1
+2025-06-05 07:04:40,188 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4904s (FPS: 13.42).
+2025-06-05 07:04:40,199 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 90, Size: 265 bytes.
+2025-06-05 07:04:40,556 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:fa32fb9c-9938-4971-90e3-c0909148aa9b, Size: 32257113 bytes
+2025-06-05 07:04:40,703 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:fa32fb9c-9938-4971-90e3-c0909148aa9b. Result: 1
+2025-06-05 07:04:42,073 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 91, Size: 264 bytes.
+2025-06-05 07:04:42,361 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6519s (FPS: 12.11).
+2025-06-05 07:04:42,362 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1800 frames in 139.1142s (Avg FPS: 12.94).
+2025-06-05 07:04:42,450 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3bcd4ec2-c2bf-4450-b3a8-d4c15deb89ab, Size: 32257113 bytes
+2025-06-05 07:04:42,500 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3bcd4ec2-c2bf-4450-b3a8-d4c15deb89ab. Result: 1
+2025-06-05 07:04:43,696 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 92, Size: 264 bytes.
+2025-06-05 07:04:43,964 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:40d8d235-4164-4a98-84f5-eaf4db069468, Size: 32257113 bytes
+2025-06-05 07:04:44,061 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:40d8d235-4164-4a98-84f5-eaf4db069468. Result: 1
+2025-06-05 07:04:44,220 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.7192s (FPS: 11.63).
+2025-06-05 07:04:45,522 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 93, Size: 265 bytes.
+2025-06-05 07:04:45,754 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a55276aa-e5eb-4fe8-b211-7bcfd76e06df, Size: 32257113 bytes
+2025-06-05 07:04:45,843 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a55276aa-e5eb-4fe8-b211-7bcfd76e06df. Result: 1
+2025-06-05 07:04:45,961 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.7388s (FPS: 11.50).
+2025-06-05 07:04:47,321 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 94, Size: 264 bytes.
+2025-06-05 07:04:47,530 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5684s (FPS: 12.75).
+2025-06-05 07:04:47,576 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1b99bedb-24bf-4c33-9077-fc1544f45cb8, Size: 32257113 bytes
+2025-06-05 07:04:47,693 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1b99bedb-24bf-4c33-9077-fc1544f45cb8. Result: 1
+2025-06-05 07:04:49,037 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 95, Size: 263 bytes.
+2025-06-05 07:04:49,231 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5319s (FPS: 13.06).
+2025-06-05 07:04:49,342 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8a23f971-43fc-40e3-a82d-016a6c5ee514, Size: 32257113 bytes
+2025-06-05 07:04:49,512 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8a23f971-43fc-40e3-a82d-016a6c5ee514. Result: 1
+2025-06-05 07:04:50,812 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 96, Size: 264 bytes.
+2025-06-05 07:04:51,013 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3a0e9fca-407f-4456-8d8e-ad30b2725747, Size: 32257113 bytes
+2025-06-05 07:04:51,080 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3a0e9fca-407f-4456-8d8e-ad30b2725747. Result: 1
+2025-06-05 07:04:51,095 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5767s (FPS: 12.68).
+2025-06-05 07:04:52,492 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 97, Size: 264 bytes.
+2025-06-05 07:04:52,743 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d3d964bf-ad33-4671-8125-9e84d8b41f54, Size: 32257113 bytes
+2025-06-05 07:04:52,778 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6811s (FPS: 11.90).
+2025-06-05 07:04:52,778 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 1920 frames in 148.9304s (Avg FPS: 12.89).
+2025-06-05 07:04:52,805 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d3d964bf-ad33-4671-8125-9e84d8b41f54. Result: 1
+2025-06-05 07:04:54,330 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 98, Size: 263 bytes.
+2025-06-05 07:04:54,359 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5521s (FPS: 12.89).
+2025-06-05 07:04:54,538 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d3019319-54c9-4b0d-ac74-1fbb71b7526b, Size: 32257113 bytes
+2025-06-05 07:04:54,574 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d3019319-54c9-4b0d-ac74-1fbb71b7526b. Result: 1
+2025-06-05 07:04:56,083 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 99, Size: 264 bytes.
+2025-06-05 07:04:56,170 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5934s (FPS: 12.55).
+2025-06-05 07:04:56,258 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c9a92e9a-c0d3-43cf-a098-1e6b3b93dbf4, Size: 32257113 bytes
+2025-06-05 07:04:56,319 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c9a92e9a-c0d3-43cf-a098-1e6b3b93dbf4. Result: 1
+2025-06-05 07:04:57,831 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 100, Size: 264 bytes.
+2025-06-05 07:04:57,886 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5661s (FPS: 12.77).
+2025-06-05 07:04:58,052 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:0bf7289a-dfa5-44c8-96b8-a75c1979b83f, Size: 32257113 bytes
+2025-06-05 07:04:58,080 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:0bf7289a-dfa5-44c8-96b8-a75c1979b83f. Result: 1
+2025-06-05 07:04:59,538 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 101, Size: 264 bytes.
+2025-06-05 07:04:59,686 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6042s (FPS: 12.47).
+2025-06-05 07:04:59,750 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d166cd63-d468-42ad-8533-958ab8f375b3, Size: 32257113 bytes
+2025-06-05 07:04:59,826 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d166cd63-d468-42ad-8533-958ab8f375b3. Result: 1
+2025-06-05 07:05:01,369 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 102, Size: 265 bytes.
+2025-06-05 07:05:01,374 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5465s (FPS: 12.93).
+2025-06-05 07:05:01,558 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:63448ac8-61ac-4eed-bdcf-909de89da713, Size: 32257113 bytes
+2025-06-05 07:05:01,611 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:63448ac8-61ac-4eed-bdcf-909de89da713. Result: 1
+2025-06-05 07:05:03,110 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4964s (FPS: 13.37).
+2025-06-05 07:05:03,110 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2040 frames in 158.2891s (Avg FPS: 12.89).
+2025-06-05 07:05:03,112 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 103, Size: 265 bytes.
+2025-06-05 07:05:03,362 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:311a29fd-a158-47c4-8d99-c97b8a24f446, Size: 32257113 bytes
+2025-06-05 07:05:03,438 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:311a29fd-a158-47c4-8d99-c97b8a24f446. Result: 1
+2025-06-05 07:05:04,871 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 104, Size: 261 bytes.
+2025-06-05 07:05:04,984 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5449s (FPS: 12.95).
+2025-06-05 07:05:05,066 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:d66d75d8-c1ee-439e-8005-78cfc82c3dae, Size: 32257113 bytes
+2025-06-05 07:05:05,145 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:d66d75d8-c1ee-439e-8005-78cfc82c3dae. Result: 1
+2025-06-05 07:05:06,689 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5415s (FPS: 12.97).
+2025-06-05 07:05:06,690 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 105, Size: 263 bytes.
+2025-06-05 07:05:06,863 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:59061adf-4b85-4e61-87a8-0a3731ffde39, Size: 32257113 bytes
+2025-06-05 07:05:06,924 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:59061adf-4b85-4e61-87a8-0a3731ffde39. Result: 1
+2025-06-05 07:05:08,378 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 106, Size: 263 bytes.
+2025-06-05 07:05:08,432 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5072s (FPS: 13.27).
+2025-06-05 07:05:08,563 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c1eaae35-f3d5-41ad-bd10-488afe516291, Size: 32257113 bytes
+2025-06-05 07:05:08,627 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c1eaae35-f3d5-41ad-bd10-488afe516291. Result: 1
+2025-06-05 07:05:10,107 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 107, Size: 262 bytes.
+2025-06-05 07:05:10,177 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5489s (FPS: 12.91).
+2025-06-05 07:05:10,344 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:75cc4c00-72c1-4740-8048-98b677f68f63, Size: 32257113 bytes
+2025-06-05 07:05:10,364 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:75cc4c00-72c1-4740-8048-98b677f68f63. Result: 1
+2025-06-05 07:05:11,844 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4791s (FPS: 13.52).
+2025-06-05 07:05:11,863 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 108, Size: 264 bytes.
+2025-06-05 07:05:12,046 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:526f1dc8-9e0d-44d9-88af-3fb8a0a9f119, Size: 32257113 bytes
+2025-06-05 07:05:12,068 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:526f1dc8-9e0d-44d9-88af-3fb8a0a9f119. Result: 1
+2025-06-05 07:05:13,640 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5700s (FPS: 12.74).
+2025-06-05 07:05:13,641 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2160 frames in 167.4806s (Avg FPS: 12.90).
+2025-06-05 07:05:13,645 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 109, Size: 262 bytes.
+2025-06-05 07:05:13,835 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ddffff15-428d-4c92-88cb-9becc01d3c12, Size: 32257113 bytes
+2025-06-05 07:05:13,871 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ddffff15-428d-4c92-88cb-9becc01d3c12. Result: 1
+2025-06-05 07:05:15,453 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 110, Size: 265 bytes.
+2025-06-05 07:05:15,494 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6208s (FPS: 12.34).
+2025-06-05 07:05:15,659 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:51b46a25-3f92-45a0-b36e-faaae5b11e8f, Size: 32257113 bytes
+2025-06-05 07:05:15,735 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:51b46a25-3f92-45a0-b36e-faaae5b11e8f. Result: 1
+2025-06-05 07:05:17,209 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 111, Size: 265 bytes.
+2025-06-05 07:05:17,298 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5627s (FPS: 12.80).
+2025-06-05 07:05:17,459 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:77836283-d9ed-4706-8b85-02709f2af894, Size: 32257113 bytes
+2025-06-05 07:05:17,523 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:77836283-d9ed-4706-8b85-02709f2af894. Result: 1
+2025-06-05 07:05:18,953 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 112, Size: 265 bytes.
+2025-06-05 07:05:19,035 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5106s (FPS: 13.24).
+2025-06-05 07:05:19,259 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8135936e-75e1-4018-803c-10b70d4eccd1, Size: 32257113 bytes
+2025-06-05 07:05:19,331 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8135936e-75e1-4018-803c-10b70d4eccd1. Result: 1
+2025-06-05 07:05:20,704 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 113, Size: 263 bytes.
+2025-06-05 07:05:20,898 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5664s (FPS: 12.77).
+2025-06-05 07:05:20,994 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f83ece7d-910d-4caa-9ae4-a1462390a786, Size: 32257113 bytes
+2025-06-05 07:05:21,053 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f83ece7d-910d-4caa-9ae4-a1462390a786. Result: 1
+2025-06-05 07:05:22,482 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 114, Size: 264 bytes.
+2025-06-05 07:05:22,586 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5315s (FPS: 13.06).
+2025-06-05 07:05:22,756 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4d89bde9-d58d-4f22-b73f-89942b92864e, Size: 32257113 bytes
+2025-06-05 07:05:22,799 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4d89bde9-d58d-4f22-b73f-89942b92864e. Result: 1
+2025-06-05 07:05:24,197 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 115, Size: 264 bytes.
+2025-06-05 07:05:24,457 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6ef77f16-3128-40dc-8bf5-a02fdf723b40, Size: 32257113 bytes
+2025-06-05 07:05:24,531 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.7264s (FPS: 11.58).
+2025-06-05 07:05:24,532 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2280 frames in 176.9991s (Avg FPS: 12.88).
+2025-06-05 07:05:24,537 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6ef77f16-3128-40dc-8bf5-a02fdf723b40. Result: 1
+2025-06-05 07:05:25,921 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 116, Size: 263 bytes.
+2025-06-05 07:05:26,075 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5340s (FPS: 13.04).
+2025-06-05 07:05:26,243 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a47ca589-376d-4fdd-b386-5777ec04763c, Size: 32257113 bytes
+2025-06-05 07:05:26,263 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a47ca589-376d-4fdd-b386-5777ec04763c. Result: 1
+2025-06-05 07:05:27,687 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 117, Size: 264 bytes.
+2025-06-05 07:05:27,829 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5641s (FPS: 12.79).
+2025-06-05 07:05:27,948 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3940f8ca-4439-424d-8e7a-21b397139036, Size: 32257113 bytes
+2025-06-05 07:05:27,974 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3940f8ca-4439-424d-8e7a-21b397139036. Result: 1
+2025-06-05 07:05:29,465 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 118, Size: 263 bytes.
+2025-06-05 07:05:29,529 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5502s (FPS: 12.90).
+2025-06-05 07:05:29,667 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:11573446-b83c-48ef-9b16-e9c153d40bf8, Size: 32257113 bytes
+2025-06-05 07:05:29,749 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:11573446-b83c-48ef-9b16-e9c153d40bf8. Result: 1
+2025-06-05 07:05:31,205 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4546s (FPS: 13.75).
+2025-06-05 07:05:31,263 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 119, Size: 264 bytes.
+2025-06-05 07:05:31,461 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c1f4f7b1-0d1f-40e5-b978-b9388b06d421, Size: 32257113 bytes
+2025-06-05 07:05:31,534 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c1f4f7b1-0d1f-40e5-b978-b9388b06d421. Result: 1
+2025-06-05 07:05:33,014 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 120, Size: 263 bytes.
+2025-06-05 07:05:33,032 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4969s (FPS: 13.36).
+2025-06-05 07:05:33,275 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:7edd734e-31da-4857-9c1f-452dbfb7dae9, Size: 32257113 bytes
+2025-06-05 07:05:33,352 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:7edd734e-31da-4857-9c1f-452dbfb7dae9. Result: 1
+2025-06-05 07:05:34,845 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 121, Size: 263 bytes.
+2025-06-05 07:05:34,942 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5887s (FPS: 12.59).
+2025-06-05 07:05:34,943 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2400 frames in 186.1876s (Avg FPS: 12.89).
+2025-06-05 07:05:35,163 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ac2563ee-3ef0-4d03-b0c2-9d6042924ed3, Size: 32257113 bytes
+2025-06-05 07:05:35,248 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ac2563ee-3ef0-4d03-b0c2-9d6042924ed3. Result: 1
+2025-06-05 07:05:36,674 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 122, Size: 265 bytes.
+2025-06-05 07:05:36,741 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4901s (FPS: 13.42).
+2025-06-05 07:05:36,947 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:29361fb0-84e3-4ccc-8baa-4ebfd873ed31, Size: 32257113 bytes
+2025-06-05 07:05:36,974 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:29361fb0-84e3-4ccc-8baa-4ebfd873ed31. Result: 1
+2025-06-05 07:05:38,369 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 123, Size: 262 bytes.
+2025-06-05 07:05:38,584 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6026s (FPS: 12.48).
+2025-06-05 07:05:38,660 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ad1bccf1-3342-4c66-ac11-60964c5b8811, Size: 32257113 bytes
+2025-06-05 07:05:38,740 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ad1bccf1-3342-4c66-ac11-60964c5b8811. Result: 1
+2025-06-05 07:05:40,225 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 124, Size: 262 bytes.
+2025-06-05 07:05:40,276 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5345s (FPS: 13.03).
+2025-06-05 07:05:40,547 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f0c8675a-4c18-4d3a-a4b6-1d10599f1a0d, Size: 32257113 bytes
+2025-06-05 07:05:40,579 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f0c8675a-4c18-4d3a-a4b6-1d10599f1a0d. Result: 1
+2025-06-05 07:05:42,007 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 125, Size: 264 bytes.
+2025-06-05 07:05:42,177 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5952s (FPS: 12.54).
+2025-06-05 07:05:42,260 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:91261194-ad61-48b0-93f2-f05dfb13589e, Size: 32257113 bytes
+2025-06-05 07:05:42,337 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:91261194-ad61-48b0-93f2-f05dfb13589e. Result: 1
+2025-06-05 07:05:43,807 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 126, Size: 265 bytes.
+2025-06-05 07:05:43,967 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6278s (FPS: 12.29).
+2025-06-05 07:05:44,052 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8ac53dbd-292b-4eb3-9416-6b45b8254a04, Size: 32257113 bytes
+2025-06-05 07:05:44,104 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8ac53dbd-292b-4eb3-9416-6b45b8254a04. Result: 1
+2025-06-05 07:05:45,586 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4790s (FPS: 13.52).
+2025-06-05 07:05:45,587 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2520 frames in 195.5168s (Avg FPS: 12.89).
+2025-06-05 07:05:45,610 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 127, Size: 265 bytes.
+2025-06-05 07:05:45,942 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8a6ba309-162e-4cc0-9f35-986f7bfeca00, Size: 32257113 bytes
+2025-06-05 07:05:45,968 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8a6ba309-162e-4cc0-9f35-986f7bfeca00. Result: 1
+2025-06-05 07:05:47,476 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 128, Size: 264 bytes.
+2025-06-05 07:05:47,537 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5638s (FPS: 12.79).
+2025-06-05 07:05:47,664 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:2970eec9-2ebb-4541-8950-fbee23770d71, Size: 32257113 bytes
+2025-06-05 07:05:47,752 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:2970eec9-2ebb-4541-8950-fbee23770d71. Result: 1
+2025-06-05 07:05:49,201 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 129, Size: 264 bytes.
+2025-06-05 07:05:49,393 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6392s (FPS: 12.20).
+2025-06-05 07:05:49,465 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6d5f23a6-b814-4c88-8f3e-eedf2cc5e52a, Size: 32257113 bytes
+2025-06-05 07:05:49,544 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6d5f23a6-b814-4c88-8f3e-eedf2cc5e52a. Result: 1
+2025-06-05 07:05:51,028 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4835s (FPS: 13.48).
+2025-06-05 07:05:51,092 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 130, Size: 264 bytes.
+2025-06-05 07:05:51,357 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:bb36e188-6b58-451b-a0e8-f9e1822c3b4e, Size: 32257113 bytes
+2025-06-05 07:05:51,433 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:bb36e188-6b58-451b-a0e8-f9e1822c3b4e. Result: 1
+2025-06-05 07:05:52,781 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 131, Size: 263 bytes.
+2025-06-05 07:05:53,031 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5932s (FPS: 12.55).
+2025-06-05 07:05:53,061 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f6aed593-c58c-4313-8007-4e694f8215d5, Size: 32257113 bytes
+2025-06-05 07:05:53,140 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f6aed593-c58c-4313-8007-4e694f8215d5. Result: 1
+2025-06-05 07:05:54,671 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5300s (FPS: 13.07).
+2025-06-05 07:05:54,679 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 132, Size: 263 bytes.
+2025-06-05 07:05:54,858 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:258ff12b-4140-4f54-9416-d537bf98d557, Size: 32257113 bytes
+2025-06-05 07:05:54,926 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:258ff12b-4140-4f54-9416-d537bf98d557. Result: 1
+2025-06-05 07:05:56,469 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 133, Size: 264 bytes.
+2025-06-05 07:05:56,473 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5441s (FPS: 12.95).
+2025-06-05 07:05:56,473 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2640 frames in 204.8707s (Avg FPS: 12.89).
+2025-06-05 07:05:56,744 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:7f2a5361-032a-4ee4-929e-061f1680f0e3, Size: 32257113 bytes
+2025-06-05 07:05:56,765 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:7f2a5361-032a-4ee4-929e-061f1680f0e3. Result: 1
+2025-06-05 07:05:58,329 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 134, Size: 265 bytes.
+2025-06-05 07:05:58,357 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5919s (FPS: 12.56).
+2025-06-05 07:05:58,640 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:95752cd1-4ed5-49ce-af16-6d094ea0227e, Size: 32257113 bytes
+2025-06-05 07:05:58,661 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:95752cd1-4ed5-49ce-af16-6d094ea0227e. Result: 1
+2025-06-05 07:06:00,109 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 135, Size: 263 bytes.
+2025-06-05 07:06:00,247 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5848s (FPS: 12.62).
+2025-06-05 07:06:00,447 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:6d02ce16-f4d7-47aa-a862-7a948b3b6efa, Size: 32257113 bytes
+2025-06-05 07:06:00,466 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:6d02ce16-f4d7-47aa-a862-7a948b3b6efa. Result: 1
+2025-06-05 07:06:01,889 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 136, Size: 264 bytes.
+2025-06-05 07:06:02,148 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:0b9f67d8-4b31-4569-ae3a-27756990a987, Size: 32257113 bytes
+2025-06-05 07:06:02,163 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6953s (FPS: 11.80).
+2025-06-05 07:06:02,176 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:0b9f67d8-4b31-4569-ae3a-27756990a987. Result: 1
+2025-06-05 07:06:03,729 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5473s (FPS: 12.93).
+2025-06-05 07:06:03,786 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 137, Size: 264 bytes.
+2025-06-05 07:06:04,051 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:27d6262b-c7c4-4d83-86d3-25823f515515, Size: 32257113 bytes
+2025-06-05 07:06:04,092 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:27d6262b-c7c4-4d83-86d3-25823f515515. Result: 1
+2025-06-05 07:06:05,425 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 138, Size: 264 bytes.
+2025-06-05 07:06:05,611 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5131s (FPS: 13.22).
+2025-06-05 07:06:05,761 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:02b17e1b-8500-431b-ad63-5ccc7c08040c, Size: 32257113 bytes
+2025-06-05 07:06:05,831 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:02b17e1b-8500-431b-ad63-5ccc7c08040c. Result: 1
+2025-06-05 07:06:07,309 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4771s (FPS: 13.54).
+2025-06-05 07:06:07,309 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2760 frames in 214.2801s (Avg FPS: 12.88).
+2025-06-05 07:06:07,489 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 139, Size: 264 bytes.
+2025-06-05 07:06:07,754 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1d25fad9-9c8d-42d8-b68c-a02547ffef3f, Size: 32257113 bytes
+2025-06-05 07:06:07,830 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1d25fad9-9c8d-42d8-b68c-a02547ffef3f. Result: 1
+2025-06-05 07:06:09,184 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 140, Size: 265 bytes.
+2025-06-05 07:06:09,398 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5669s (FPS: 12.76).
+2025-06-05 07:06:09,464 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:aec93990-3f6e-4b41-9fe1-a9fb3aabf3ca, Size: 32257113 bytes
+2025-06-05 07:06:09,549 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:aec93990-3f6e-4b41-9fe1-a9fb3aabf3ca. Result: 1
+2025-06-05 07:06:10,997 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 141, Size: 263 bytes.
+2025-06-05 07:06:11,151 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6007s (FPS: 12.49).
+2025-06-05 07:06:11,254 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:02edde63-a132-4839-bbef-e514576f2281, Size: 32257113 bytes
+2025-06-05 07:06:11,302 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:02edde63-a132-4839-bbef-e514576f2281. Result: 1
+2025-06-05 07:06:12,826 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 142, Size: 263 bytes.
+2025-06-05 07:06:12,896 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5893s (FPS: 12.58).
+2025-06-05 07:06:13,149 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:dccb1cd4-989b-44cd-a045-8698cf41e4af, Size: 32257113 bytes
+2025-06-05 07:06:13,180 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:dccb1cd4-989b-44cd-a045-8698cf41e4af. Result: 1
+2025-06-05 07:06:14,675 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 143, Size: 265 bytes.
+2025-06-05 07:06:14,830 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6470s (FPS: 12.14).
+2025-06-05 07:06:14,940 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:ed279f75-dab6-4bab-9cb1-a4b298d8f977, Size: 32257113 bytes
+2025-06-05 07:06:14,981 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:ed279f75-dab6-4bab-9cb1-a4b298d8f977. Result: 1
+2025-06-05 07:06:16,493 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 144, Size: 262 bytes.
+2025-06-05 07:06:16,576 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5902s (FPS: 12.58).
+2025-06-05 07:06:16,754 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:be5e973f-955a-4c9a-b10d-0a03e1c95895, Size: 32257113 bytes
+2025-06-05 07:06:16,811 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:be5e973f-955a-4c9a-b10d-0a03e1c95895. Result: 1
+2025-06-05 07:06:18,317 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5032s (FPS: 13.30).
+2025-06-05 07:06:18,318 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 2880 frames in 223.7774s (Avg FPS: 12.87).
+2025-06-05 07:06:18,392 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 145, Size: 262 bytes.
+2025-06-05 07:06:18,652 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:09adde3b-0a2b-4616-a590-dee4c5ca3d78, Size: 32257113 bytes
+2025-06-05 07:06:18,698 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:09adde3b-0a2b-4616-a590-dee4c5ca3d78. Result: 1
+2025-06-05 07:06:20,084 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 146, Size: 264 bytes.
+2025-06-05 07:06:20,364 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a7044a0d-abef-4f54-98cf-bf18ee7544be, Size: 32257113 bytes
+2025-06-05 07:06:20,388 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6858s (FPS: 11.86).
+2025-06-05 07:06:20,444 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a7044a0d-abef-4f54-98cf-bf18ee7544be. Result: 1
+2025-06-05 07:06:21,908 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 147, Size: 263 bytes.
+2025-06-05 07:06:22,024 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5788s (FPS: 12.67).
+2025-06-05 07:06:22,250 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:875b8fa2-0184-4f5b-8436-1a7ff8de54ae, Size: 32257113 bytes
+2025-06-05 07:06:22,273 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:875b8fa2-0184-4f5b-8436-1a7ff8de54ae. Result: 1
+2025-06-05 07:06:23,688 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 148, Size: 264 bytes.
+2025-06-05 07:06:23,853 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5785s (FPS: 12.67).
+2025-06-05 07:06:24,045 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:98d476c1-7e58-4d24-b5a5-a2e1555a2e75, Size: 32257113 bytes
+2025-06-05 07:06:24,066 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:98d476c1-7e58-4d24-b5a5-a2e1555a2e75. Result: 1
+2025-06-05 07:06:25,486 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 149, Size: 265 bytes.
+2025-06-05 07:06:25,637 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5692s (FPS: 12.75).
+2025-06-05 07:06:25,748 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1646a325-26a6-4f4c-98fc-6a376fdc00b1, Size: 32257113 bytes
+2025-06-05 07:06:25,771 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1646a325-26a6-4f4c-98fc-6a376fdc00b1. Result: 1
+2025-06-05 07:06:27,301 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 150, Size: 261 bytes.
+2025-06-05 07:06:27,397 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6251s (FPS: 12.31).
+2025-06-05 07:06:27,560 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:c5c701e9-e8cd-4ee2-a7ca-a2da66e746fb, Size: 32257113 bytes
+2025-06-05 07:06:27,640 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:c5c701e9-e8cd-4ee2-a7ca-a2da66e746fb. Result: 1
+2025-06-05 07:06:29,127 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 151, Size: 264 bytes.
+2025-06-05 07:06:29,142 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5010s (FPS: 13.32).
+2025-06-05 07:06:29,142 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3000 frames in 233.3159s (Avg FPS: 12.86).
+2025-06-05 07:06:29,452 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:5fc9a1e5-c02a-4756-8592-236f89690703, Size: 32257113 bytes
+2025-06-05 07:06:29,503 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:5fc9a1e5-c02a-4756-8592-236f89690703. Result: 1
+2025-06-05 07:06:30,985 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 152, Size: 265 bytes.
+2025-06-05 07:06:31,101 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5938s (FPS: 12.55).
+2025-06-05 07:06:31,254 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:7fdc473d-4b34-48b8-bf29-f23d386bcd8b, Size: 32257113 bytes
+2025-06-05 07:06:31,316 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:7fdc473d-4b34-48b8-bf29-f23d386bcd8b. Result: 1
+2025-06-05 07:06:32,576 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 153, Size: 264 bytes.
+2025-06-05 07:06:32,869 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:fa97c47b-5c93-44ca-a606-50cf97ba71ab, Size: 32257113 bytes
+2025-06-05 07:06:32,961 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6394s (FPS: 12.20).
+2025-06-05 07:06:32,964 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:fa97c47b-5c93-44ca-a606-50cf97ba71ab. Result: 1
+2025-06-05 07:06:34,440 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 154, Size: 265 bytes.
+2025-06-05 07:06:34,634 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6693s (FPS: 11.98).
+2025-06-05 07:06:34,750 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:475d54ce-91af-4790-b61b-b5187a466662, Size: 32257113 bytes
+2025-06-05 07:06:34,779 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:475d54ce-91af-4790-b61b-b5187a466662. Result: 1
+2025-06-05 07:06:36,291 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 155, Size: 265 bytes.
+2025-06-05 07:06:36,433 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6526s (FPS: 12.10).
+2025-06-05 07:06:36,549 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8997b647-cc2a-4352-8e75-1536a1ad66e4, Size: 32257113 bytes
+2025-06-05 07:06:36,573 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8997b647-cc2a-4352-8e75-1536a1ad66e4. Result: 1
+2025-06-05 07:06:38,146 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5677s (FPS: 12.76).
+2025-06-05 07:06:38,183 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 156, Size: 264 bytes.
+2025-06-05 07:06:38,367 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:a75fd747-b4ba-4983-9011-b427bbee60d7, Size: 32257113 bytes
+2025-06-05 07:06:38,445 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:a75fd747-b4ba-4983-9011-b427bbee60d7. Result: 1
+2025-06-05 07:06:39,968 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 157, Size: 263 bytes.
+2025-06-05 07:06:40,037 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5912s (FPS: 12.57).
+2025-06-05 07:06:40,038 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3120 frames in 243.0298s (Avg FPS: 12.84).
+2025-06-05 07:06:40,239 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:99b5ea6f-b143-4178-b624-9a5d1c245e85, Size: 32257113 bytes
+2025-06-05 07:06:40,263 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:99b5ea6f-b143-4178-b624-9a5d1c245e85. Result: 1
+2025-06-05 07:06:41,844 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5799s (FPS: 12.66).
+2025-06-05 07:06:41,904 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 158, Size: 261 bytes.
+2025-06-05 07:06:42,067 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:7859b168-816f-47be-8b5e-ab5e1577fe57, Size: 32257113 bytes
+2025-06-05 07:06:42,127 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:7859b168-816f-47be-8b5e-ab5e1577fe57. Result: 1
+2025-06-05 07:06:43,676 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5491s (FPS: 12.91).
+2025-06-05 07:06:43,694 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 159, Size: 264 bytes.
+2025-06-05 07:06:43,953 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:30831ff0-a8af-4c2c-922b-a02929dc959d, Size: 32257113 bytes
+2025-06-05 07:06:44,009 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:30831ff0-a8af-4c2c-922b-a02929dc959d. Result: 1
+2025-06-05 07:06:45,359 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 160, Size: 263 bytes.
+2025-06-05 07:06:45,561 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:569ba559-57a0-4743-8522-a81072395fec, Size: 32257113 bytes
+2025-06-05 07:06:45,645 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6347s (FPS: 12.23).
+2025-06-05 07:06:45,652 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:569ba559-57a0-4743-8522-a81072395fec. Result: 1
+2025-06-05 07:06:48,940 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 3.2863s (FPS: 6.09).
+2025-06-05 07:06:48,994 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 161, Size: 264 bytes.
+2025-06-05 07:06:49,253 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:fe31b005-48dc-4603-8bf1-bd78cf577adf, Size: 32257113 bytes
+2025-06-05 07:06:49,291 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:fe31b005-48dc-4603-8bf1-bd78cf577adf. Result: 1
+2025-06-05 07:06:51,932 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 162, Size: 265 bytes.
+2025-06-05 07:06:52,256 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 2.9620s (FPS: 6.75).
+2025-06-05 07:06:52,258 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3220 frames in 254.0418s (Avg FPS: 12.68).
+2025-06-05 07:06:52,662 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:253007a5-e6de-4b5b-be89-540ad298f1b5, Size: 32257113 bytes
+2025-06-05 07:06:52,724 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:253007a5-e6de-4b5b-be89-540ad298f1b5. Result: 1
+2025-06-05 07:06:54,187 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 163, Size: 262 bytes.
+2025-06-05 07:06:54,204 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4772s (FPS: 13.54).
+2025-06-05 07:06:54,382 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:8925456f-22d8-4b41-9ccc-394f4aea0359, Size: 32257113 bytes
+2025-06-05 07:06:54,448 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:8925456f-22d8-4b41-9ccc-394f4aea0359. Result: 1
+2025-06-05 07:06:55,812 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 164, Size: 264 bytes.
+2025-06-05 07:06:55,956 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5073s (FPS: 13.27).
+2025-06-05 07:06:56,054 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:90498a5b-0863-4b9b-803a-ab46708884a6, Size: 32257113 bytes
+2025-06-05 07:06:56,102 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:90498a5b-0863-4b9b-803a-ab46708884a6. Result: 1
+2025-06-05 07:06:57,549 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 165, Size: 265 bytes.
+2025-06-05 07:06:57,625 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5222s (FPS: 13.14).
+2025-06-05 07:06:57,761 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:0ff71867-845b-4428-975f-f0f4825f3be2, Size: 32257113 bytes
+2025-06-05 07:06:57,835 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:0ff71867-845b-4428-975f-f0f4825f3be2. Result: 1
+2025-06-05 07:06:59,316 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 166, Size: 264 bytes.
+2025-06-05 07:06:59,341 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5036s (FPS: 13.30).
+2025-06-05 07:06:59,555 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:fabc1a92-d71e-49a4-8bfb-73ead98bd261, Size: 32257113 bytes
+2025-06-05 07:06:59,611 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:fabc1a92-d71e-49a4-8bfb-73ead98bd261. Result: 1
+2025-06-05 07:07:01,028 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 167, Size: 264 bytes.
+2025-06-05 07:07:01,192 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5800s (FPS: 12.66).
+2025-06-05 07:07:01,258 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:e35f671c-975a-43f7-8c47-651608adc343, Size: 32257113 bytes
+2025-06-05 07:07:01,298 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:e35f671c-975a-43f7-8c47-651608adc343. Result: 1
+2025-06-05 07:07:02,730 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 168, Size: 264 bytes.
+2025-06-05 07:07:02,834 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5344s (FPS: 13.03).
+2025-06-05 07:07:02,834 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3340 frames in 263.1665s (Avg FPS: 12.69).
+2025-06-05 07:07:02,962 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3f462631-05c7-43e4-839f-b632ef2edf8c, Size: 32257113 bytes
+2025-06-05 07:07:03,034 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3f462631-05c7-43e4-839f-b632ef2edf8c. Result: 1
+2025-06-05 07:07:04,502 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 169, Size: 263 bytes.
+2025-06-05 07:07:04,515 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4799s (FPS: 13.51).
+2025-06-05 07:07:04,665 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:fa1949d9-36d0-4c69-9c58-deeab4177a5e, Size: 32257113 bytes
+2025-06-05 07:07:04,745 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:fa1949d9-36d0-4c69-9c58-deeab4177a5e. Result: 1
+2025-06-05 07:07:06,229 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4805s (FPS: 13.51).
+2025-06-05 07:07:06,280 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 170, Size: 262 bytes.
+2025-06-05 07:07:06,466 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:aad227e6-b654-4a1e-9598-492f4d35c7bd, Size: 32257113 bytes
+2025-06-05 07:07:06,529 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:aad227e6-b654-4a1e-9598-492f4d35c7bd. Result: 1
+2025-06-05 07:07:08,432 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.9012s (FPS: 10.52).
+2025-06-05 07:07:08,800 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 171, Size: 264 bytes.
+2025-06-05 07:07:09,147 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3647a638-2feb-4808-a34a-f39f19dcca00, Size: 32257113 bytes
+2025-06-05 07:07:09,174 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3647a638-2feb-4808-a34a-f39f19dcca00. Result: 1
+2025-06-05 07:07:10,610 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 172, Size: 265 bytes.
+2025-06-05 07:07:10,691 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5147s (FPS: 13.20).
+2025-06-05 07:07:10,853 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1e82a9cd-a850-440d-8cad-aa4309060889, Size: 32257113 bytes
+2025-06-05 07:07:10,906 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1e82a9cd-a850-440d-8cad-aa4309060889. Result: 1
+2025-06-05 07:07:12,376 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 173, Size: 265 bytes.
+2025-06-05 07:07:12,394 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4833s (FPS: 13.48).
+2025-06-05 07:07:12,556 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:79fa5597-36ff-49d6-a4e3-4f519dee66e8, Size: 32257113 bytes
+2025-06-05 07:07:12,620 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:79fa5597-36ff-49d6-a4e3-4f519dee66e8. Result: 1
+2025-06-05 07:07:14,099 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4748s (FPS: 13.56).
+2025-06-05 07:07:14,099 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3460 frames in 272.5010s (Avg FPS: 12.70).
+2025-06-05 07:07:14,170 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 174, Size: 261 bytes.
+2025-06-05 07:07:14,353 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:2fdb2658-00b7-40ee-9b52-389f79b89a76, Size: 32257113 bytes
+2025-06-05 07:07:14,400 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:2fdb2658-00b7-40ee-9b52-389f79b89a76. Result: 1
+2025-06-05 07:07:15,908 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 175, Size: 265 bytes.
+2025-06-05 07:07:15,973 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5714s (FPS: 12.73).
+2025-06-05 07:07:16,075 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:bb6e326d-f4a5-4fd6-94af-6bd93b64532c, Size: 32257113 bytes
+2025-06-05 07:07:16,151 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:bb6e326d-f4a5-4fd6-94af-6bd93b64532c. Result: 1
+2025-06-05 07:07:18,505 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 2.3538s (FPS: 8.50).
+2025-06-05 07:07:18,663 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 176, Size: 263 bytes.
+2025-06-05 07:07:18,800 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:2a709103-ff0d-4ab4-8d83-4dba24e730f3, Size: 32257113 bytes
+2025-06-05 07:07:18,834 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:2a709103-ff0d-4ab4-8d83-4dba24e730f3. Result: 1
+2025-06-05 07:07:21,226 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 2.3911s (FPS: 8.36).
+2025-06-05 07:07:21,293 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 177, Size: 260 bytes.
+2025-06-05 07:07:21,482 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:3edb9d38-f5c4-4ac3-bef8-efb6276253d0, Size: 32257113 bytes
+2025-06-05 07:07:21,590 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:3edb9d38-f5c4-4ac3-bef8-efb6276253d0. Result: 1
+2025-06-05 07:07:23,067 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 178, Size: 261 bytes.
+2025-06-05 07:07:23,119 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5269s (FPS: 13.10).
+2025-06-05 07:07:23,235 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:7110d133-a760-4eb1-b8d9-840dd015a957, Size: 32257113 bytes
+2025-06-05 07:07:23,292 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:7110d133-a760-4eb1-b8d9-840dd015a957. Result: 1
+2025-06-05 07:07:24,871 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5755s (FPS: 12.69).
+2025-06-05 07:07:24,871 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3560 frames in 281.9197s (Avg FPS: 12.63).
+2025-06-05 07:07:24,894 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 179, Size: 265 bytes.
+2025-06-05 07:07:25,057 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:e49826c9-fa76-4acf-b961-94d76aba21a8, Size: 32257113 bytes
+2025-06-05 07:07:25,291 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:e49826c9-fa76-4acf-b961-94d76aba21a8. Result: 1
+2025-06-05 07:07:26,698 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 180, Size: 263 bytes.
+2025-06-05 07:07:26,887 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5924s (FPS: 12.56).
+2025-06-05 07:07:26,948 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:24f66421-4388-4567-b434-d54d23ed05ac, Size: 32257113 bytes
+2025-06-05 07:07:26,981 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:24f66421-4388-4567-b434-d54d23ed05ac. Result: 1
+2025-06-05 07:07:28,687 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6990s (FPS: 11.77).
+2025-06-05 07:07:29,517 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 181, Size: 263 bytes.
+2025-06-05 07:07:29,833 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:777a48d1-168d-4a86-8539-fe5577ce3008, Size: 32257113 bytes
+2025-06-05 07:07:29,905 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:777a48d1-168d-4a86-8539-fe5577ce3008. Result: 1
+2025-06-05 07:07:31,250 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 182, Size: 265 bytes.
+2025-06-05 07:07:31,372 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4600s (FPS: 13.70).
+2025-06-05 07:07:31,446 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:33dd72be-41b5-47ad-82ec-55cd04e37d4e, Size: 32257113 bytes
+2025-06-05 07:07:31,610 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:33dd72be-41b5-47ad-82ec-55cd04e37d4e. Result: 1
+2025-06-05 07:07:33,045 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 183, Size: 265 bytes.
+2025-06-05 07:07:33,088 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4698s (FPS: 13.61).
+2025-06-05 07:07:33,256 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:bf3f33c7-d627-48f9-a960-f80786086253, Size: 32257113 bytes
+2025-06-05 07:07:33,497 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:bf3f33c7-d627-48f9-a960-f80786086253. Result: 1
+2025-06-05 07:07:34,847 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 184, Size: 263 bytes.
+2025-06-05 07:07:34,997 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4951s (FPS: 13.38).
+2025-06-05 07:07:34,997 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3660 frames in 289.6361s (Avg FPS: 12.64).
+2025-06-05 07:07:35,230 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1c13df71-b84d-4a0d-9397-011349f3d4da, Size: 32257113 bytes
+2025-06-05 07:07:35,295 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1c13df71-b84d-4a0d-9397-011349f3d4da. Result: 1
+2025-06-05 07:07:36,584 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 185, Size: 264 bytes.
+2025-06-05 07:07:36,867 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:9c46a031-2529-4748-80e5-c043af3b3c46, Size: 32257113 bytes
+2025-06-05 07:07:36,954 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6563s (FPS: 12.07).
+2025-06-05 07:07:37,016 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:9c46a031-2529-4748-80e5-c043af3b3c46. Result: 1
+2025-06-05 07:07:38,332 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 186, Size: 263 bytes.
+2025-06-05 07:07:38,431 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4134s (FPS: 14.15).
+2025-06-05 07:07:38,538 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:578651be-4587-4be9-ae1a-5995eb9ca188, Size: 32257113 bytes
+2025-06-05 07:07:38,589 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:578651be-4587-4be9-ae1a-5995eb9ca188. Result: 1
+2025-06-05 07:07:40,105 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 187, Size: 264 bytes.
+2025-06-05 07:07:40,172 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5710s (FPS: 12.73).
+2025-06-05 07:07:40,253 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:0d25088b-0c5c-45b0-b57c-982821a1dcc5, Size: 32257113 bytes
+2025-06-05 07:07:40,471 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:0d25088b-0c5c-45b0-b57c-982821a1dcc5. Result: 1
+2025-06-05 07:07:43,389 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 2.9136s (FPS: 6.86).
+2025-06-05 07:07:43,438 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 188, Size: 264 bytes.
+2025-06-05 07:07:44,958 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:bf278df0-aca7-4e81-83a7-9efb3c54f27c, Size: 32257113 bytes
+2025-06-05 07:07:45,123 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:bf278df0-aca7-4e81-83a7-9efb3c54f27c. Result: 1
+2025-06-05 07:07:48,005 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 189, Size: 264 bytes.
+2025-06-05 07:07:48,089 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 2.9637s (FPS: 6.75).
+2025-06-05 07:07:48,089 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3760 frames in 300.1542s (Avg FPS: 12.53).
+2025-06-05 07:07:48,206 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:69f12aa7-990e-48e2-b5e6-c7a993ccfeb5, Size: 32257113 bytes
+2025-06-05 07:07:48,278 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:69f12aa7-990e-48e2-b5e6-c7a993ccfeb5. Result: 1
+2025-06-05 07:07:49,670 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 190, Size: 264 bytes.
+2025-06-05 07:07:49,776 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4909s (FPS: 13.41).
+2025-06-05 07:07:49,854 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:09ab70c3-79ec-4747-b40d-7b0b2dc269c4, Size: 32257113 bytes
+2025-06-05 07:07:49,990 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:09ab70c3-79ec-4747-b40d-7b0b2dc269c4. Result: 1
+2025-06-05 07:07:51,431 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 191, Size: 262 bytes.
+2025-06-05 07:07:51,551 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5583s (FPS: 12.83).
+2025-06-05 07:07:51,658 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:4f6edb34-3afc-4695-ab4b-6dc2dfcedb74, Size: 32257113 bytes
+2025-06-05 07:07:51,873 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:4f6edb34-3afc-4695-ab4b-6dc2dfcedb74. Result: 1
+2025-06-05 07:07:53,196 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 192, Size: 264 bytes.
+2025-06-05 07:07:53,326 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4513s (FPS: 13.78).
+2025-06-05 07:07:53,563 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:277beac7-f77b-430b-85a5-720ac1d660a9, Size: 32257113 bytes
+2025-06-05 07:07:53,646 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:277beac7-f77b-430b-85a5-720ac1d660a9. Result: 1
+2025-06-05 07:07:54,990 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 193, Size: 265 bytes.
+2025-06-05 07:07:55,235 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5874s (FPS: 12.60).
+2025-06-05 07:07:55,336 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:1e042fd0-1aa7-4f3e-badc-164aa9decfa9, Size: 32257113 bytes
+2025-06-05 07:07:55,404 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:1e042fd0-1aa7-4f3e-badc-164aa9decfa9. Result: 1
+2025-06-05 07:07:56,608 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 194, Size: 263 bytes.
+2025-06-05 07:07:56,840 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f000276b-a819-4887-8caa-da21792be5a9, Size: 32257113 bytes
+2025-06-05 07:07:56,920 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f000276b-a819-4887-8caa-da21792be5a9. Result: 1
+2025-06-05 07:07:56,925 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5156s (FPS: 13.20).
+2025-06-05 07:07:58,430 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 195, Size: 264 bytes.
+2025-06-05 07:07:58,472 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.5463s (FPS: 12.93).
+2025-06-05 07:07:58,472 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 3880 frames in 309.3040s (Avg FPS: 12.54).
+2025-06-05 07:07:58,658 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:7b55140c-4311-4160-a3b6-9fa0feb7a454, Size: 32257113 bytes
+2025-06-05 07:07:58,807 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:7b55140c-4311-4160-a3b6-9fa0feb7a454. Result: 1
+2025-06-05 07:08:00,226 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 196, Size: 265 bytes.
+2025-06-05 07:08:00,229 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4194s (FPS: 14.09).
+2025-06-05 07:08:00,453 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:9fb727cc-6f1c-402e-8a46-4d0a9bda59cc, Size: 32257113 bytes
+2025-06-05 07:08:00,501 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:9fb727cc-6f1c-402e-8a46-4d0a9bda59cc. Result: 1
+2025-06-05 07:08:01,950 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4429s (FPS: 13.86).
+2025-06-05 07:08:02,071 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 197, Size: 263 bytes.
+2025-06-05 07:08:02,257 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:0f2e8278-0fc6-4f6c-8ccc-f6b746dae1f0, Size: 32257113 bytes
+2025-06-05 07:08:02,509 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:0f2e8278-0fc6-4f6c-8ccc-f6b746dae1f0. Result: 1
+2025-06-05 07:08:03,773 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 198, Size: 264 bytes.
+2025-06-05 07:08:03,963 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:601fc605-d5c2-4ace-9fbc-75524ed1844b, Size: 32257113 bytes
+2025-06-05 07:08:04,124 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:601fc605-d5c2-4ace-9fbc-75524ed1844b. Result: 1
+2025-06-05 07:08:04,158 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.6422s (FPS: 12.18).
+2025-06-05 07:08:05,550 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 199, Size: 262 bytes.
+2025-06-05 07:08:05,628 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4703s (FPS: 13.60).
+2025-06-05 07:08:05,753 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:f677bab3-711b-43e7-b4df-1f0cb6c6c484, Size: 32257113 bytes
+2025-06-05 07:08:05,912 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:f677bab3-711b-43e7-b4df-1f0cb6c6c484. Result: 1
+2025-06-05 07:08:07,273 - my_logger - INFO - [IOThread-L2] Callback: Received message. Delivery Tag: 200, Size: 264 bytes.
+2025-06-05 07:08:07,337 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4227s (FPS: 14.06).
+2025-06-05 07:08:07,465 - my_logger - INFO - [RedisManager] Retrieved raw bytes from Redis for key: data_chunk:db29ee31-8b38-4744-afac-6950f61b8186, Size: 32257113 bytes
+2025-06-05 07:08:07,718 - my_logger - INFO - [RedisManager] Deleted data from Redis for key: data_chunk:db29ee31-8b38-4744-afac-6950f61b8186. Result: 1
+2025-06-05 07:08:07,917 - my_logger - WARNING - [RpcClient L2] Received STOP command from server. Reason: Server-initiated shutdown (timer or explicit command).
+2025-06-05 07:08:07,921 - my_logger - INFO - [IOThread-L2] Checkpoint 9: Exited main event loop (stop_evt is True).
+2025-06-05 07:08:07,922 - my_logger - INFO - [IOThread-L2] Checkpoint 10: Entering finally block for cleanup.
+2025-06-05 07:08:07,923 - my_logger - INFO - [IOThread-L2] Attempting to cancel consumer (tag: ctag1.1c915d019b844ccc8c4b4a9f5cd7f576).
+2025-06-05 07:08:07,928 - my_logger - INFO - [IOThread-L2] Consumer cancelled.
+2025-06-05 07:08:07,930 - my_logger - INFO - [IOThread-L2] Checkpoint 11: Run method finished execution.
+2025-06-05 07:08:08,320 - my_logger - INFO - Waiting for threads to join...
+2025-06-05 07:08:09,173 - my_logger - INFO - [InferenceThread L2] Batch of features (L-Last): 20 frames processed in 1.4540s (FPS: 13.75).
+2025-06-05 07:08:09,173 - my_logger - INFO - [InferenceThread L2] CUMULATIVE: 4000 frames in 318.1556s (Avg FPS: 12.57).
+2025-06-05 07:08:09,173 - my_logger - INFO - [InferenceThread L2] L-Last: Feature processing finished. OVERALL: 4000 frames in 318.1556s (Avg FPS: 12.57).
+2025-06-05 07:08:09,176 - my_logger - INFO - All threads joined. Overall active time: 367.4337s
+2025-06-05 07:08:09,176 - my_logger - INFO - [RpcClient L2] Closing RabbitMQ connection.
+2025-06-05 07:08:09,186 - my_logger - INFO - Client 0eaec8db-fc4b-44d0-b4d7-6c78093f435f (Layer 2) finished execution sequence.

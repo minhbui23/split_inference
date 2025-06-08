@@ -139,8 +139,8 @@ if __name__ == "__main__":
                     io_worker_class = LastLayerIOWorker
                     inference_worker_class = LastLayerWorker
                     # Khởi tạo metrics logger chỉ cho layer cuối
-                    metrics_fields = ['batch_id', 't1', 't2', 'q1', 't3', 'q2', 't4', 't5']
-                    metrics_log_name = f'metrics_L{layer_id_arg}.csv'
+                    metrics_fields = ['timestamp', 'batch_id', 't1', 't2', 'q1', 't3', 'q2', 't4', 't5']
+                    metrics_log_name = f'metrics_{client_uuid}_L{layer_id_arg}.csv'
                     metrics_log_full_path = os.path.join(log_dir_from_config, metrics_log_name)
                     metrics_logger = MetricsLogger(metrics_log_full_path, metrics_fields)
 

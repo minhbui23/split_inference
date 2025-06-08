@@ -81,12 +81,30 @@ services:
       - ../../videos/video.mp4:/app/video.mp4 
     networks:
       - si_network
-    command: ["sh", "-c", "sleep 15 && python client.py --layer_id 1 --device cpu --config /app/configs/config.yaml"] 
+    command: ["sh", "-c", "sleep 10 && python client.py --layer_id 1 --device cpu --config /app/configs/config.yaml"] 
     deploy:
       resources:
         limits:
-          cpus: "4"
-          memory: "4GB"
+          cpus: "6"
+          memory: "6GB"
+
+  # client12: # Client Edge
+  #   image: minhbui1/client-infer:v2.0
+  #   container_name: client12
+  #   depends_on:
+  #    - server
+  #   volumes:
+  #     - ../../configs/config.yaml:/app/configs/config.yaml  
+  #     - ../../logs:/app/logs
+  #     - ../../videos/video.mp4:/app/video.mp4 
+  #   networks:
+  #     - si_network
+  #   command: ["sh", "-c", "sleep 200 && python client.py --layer_id 1 --device cpu --config /app/configs/config.yaml"] 
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "6"
+  #         memory: "6GB"
 
   client21: # Client Cloud
     image: minhbui1/client-infer:v2.0
@@ -102,19 +120,36 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "4"
-          memory: "4GB"
+          cpus: "6"
+          memory: "6GB"
+
+  # client22: # Client Cloud
+  #   image: minhbui1/client-infer:v2.0
+  #   container_name: client22
+  #   depends_on:
+  #     - server
+  #   volumes:
+  #     - ../../configs/config.yaml:/app/configs/config.yaml  
+  #     - ../../logs:/app/logs
+  #   networks:
+  #     - si_network
+  #   command: ["sh", "-c", "sleep 230 && python client.py --layer_id 2 --device cpu --config /app/configs/config.yaml"]
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "3"
+  #         memory: "4GB"
 
   # =====  PUMBA CONTAINER =====
-  pumba:
+  pumba11:
     image: gaiaadm/pumba:latest
-    container_name: pumba
+    container_name: pumba11
 
     command: [
       "netem",
       "--duration", "1h",  
-      "delay", "--time", "7", 
-      "--jitter", "1",       
+      "delay", "--time", "5", 
+      "--jitter", "2",       
       "loss", "--percent", "0.1", 
       "rate", "--rate", "500mbit",
       "client11"          
@@ -131,8 +166,58 @@ services:
         limits:
           cpus: "0.2"
           memory: "128MB"
+
+  # pumba12:
+  #   image: gaiaadm/pumba:latest
+  #   container_name: pumba12
+
+  #   command: [
+  #     "netem",
+  #     "--duration", "1h",  
+  #     "delay", "--time", "5", 
+  #     "--jitter", "2",       
+  #     "loss", "--percent", "0.1", 
+  #     "rate", "--rate", "500mbit",
+  #     "client12"          
+  #   ]
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock 
+  #   networks:
+  #     - si_network 
+  #   depends_on:
+  #     client12: 
+  #       condition: service_started 
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.2"
+  #         memory: "128MB"
   # ==============================
 
+  metrics-collector:
+    image: minhbui1/metric-collector
+    container_name: metrics_collector
+    depends_on:
+      - rabbitmq 
+    volumes:
+      - ../../result:/collector/output 
+    environment:
+      RABBITMQ_MONITOR_HOST: rabbitmq 
+      RABBITMQ_MONITOR_PORT: 15672
+      RABBITMQ_MONITOR_USER: admin  
+      RABBITMQ_MONITOR_PASS: admin  
+      RABBITMQ_MONITOR_VHOST_ENCODED: '%2F' 
+      METRICS_CSV_FILENAME: /collector/output/rabbitmq_queue_stats.csv 
+      METRICS_POLL_INTERVAL: 5
+    networks:
+      - si_network 
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "128MB"
+
+  
 volumes:
   rabbitmq_data:
   redis_data:

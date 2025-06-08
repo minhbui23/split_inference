@@ -1,0 +1,20 @@
+2025-06-05 06:34:28,629 - my_logger - INFO - Server initialized, waiting for 2 clients.
+2025-06-05 06:34:28,649 - my_logger - INFO - Model 'yolov8n' loaded and encoded.
+2025-06-05 06:34:28,650 - my_logger - INFO - Starting server's RPC consumer...
+2025-06-05 06:34:40,407 - my_logger - INFO - Received action 'REGISTER' from client 37b16936-ca44-4989-a4dd-91e1e144e556 (Layer 2)
+2025-06-05 06:34:40,407 - my_logger - INFO - Client 37b16936-ca44-4989-a4dd-91e1e144e556 (Layer 2) registered. Total: 1/2
+2025-06-05 06:34:41,972 - my_logger - INFO - Received action 'REGISTER' from client 801fec96-5bb6-4a57-9a34-e106806d0f58 (Layer 1)
+2025-06-05 06:34:41,972 - my_logger - INFO - Client 801fec96-5bb6-4a57-9a34-e106806d0f58 (Layer 1) registered. Total: 2/2
+2025-06-05 06:34:41,972 - my_logger - INFO - All clients registered. Notifying all.
+2025-06-05 06:34:41,987 - my_logger - INFO - Sent RPC reply to 'amq.gen-j3Op3rZPRg5qc_jk4ERu9w' (CorrID: 85179400-2d7e-4c3e-90e2-3072a5675171)
+2025-06-05 06:34:41,987 - my_logger - INFO - Sent START signal to client 37b16936-ca44-4989-a4dd-91e1e144e556
+2025-06-05 06:34:41,998 - my_logger - INFO - Sent RPC reply to 'amq.gen-89FBKq400IlsQTxQ44CL7w' (CorrID: b4a47cb7-c45f-4397-93cf-f471489dcbed)
+2025-06-05 06:34:41,998 - my_logger - INFO - Sent START signal to client 801fec96-5bb6-4a57-9a34-e106806d0f58
+2025-06-05 06:44:28,891 - my_logger - INFO - Run duration of 600 seconds reached.
+2025-06-05 06:44:28,892 - my_logger - INFO - Initiating STOP signal for all registered clients...
+2025-06-05 06:44:28,893 - my_logger - INFO - Sent STOP signal to client 37b16936-ca44-4989-a4dd-91e1e144e556 on queue amq.gen-j3Op3rZPRg5qc_jk4ERu9w
+2025-06-05 06:44:28,893 - my_logger - INFO - Sent STOP signal to client 801fec96-5bb6-4a57-9a34-e106806d0f58 on queue amq.gen-89FBKq400IlsQTxQ44CL7w
+2025-06-05 06:44:28,893 - my_logger - INFO - All clients notified to STOP. Server will shut down soon.
+2025-06-05 06:44:28,893 - my_logger - INFO - Server_logic: Main loop ended. Cleaning up...
+2025-06-05 06:44:28,899 - my_logger - INFO - Server_logic: RabbitMQ connection closed.
+2025-06-05 06:44:28,899 - my_logger - INFO - Server_logic: Shutdown complete.

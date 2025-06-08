@@ -1,3 +1,4 @@
+import datetime
 import threading
 import torch
 import time
@@ -5,6 +6,7 @@ import queue
 import cv2
 import uuid
 from core.utils.fps_logger import FPSLogger
+from datetime import datetime
 
 class BaseInferenceWorker(threading.Thread):
     """Base class for inference processing threads.
@@ -138,6 +140,7 @@ class FirstLayerWorker(BaseInferenceWorker):
             self.fps_logger.end_batch_and_log_fps(batch_size)
             
             t1 = time.time() - t1_start
+            timestamp = datetime.now().isoformat()
 
             output["layers_output"] = [
                 t.cpu() if isinstance(t, torch.Tensor) else None
@@ -146,6 +149,7 @@ class FirstLayerWorker(BaseInferenceWorker):
             item = {
                 "payload": output,
                 "metrics": {
+                    "timestamp": timestamp,
                     "t1": t1,
                     "batch_id" : str(uuid.uuid4()),
                 },
@@ -219,8 +223,6 @@ class LastLayerWorker(BaseInferenceWorker):
 
         # Đo t5
         t5_start = time.time()
-        ack_status = "failure"
-        requeue = False
         self.fps_logger.start_batch_timing()
         try:
             payload["layers_output"] = [
@@ -228,7 +230,6 @@ class LastLayerWorker(BaseInferenceWorker):
                 for t in payload["layers_output"]
             ]
             self.model_obj.forward_tail(payload)
-            ack_status = "success"
         except Exception as e:
             self.logger.log_error(f"[{self.name}] Error with payload {delivery_tag}: {e}")
         finally:
