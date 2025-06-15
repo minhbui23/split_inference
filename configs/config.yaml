@@ -19,7 +19,7 @@ app:
 server:
   # Defines the model splitting point. Corresponds to pre-configured
   # splits in the server logic ('a', 'b', or 'c').
-  cut-layer: a
+  cut-layer: c
   # Defines the number of client instances per layer.
   # e.g., [1, 1] means 1 client for layer 1, and 1 client for layer 2.
   clients:
