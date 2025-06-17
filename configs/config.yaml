@@ -19,7 +19,7 @@ app:
 server:
   # Defines the model splitting point. Corresponds to pre-configured
   # splits in the server logic ('a', 'b', or 'c').
-  cut-layer: c
+  cut-layer: a
   # Defines the number of client instances per layer.
   # e.g., [1, 1] means 1 client for layer 1, and 1 client for layer 2.
   clients:
@@ -28,7 +28,7 @@ server:
   # Model file path
   model: yolov8n
   # Number of frames to process in a single batch.
-  batch-frame: 20
+  batch-frame: 5
   save-output: False
 
 # ===================================================================

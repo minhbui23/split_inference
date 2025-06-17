@@ -231,10 +231,12 @@ class LastLayerIOWorker(BaseIOWorker):
                 return
             self.logger.log_info(f"[{self.name}] Checkpoint 5: Queue '{source_queue_name}' declared and QOS set.")
 
+            # Callback function to handle incoming messages
             def _callback(ch, method, properties, body):
                 """Callback function invoked when a new message is received from RabbitMQ."""
                 self.logger.log_info(f"[{self.name}] Callback: Received message. Delivery Tag: {method.delivery_tag}, Size: {len(body)} bytes.")
                 
+                # For STOP signal handling
                 if self.stop_evt.is_set():
                     self.logger.log_info(f"[{self.name}] Callback: Stop event is set. Nacking message (tag: {method.delivery_tag}) to requeue.")
                     try:
@@ -243,6 +245,7 @@ class LastLayerIOWorker(BaseIOWorker):
                         self.logger.error(f"[{self.name}] Callback: Error nacking message during stop: {e_nack}")
                     return
                 
+                # For Processing the message
                 try:
 
                     metrics = json.loads(body.decode()) # Đây là metadata từ layer trước
@@ -277,16 +280,16 @@ class LastLayerIOWorker(BaseIOWorker):
                             "metrics": metrics, # Truyền metrics đã được cập nhật t3
                             "put_to_l2_input_q_timestamp": time.time()
                         }
-                        if not self.stop_evt.is_set():
+                        while not self.stop_evt.is_set():
                             try:
                                 self.input_q.put(item_for_inference, timeout=0.1) # Thêm timeout nhỏ
 
                                 metrics['q2'] = self.input_q.qsize() 
-
                                 ch.basic_ack(delivery_tag=method.delivery_tag) # Auto ack after get message
+                                return 
                             except queue.Full:
                                 self.logger.log_warning(f"[{self.name}] Callback: Input queue full. Nacking message (tag: {method.delivery_tag}) to requeue.")
-                                ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+                                time.sleep(1)
                         else:
                             self.logger.info(f"[{self.name}] Callback: Stop event set during put to input_q. Nacking message (tag: {method.delivery_tag}).")
                             ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
@@ -301,6 +304,7 @@ class LastLayerIOWorker(BaseIOWorker):
                     self.logger.log_error(f"[{self.name}] Callback: Unhandled error processing message (tag: {method.delivery_tag}). Error: {e_cb}")
                     ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False) # Requeue cho các lỗi khác
 
+            #Setting up the consumer
             try:
                 self.logger.log_info(f"[{self.name}] Checkpoint 6: Setting up consumer for queue '{source_queue_name}'.")
                 # auto_ack=False là mặc định và được khuyến khích để xử lý ack/nack thủ công
@@ -313,6 +317,7 @@ class LastLayerIOWorker(BaseIOWorker):
                 self.logger.log_error(f"[{self.name}] Checkpoint FAILED: basic_consume for queue '{source_queue_name}'. Error: {e_consume}")
                 self.stop_evt.set()
                 return
+            
             
             self.logger.log_info(f"[{self.name}] Checkpoint 7: Consumer started (tag: {self.consumer_tag}). Waiting for messages on '{source_queue_name}'.")
 

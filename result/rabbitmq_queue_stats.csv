@@ -1,2 +1,0 @@
-timestamp,queue_name,messages_ready,messages_unacknowledged,messages,publish_rate,deliver_get_rate,ack_rate,consumers,state
-2025-06-15T17:24:18.326459,intermediate_queue_2,0,0,0,0.0,0.0,0.0,0,running
