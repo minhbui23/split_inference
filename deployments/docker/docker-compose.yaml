@@ -41,7 +41,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: "5GB"
+          memory: "8GB"
     healthcheck: # Thêm healthcheck cho Redis
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -137,7 +137,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3"
+          cpus: "4"
           memory: "4GB"
 
   # =====  PUMBA CONTAINER =====

@@ -181,175 +181,190 @@ class MiddleLayerIOWorker(BaseIOWorker):
         self.stop_evt.set()
 
 class LastLayerIOWorker(BaseIOWorker):
-    """I/O thread for the last layer client.
-
-    Its primary task is to receive data from the previous layer via RabbitMQ,
-    fetch the payload using Redis (Claim Check pattern), and put it into the
-    `input_q` for the Inference thread.
     """
-    def run(self):
-        """Starts the consumer to listen for messages from RabbitMQ, with detailed checkpoints."""
-        self.logger.log_info(f"[{self.name}] Checkpoint 0: Run method started.")
-        try:
-            # ---- Giai đoạn Kết nối và Thiết lập ----
-            if not self._connect_rabbitmq(): 
-                self.logger.log_error(f"[{self.name}] Checkpoint FAILED at RabbitMQ connection. Exiting.")
-                self.stop_evt.set()
-                return
-            self.logger.log_info(f"[{self.name}] Checkpoint 1: RabbitMQ connected successfully.")
+    I/O thread for the final layer client. It consumes data from RabbitMQ,
+    retrieves payloads from Redis, and puts them into an internal queue for the
+    InferenceWorker. It implements a robust backpressure mechanism to handle
+    high loads gracefully.
+    """
 
+    def __init__(self, *args, **kwargs):
+        """Initializes the worker and backpressure state variables."""
+        super().__init__(*args, **kwargs)
+        self.is_consuming = False
+        self.backoff_attempt = 0
+        self.source_queue_name = f"intermediate_queue_{self.layer_id}"
+        
+        # Backpressure configuration constants
+        self.INITIAL_BACKOFF_SECONDS = 1.0
+        self.MAX_BACKOFF_SECONDS = 16.0
+        self.RESUME_CONSUMPTION_THRESHOLD = 0.25 # Resume when queue is 25% full or less
+
+    def _setup_consumer(self):
+        """Declares the queue, sets QOS, and starts the consumer."""
+        try:
+            self.logger.log_info(f"[{self.name}] Declaring queue '{self.source_queue_name}' and setting QOS.")
+            self.channel.queue_declare(queue=self.source_queue_name, durable=False)
+            self.channel.basic_qos(prefetch_count=self.prefetch_val)
+            self.consumer_tag = self.channel.basic_consume(
+                queue=self.source_queue_name,
+                on_message_callback=self._on_message_callback,
+                auto_ack=False
+            )
+            self.is_consuming = True
+            self.logger.log_info(f"[{self.name}] Consumer started (tag: {self.consumer_tag}). Waiting for messages.")
+            return True
+        except Exception as e:
+            self.logger.log_error(f"[{self.name}] Failed to set up consumer: {e}")
+            self.stop_evt.set()
+            return False
+
+    def _pause_consumer_due_to_backpressure(self, channel, delivery_tag):
+        """
+        Nacks the current message and pauses the consumer by cancelling it.
+        Schedules a check to resume consumption later.
+        """
+        # 1. Nack the message to return it to the queue
+        channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
+        
+        # 2. Pause consumption if it's currently active
+        if self.is_consuming:
+            try:
+                channel.basic_cancel(self.consumer_tag)
+                self.is_consuming = False
+                self.logger.log_info(f"[{self.name}] Consumer paused due to backpressure.")
+                
+                # 3. Schedule the first attempt to resume
+                self.backoff_attempt = 1
+                self.connection.call_later(self.INITIAL_BACKOFF_SECONDS, self._resume_consumption)
+            except Exception as e:
+                self.logger.log_error(f"[{self.name}] Failed to cancel consumer: {e}")
+                self.stop_evt.set() # Critical failure, stop the thread
+
+    def _resume_consumption(self):
+        """
+        Checks if the internal queue has capacity. If so, resumes consumption.
+        If not, schedules another check with exponential backoff.
+        """
+        if self.stop_evt.is_set() or not (self.connection and self.connection.is_open):
+            return
+
+        # Check if the queue has drained below the threshold
+        if self.input_q.qsize() < (self.input_q.maxsize * self.RESUME_CONSUMPTION_THRESHOLD):
+            self.logger.log_info(f"[{self.name}] Input queue has capacity. Resuming consumption.")
+            self.backoff_attempt = 0 # Reset backoff on success
+            if not self._setup_consumer():
+                self.logger.log_error(f"[{self.name}] Could not resume consumption. Stopping.")
+                self.stop_evt.set()
+        else:
+            # If queue is still full, schedule the next check with backoff
+            self.backoff_attempt += 1
+            wait_time = min(self.INITIAL_BACKOFF_SECONDS * (2 ** (self.backoff_attempt - 1)), self.MAX_BACKOFF_SECONDS)
+            
+            self.logger.log_info(f"[{self.name}] Input queue still full ({self.input_q.qsize()}). Will check again in {wait_time:.2f}s.")
+            self.connection.call_later(wait_time, self._resume_consumption)
+            
+    def _on_message_callback(self, channel, method, properties, body):
+        """
+        The main callback function for processing incoming messages from RabbitMQ.
+        This version includes detailed checkpoints and robust error handling.
+        ACK is performed immediately after successfully queueing the item for inference.
+        """
+
+        if self.stop_evt.is_set():
+            try:
+                channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+            except Exception as e_nack:
+                self.logger.log_error(f"[{self.name}] Callback: Error nacking message during stop: {e_nack}")
+            return
+
+        try:
+            metrics = json.loads(body.decode())
+            
+            l1_sent_time = metrics.get('l1_sent_timestamp')
+            if l1_sent_time:
+                metrics['t3'] = time.time() - l1_sent_time
+            
+            
+            actual_payload = self.data_transfer_handler.receive_data_from_metadata(
+                metrics, delete_after_retrieval=True
+            )
+
+            if actual_payload is None:
+                self.logger.log_error(f"[{self.name}] Failed to retrieve payload from Redis for key {metrics.get('redis_key')}. Discarding message (tag: {method.delivery_tag}).")
+                channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+                return
+
+            item_for_inference = {
+                "payload": actual_payload,
+                "delivery_tag": method.delivery_tag,
+                "metrics": metrics,
+                "put_to_l2_input_q_timestamp": time.time()
+            }
+            
+            try:
+                # Measure queue depth *before* putting the item in.
+                metrics['q2'] = self.input_q.qsize()
+
+                self.input_q.put_nowait(item_for_inference)
+                
+                channel.basic_ack(delivery_tag=method.delivery_tag)
+
+            except queue.Full:
+                # Backpressure: Internal queue is full. Trigger the pause mechanism.
+                self.logger.log_warning(f"[{self.name}] Input queue is full. Triggering backpressure mechanism for message (tag: {method.delivery_tag}).")
+                # This will nack(requeue=True) and pause the consumer.
+                self._pause_consumer_due_to_backpressure(channel, method.delivery_tag)
+        
+        except json.JSONDecodeError as e_json:
+            self.logger.log_error(f"[{self.name}] JSONDecodeError. Discarding malformed message (tag: {method.delivery_tag}).")
+            channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+        except Exception as e_unhandled:
+            # This block catches any other unexpected errors during the process.
+            # Adding exc_info=True will print the full traceback.
+            self.logger.log_error(f"[{self.name}] Unhandled error in callback. Discarding message (tag: {method.delivery_tag}). Error: {e_unhandled}")
+            try:
+                channel.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+            except Exception as e_final_nack:
+                self.logger.log_error(f"[{self.name}] Failed to even nack after unhandled error: {e_final_nack}")
+
+
+    def run(self):
+        """The main execution method for the thread."""
+        self.logger.log_info(f"[{self.name}] Starting.")
+        try:
+            # --- 1. Setup Phase ---
+            if not self._connect_rabbitmq(): return
             self._setup_redis()
             if not self.data_transfer_handler:
-                self.logger.log_error(f"[{self.name}] Checkpoint FAILED at Data Handler initialization. Exiting.")
-                self.stop_evt.set()
-                return
-            self.logger.log_info(f"[{self.name}] Checkpoint 2: Redis and Data Handler setup complete.")
-
-            source_queue_name = f"intermediate_queue_{self.layer_id}"
-
-            # ---- Giai đoạn Thiết lập Consumer RabbitMQ ----
-            try:
-                self.logger.log_info(f"[{self.name}] Checkpoint 3: Declaring queue '{source_queue_name}'.")
-                # Khai báo queue với các thuộc tính mong muốn, durable=False nghĩa là queue sẽ mất nếu broker restart
-                # exclusive=False (mặc định) nghĩa là nhiều connection có thể access
-                # auto_delete=False (mặc định) nghĩa là queue không tự xóa khi consumer cuối cùng disconnect
-                self.channel.queue_declare(queue=source_queue_name, durable=False) 
-                
-                self.logger.log_info(f"[{self.name}] Checkpoint 4: Setting QOS (prefetch_count={self.prefetch_val}).")
-                self.channel.basic_qos(prefetch_count=self.prefetch_val)
-            except pika.exceptions.ChannelClosedByBroker as e_ch_closed_broker:
-                self.logger.log_error(f"[{self.name}] Checkpoint FAILED: Channel closed by broker during queue_declare/qos for '{source_queue_name}'. Error: {e_ch_closed_broker}")
-                self.stop_evt.set()
-                return
-            except pika.exceptions.AMQPConnectionError as e_conn_amqp:
-                self.logger.log_error(f"[{self.name}] Checkpoint FAILED: AMQP Connection Error during queue_declare/qos for '{source_queue_name}'. Error: {e_conn_amqp}")
-                self.stop_evt.set()
-                return
-            except Exception as e_setup: # Bắt các lỗi khác
-                self.logger.log_error(f"[{self.name}] Checkpoint FAILED: Declare queue or set QOS for '{source_queue_name}'. Error: {e_setup}")
-                self.stop_evt.set()
-                return
-            self.logger.log_info(f"[{self.name}] Checkpoint 5: Queue '{source_queue_name}' declared and QOS set.")
-
-            # Callback function to handle incoming messages
-            def _callback(ch, method, properties, body):
-                """Callback function invoked when a new message is received from RabbitMQ."""
-                self.logger.log_info(f"[{self.name}] Callback: Received message. Delivery Tag: {method.delivery_tag}, Size: {len(body)} bytes.")
-                
-                # For STOP signal handling
-                if self.stop_evt.is_set():
-                    self.logger.log_info(f"[{self.name}] Callback: Stop event is set. Nacking message (tag: {method.delivery_tag}) to requeue.")
-                    try:
-                        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-                    except Exception as e_nack:
-                        self.logger.error(f"[{self.name}] Callback: Error nacking message during stop: {e_nack}")
-                    return
-                
-                # For Processing the message
-                try:
-
-                    metrics = json.loads(body.decode()) # Đây là metadata từ layer trước
-
-                    # Logic xử lý STOP message (nếu còn) nên được loại bỏ ở đây,
-                    # vì việc dừng giờ được quản lý bởi self.stop_evt chung.
-
-                    l1_sent_time = metrics.get('l1_sent_timestamp') # Hoặc key tương ứng
-                    if l1_sent_time:
-                        metrics['t3'] = time.time() - l1_sent_time
-
-
-                    redis_key = metrics.get("redis_key")
-                    if not redis_key:
-                        self.logger.log_warning(f"[{self.name}] Callback: No redis_key in message (tag: {method.delivery_tag}). Nacking, no requeue. Body: {body[:100]}")
-                        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-                        return
-
-                    if not self.data_transfer_handler:
-                        self.logger.log_error(f"[{self.name}] Callback: Data_transfer_handler is None. Cannot process message (tag: {method.delivery_tag}). Nacking, requeue.")
-                        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-                        return
-
-                    actual_payload = self.data_transfer_handler.receive_data_from_metadata(
-                        metrics, delete_after_retrieval=True
-                    )
-
-                    if actual_payload is not None: # Kiểm tra actual_payload có giá trị
-                        item_for_inference = {
-                            "payload": actual_payload,
-                            "delivery_tag": method.delivery_tag,
-                            "metrics": metrics, # Truyền metrics đã được cập nhật t3
-                            "put_to_l2_input_q_timestamp": time.time()
-                        }
-                        while not self.stop_evt.is_set():
-                            try:
-                                self.input_q.put(item_for_inference, timeout=0.1) # Thêm timeout nhỏ
-
-                                metrics['q2'] = self.input_q.qsize() 
-                                ch.basic_ack(delivery_tag=method.delivery_tag) # Auto ack after get message
-                                return 
-                            except queue.Full:
-                                self.logger.log_warning(f"[{self.name}] Callback: Input queue full. Nacking message (tag: {method.delivery_tag}) to requeue.")
-                                time.sleep(1)
-                        else:
-                            self.logger.info(f"[{self.name}] Callback: Stop event set during put to input_q. Nacking message (tag: {method.delivery_tag}).")
-                            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-                    else:
-                        self.logger.log_error(f"[{self.name}] Callback: Failed to retrieve data from Redis for key {redis_key} (tag: {method.delivery_tag}). Nacking, no requeue.")
-                        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-
-                except json.JSONDecodeError as e_json:
-                    self.logger.error(f"[{self.name}] Callback: JSONDecodeError for message (tag: {method.delivery_tag}). Body: {body[:200]}. Error: {e_json}")
-                    ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False) # Không requeue message JSON lỗi
-                except Exception as e_cb:
-                    self.logger.log_error(f"[{self.name}] Callback: Unhandled error processing message (tag: {method.delivery_tag}). Error: {e_cb}")
-                    ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False) # Requeue cho các lỗi khác
-
-            #Setting up the consumer
-            try:
-                self.logger.log_info(f"[{self.name}] Checkpoint 6: Setting up consumer for queue '{source_queue_name}'.")
-                # auto_ack=False là mặc định và được khuyến khích để xử lý ack/nack thủ công
-                self.consumer_tag = self.channel.basic_consume(
-                    queue=source_queue_name,
-                    on_message_callback=_callback,
-                    auto_ack=False # Quan trọng: Xử lý ACK/NACK thủ công trong callback
-                )
-            except Exception as e_consume:
-                self.logger.log_error(f"[{self.name}] Checkpoint FAILED: basic_consume for queue '{source_queue_name}'. Error: {e_consume}")
+                self.logger.log_error(f"[{self.name}] Data Handler failed initialization. Stopping.")
                 self.stop_evt.set()
                 return
             
+            # --- 2. Consumer Start ---
+            if not self._setup_consumer(): return
             
-            self.logger.log_info(f"[{self.name}] Checkpoint 7: Consumer started (tag: {self.consumer_tag}). Waiting for messages on '{source_queue_name}'.")
-
-
-            # ---- MAIN LOOP ----
-            self.logger.log_info(f"[{self.name}] Checkpoint 8: Entering main event loop.")
+            # --- 3. Main Event Loop ---
+            self.logger.log_info(f"[{self.name}] Entering main event loop.")
             while not self.stop_evt.is_set():
                 try:
-                    # self.logger.log_debug(f"[{self.name}] Checkpoint 8.1: Calling process_data_events.")
-                    self.connection.process_data_events(time_limit=self.process_events_timeout)
-                    # self.logger.log_debug(f"[{self.name}] Checkpoint 8.2: Returned from process_data_events.")
-                except pika.exceptions.StreamLostError as e_stream:
-                    self.logger.error(f"[{self.name}] RabbitMQ StreamLostError in event loop. Setting stop_evt. Error: {e_stream}")
-                    self.stop_evt.set() # Kích hoạt dừng
-                except pika.exceptions.AMQPConnectionError as e_conn_amqp: # Bắt lỗi kết nối cụ thể hơn
-                    self.logger.error(f"[{self.name}] RabbitMQ AMQPConnectionError in event loop. Setting stop_evt. Error: {e_conn_amqp}")
-                    self.stop_evt.set() # Kích hoạt dừng
-                except Exception as e_loop: # Bắt các lỗi không mong muốn khác
-                    if not self.stop_evt.is_set(): # Chỉ log nếu chưa bị dừng bởi nguyên nhân khác
-                        self.logger.log_error(f"[{self.name}] Unexpected error in event loop. Setting stop_evt. Error: {e_loop}")
-                    self.stop_evt.set() # Kích hoạt dừng
-            self.logger.log_info(f"[{self.name}] Checkpoint 9: Exited main event loop (stop_evt is {self.stop_evt.is_set()}).")
-
+                    # Process I/O events for a short duration. This allows Pika's
+                    # internal mechanisms, including timers (`call_later`), to run.
+                    self.connection.process_data_events(time_limit=1.0)
+                except (pika.exceptions.StreamLostError, pika.exceptions.AMQPConnectionError) as e:
+                    self.logger.log_error(f"[{self.name}] Connection lost in event loop: {e}. Stopping thread.")
+                    self.stop_evt.set() # Trigger a clean shutdown
+                except Exception as e:
+                    self.logger.log_error(f"[{self.name}] Unexpected error in event loop: {e}. Stopping thread.")
+                    self.stop_evt.set()
+        
         finally:
-            # ---- Giai đoạn Dọn dẹp ----
-            self.logger.log_info(f"[{self.name}] Checkpoint 10: Entering finally block for cleanup.")
-            if hasattr(self, 'consumer_tag') and self.consumer_tag and self.channel and self.channel.is_open:
+            # --- 4. Cleanup Phase ---
+            self.logger.log_info(f"[{self.name}] Exiting run loop. Cleaning up.")
+            if self.is_consuming and self.channel and self.channel.is_open:
                 try:
-                    self.logger.log_info(f"[{self.name}] Attempting to cancel consumer (tag: {self.consumer_tag}).")
                     self.channel.basic_cancel(self.consumer_tag)
-                    self.logger.log_info(f"[{self.name}] Consumer cancelled.")
-                except Exception as e_cancel:
-                    self.logger.error(f"[{self.name}] Error cancelling consumer: {e_cancel}")
-            
-            self.logger.log_info(f"[{self.name}] Checkpoint 11: Run method finished execution.")
+                    self.logger.log_info(f"[{self.name}] Consumer cancelled successfully during cleanup.")
+                except Exception as e:
+                    self.logger.error(f"[{self.name}] Error cancelling consumer during cleanup: {e}")
+            self.logger.log_info(f"[{self.name}] Run method finished.")
