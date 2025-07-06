@@ -1,32 +1,65 @@
-2025-06-17 16:21:48,226 - my_logger - INFO - Server initialized, waiting for 2 clients.
-2025-06-17 16:21:48,246 - my_logger - INFO - Model 'yolov8n' loaded and encoded.
-2025-06-17 16:21:48,246 - my_logger - INFO - Starting server's RPC consumer...
-2025-06-17 16:22:21,384 - my_logger - INFO - Received action 'REGISTER' from client 5da66ca6-14f3-4d00-9815-7b4c95de4b6c (Layer 1)
-2025-06-17 16:22:21,384 - my_logger - INFO - Client 5da66ca6-14f3-4d00-9815-7b4c95de4b6c (Layer 1) registered. Total: 1/2
-2025-06-17 16:22:23,179 - my_logger - INFO - Received action 'REGISTER' from client 7e366e7c-4f3f-4e84-a69e-2a8f7e81a6cb (Layer 2)
-2025-06-17 16:22:23,179 - my_logger - INFO - Client 7e366e7c-4f3f-4e84-a69e-2a8f7e81a6cb (Layer 2) registered. Total: 2/2
-2025-06-17 16:22:23,179 - my_logger - INFO - All clients registered. Notifying all.
-2025-06-17 16:22:23,193 - my_logger - INFO - Sent RPC reply to 'amq.gen-jXHYgw53kjTdeCAw5wsMtg' (CorrID: 89d3cf62-f38d-4a6e-b4f8-2f0c71bcc231)
-2025-06-17 16:22:23,193 - my_logger - INFO - Sent START signal to client 5da66ca6-14f3-4d00-9815-7b4c95de4b6c
-2025-06-17 16:22:23,203 - my_logger - INFO - Sent RPC reply to 'amq.gen-RHcIZy2DeQZ6XRy2qsSxgw' (CorrID: 250b0726-1984-4539-97bc-ff8413b56184)
-2025-06-17 16:22:23,204 - my_logger - INFO - Sent START signal to client 7e366e7c-4f3f-4e84-a69e-2a8f7e81a6cb
-2025-06-17 16:25:22,558 - my_logger - INFO - Received action 'REGISTER' from client af69fcfa-8069-4737-9125-39dd7cfa20b9 (Layer 1)
-2025-06-17 16:25:22,559 - my_logger - INFO - Client af69fcfa-8069-4737-9125-39dd7cfa20b9 (Layer 1) registered. Total: 3/2
-2025-06-17 16:25:22,559 - my_logger - INFO - Late client af69fcfa-8069-4737-9125-39dd7cfa20b9. Sending START.
-2025-06-17 16:25:22,580 - my_logger - INFO - Sent RPC reply to 'amq.gen-tf_d9T-F5IMUcNzAJ_Q82g' (CorrID: 3a2c9048-869d-4802-9e01-134b7a52b4c6)
-2025-06-17 16:25:22,580 - my_logger - INFO - Sent START signal to client af69fcfa-8069-4737-9125-39dd7cfa20b9
-2025-06-17 16:25:52,324 - my_logger - INFO - Received action 'REGISTER' from client 84dd8c73-552c-4050-8252-6d5c82bb5642 (Layer 2)
-2025-06-17 16:25:52,325 - my_logger - INFO - Client 84dd8c73-552c-4050-8252-6d5c82bb5642 (Layer 2) registered. Total: 4/2
-2025-06-17 16:25:52,325 - my_logger - INFO - Late client 84dd8c73-552c-4050-8252-6d5c82bb5642. Sending START.
-2025-06-17 16:25:52,358 - my_logger - INFO - Sent RPC reply to 'amq.gen-DlCYwhsdtmt5CGXLm52BVA' (CorrID: ebb1fdc7-8792-405d-9c42-b420f1332692)
-2025-06-17 16:25:52,359 - my_logger - INFO - Sent START signal to client 84dd8c73-552c-4050-8252-6d5c82bb5642
-2025-06-17 16:31:48,887 - my_logger - INFO - Run duration of 600 seconds reached.
-2025-06-17 16:31:48,888 - my_logger - INFO - Initiating STOP signal for all registered clients...
-2025-06-17 16:31:48,890 - my_logger - INFO - Sent STOP signal to client 5da66ca6-14f3-4d00-9815-7b4c95de4b6c on queue amq.gen-jXHYgw53kjTdeCAw5wsMtg
-2025-06-17 16:31:48,892 - my_logger - INFO - Sent STOP signal to client 7e366e7c-4f3f-4e84-a69e-2a8f7e81a6cb on queue amq.gen-RHcIZy2DeQZ6XRy2qsSxgw
-2025-06-17 16:31:48,893 - my_logger - INFO - Sent STOP signal to client af69fcfa-8069-4737-9125-39dd7cfa20b9 on queue amq.gen-tf_d9T-F5IMUcNzAJ_Q82g
-2025-06-17 16:31:48,893 - my_logger - INFO - Sent STOP signal to client 84dd8c73-552c-4050-8252-6d5c82bb5642 on queue amq.gen-DlCYwhsdtmt5CGXLm52BVA
-2025-06-17 16:31:48,894 - my_logger - INFO - All clients notified to STOP. Server will shut down soon.
-2025-06-17 16:31:48,894 - my_logger - INFO - Server_logic: Main loop ended. Cleaning up...
-2025-06-17 16:31:48,903 - my_logger - INFO - Server_logic: RabbitMQ connection closed.
-2025-06-17 16:31:48,904 - my_logger - INFO - Server_logic: Shutdown complete.
+2025-07-01 14:10:09,785 - my_logger - INFO - Server initialized, waiting for 2 clients.
+2025-07-01 14:10:09,804 - my_logger - INFO - Model 'yolov8n' loaded and encoded.
+2025-07-01 14:10:09,805 - my_logger - INFO - Starting server's RPC consumer...
+2025-07-01 14:10:23,958 - my_logger - INFO - Received action 'REGISTER' from client bb4f1371-ff48-48f1-80a8-550956ed24e8 (Layer 2)
+2025-07-01 14:10:23,958 - my_logger - INFO - Client bb4f1371-ff48-48f1-80a8-550956ed24e8 (Layer 2) registered. Total: 1/2
+2025-07-01 14:10:26,027 - my_logger - INFO - Received action 'REGISTER' from client 30dc852b-a0e8-4887-b163-f9088e25927c (Layer 1)
+2025-07-01 14:10:26,028 - my_logger - INFO - Client 30dc852b-a0e8-4887-b163-f9088e25927c (Layer 1) registered. Total: 2/2
+2025-07-01 14:10:26,028 - my_logger - INFO - All clients registered. Notifying all.
+2025-07-01 14:10:26,042 - my_logger - INFO - Sent RPC reply to 'amq.gen-RqP3f_O4vmaFZWIgfnoimg' (CorrID: 289282b3-3456-457d-a542-de77871aaebb)
+2025-07-01 14:10:26,042 - my_logger - INFO - Sent START signal to client bb4f1371-ff48-48f1-80a8-550956ed24e8
+2025-07-01 14:10:26,053 - my_logger - INFO - Sent RPC reply to 'amq.gen-CdkppwGwPVrnkNliRx3CPQ' (CorrID: e2588733-b94c-47ba-a5ff-f9fd3ae2c77b)
+2025-07-01 14:10:26,053 - my_logger - INFO - Sent START signal to client 30dc852b-a0e8-4887-b163-f9088e25927c
+2025-07-01 14:13:35,265 - my_logger - INFO - Received action 'REGISTER' from client af17f050-303d-4278-a94b-41b8bc1a104a (Layer 1)
+2025-07-01 14:13:35,266 - my_logger - INFO - Client af17f050-303d-4278-a94b-41b8bc1a104a (Layer 1) registered. Total: 3/2
+2025-07-01 14:13:35,266 - my_logger - INFO - Late client af17f050-303d-4278-a94b-41b8bc1a104a. Sending START.
+2025-07-01 14:13:35,277 - my_logger - INFO - Sent RPC reply to 'amq.gen-CrEVUfkOmCYkZbyGCaG8zA' (CorrID: 8c6eb4eb-cee6-4ef3-a617-35577e9cc232)
+2025-07-01 14:13:35,277 - my_logger - INFO - Sent START signal to client af17f050-303d-4278-a94b-41b8bc1a104a
+2025-07-01 14:15:06,435 - my_logger - INFO - Received action 'REGISTER' from client 238fbc1d-7bd4-4a36-a257-8cf1070ae93a (Layer 2)
+2025-07-01 14:15:06,435 - my_logger - INFO - Client 238fbc1d-7bd4-4a36-a257-8cf1070ae93a (Layer 2) registered. Total: 4/2
+2025-07-01 14:15:06,435 - my_logger - INFO - Late client 238fbc1d-7bd4-4a36-a257-8cf1070ae93a. Sending START.
+2025-07-01 14:15:06,448 - my_logger - INFO - Sent RPC reply to 'amq.gen-PwMEZad1EFKrhilwZXC9PA' (CorrID: 2d48d61e-f1d9-4c00-a8f0-a3d7729846ea)
+2025-07-01 14:15:06,449 - my_logger - INFO - Sent START signal to client 238fbc1d-7bd4-4a36-a257-8cf1070ae93a
+2025-07-01 14:15:08,462 - my_logger - INFO - Received action 'REGISTER' from client 00ce6634-8573-45b5-88c4-04246920dd51 (Layer 2)
+2025-07-01 14:15:08,463 - my_logger - INFO - Client 00ce6634-8573-45b5-88c4-04246920dd51 (Layer 2) registered. Total: 5/2
+2025-07-01 14:15:08,463 - my_logger - INFO - Late client 00ce6634-8573-45b5-88c4-04246920dd51. Sending START.
+2025-07-01 14:15:08,485 - my_logger - INFO - Sent RPC reply to 'amq.gen-sIumYdMBSiK7wF6P7FTgUw' (CorrID: a62c9f6a-c4cb-481f-98dc-f47e9731e0c5)
+2025-07-01 14:15:08,485 - my_logger - INFO - Sent START signal to client 00ce6634-8573-45b5-88c4-04246920dd51
+2025-07-02 08:15:53,360 - my_logger - INFO - Server initialized, waiting for 2 clients.
+2025-07-02 08:15:53,404 - my_logger - INFO - Model 'yolov8n' loaded and encoded.
+2025-07-02 08:15:53,404 - my_logger - INFO - Starting server's RPC consumer...
+2025-07-02 08:16:08,827 - my_logger - INFO - Received action 'REGISTER' from client 1d668db0-842a-493f-ab14-30e3809bba40 (Layer 2)
+2025-07-02 08:16:08,828 - my_logger - INFO - Client 1d668db0-842a-493f-ab14-30e3809bba40 (Layer 2) registered. Total: 1/2
+2025-07-02 08:16:09,056 - my_logger - INFO - Received action 'REGISTER' from client f366f6f1-2639-4c44-9aa3-ac692d67772f (Layer 1)
+2025-07-02 08:16:09,056 - my_logger - INFO - Client f366f6f1-2639-4c44-9aa3-ac692d67772f (Layer 1) registered. Total: 2/2
+2025-07-02 08:16:09,057 - my_logger - INFO - All clients registered. Notifying all.
+2025-07-02 08:16:09,073 - my_logger - INFO - Sent RPC reply to 'amq.gen-3h4ERVO4ZObhdoVprEQ6Fg' (CorrID: dc4145d2-324d-400c-bad4-c60591b7b17f)
+2025-07-02 08:16:09,073 - my_logger - INFO - Sent START signal to client 1d668db0-842a-493f-ab14-30e3809bba40
+2025-07-02 08:16:09,086 - my_logger - INFO - Sent RPC reply to 'amq.gen-OyJtFJpxuLkmQtOExAyWDA' (CorrID: 3a490cf7-aad7-4e7e-b62c-86169ef5e1cc)
+2025-07-02 08:16:09,086 - my_logger - INFO - Sent START signal to client f366f6f1-2639-4c44-9aa3-ac692d67772f
+2025-07-02 08:19:16,164 - my_logger - INFO - Received action 'REGISTER' from client 24acd1db-2ec9-4944-a4ac-dc09934e5ec2 (Layer 1)
+2025-07-02 08:19:16,164 - my_logger - INFO - Client 24acd1db-2ec9-4944-a4ac-dc09934e5ec2 (Layer 1) registered. Total: 3/2
+2025-07-02 08:19:16,164 - my_logger - INFO - Late client 24acd1db-2ec9-4944-a4ac-dc09934e5ec2. Sending START.
+2025-07-02 08:19:16,180 - my_logger - INFO - Sent RPC reply to 'amq.gen-wgTS9qbThnFl18RaG6AyIw' (CorrID: 70e0e753-e41c-4c60-a980-d0d35b367757)
+2025-07-02 08:19:16,181 - my_logger - INFO - Sent START signal to client 24acd1db-2ec9-4944-a4ac-dc09934e5ec2
+2025-07-02 08:20:46,364 - my_logger - INFO - Received action 'REGISTER' from client daad995d-111e-4e7a-a1d8-d5ab5fee0b78 (Layer 2)
+2025-07-02 08:20:46,365 - my_logger - INFO - Client daad995d-111e-4e7a-a1d8-d5ab5fee0b78 (Layer 2) registered. Total: 4/2
+2025-07-02 08:20:46,365 - my_logger - INFO - Late client daad995d-111e-4e7a-a1d8-d5ab5fee0b78. Sending START.
+2025-07-02 08:20:46,379 - my_logger - INFO - Sent RPC reply to 'amq.gen-6vLqp0zY6Sg1DpsAkEZ1zA' (CorrID: 5d13adc7-c555-476f-acf8-3993aa45ba5d)
+2025-07-02 08:20:46,379 - my_logger - INFO - Sent START signal to client daad995d-111e-4e7a-a1d8-d5ab5fee0b78
+2025-07-02 08:20:47,457 - my_logger - INFO - Received action 'REGISTER' from client 23c0b50f-de11-48ab-9073-a63455146ebe (Layer 2)
+2025-07-02 08:20:47,457 - my_logger - INFO - Client 23c0b50f-de11-48ab-9073-a63455146ebe (Layer 2) registered. Total: 5/2
+2025-07-02 08:20:47,458 - my_logger - INFO - Late client 23c0b50f-de11-48ab-9073-a63455146ebe. Sending START.
+2025-07-02 08:20:47,485 - my_logger - INFO - Sent RPC reply to 'amq.gen-9L47ut6HSjLcLyB-2gD_gw' (CorrID: e07c0025-6337-4fbe-8006-193eb9192fc9)
+2025-07-02 08:20:47,485 - my_logger - INFO - Sent START signal to client 23c0b50f-de11-48ab-9073-a63455146ebe
+2025-07-02 08:25:53,958 - my_logger - INFO - Run duration of 600 seconds reached.
+2025-07-02 08:25:53,958 - my_logger - INFO - Initiating STOP signal for all registered clients...
+2025-07-02 08:25:53,959 - my_logger - INFO - Sent STOP signal to client 1d668db0-842a-493f-ab14-30e3809bba40 on queue amq.gen-3h4ERVO4ZObhdoVprEQ6Fg
+2025-07-02 08:25:53,959 - my_logger - INFO - Sent STOP signal to client f366f6f1-2639-4c44-9aa3-ac692d67772f on queue amq.gen-OyJtFJpxuLkmQtOExAyWDA
+2025-07-02 08:25:53,960 - my_logger - INFO - Sent STOP signal to client 24acd1db-2ec9-4944-a4ac-dc09934e5ec2 on queue amq.gen-wgTS9qbThnFl18RaG6AyIw
+2025-07-02 08:25:53,960 - my_logger - INFO - Sent STOP signal to client daad995d-111e-4e7a-a1d8-d5ab5fee0b78 on queue amq.gen-6vLqp0zY6Sg1DpsAkEZ1zA
+2025-07-02 08:25:53,961 - my_logger - INFO - Sent STOP signal to client 23c0b50f-de11-48ab-9073-a63455146ebe on queue amq.gen-9L47ut6HSjLcLyB-2gD_gw
+2025-07-02 08:25:53,961 - my_logger - INFO - All clients notified to STOP. Server will shut down soon.
+2025-07-02 08:25:53,961 - my_logger - INFO - Server_logic: Main loop ended. Cleaning up...
+2025-07-02 08:25:53,968 - my_logger - INFO - Server_logic: RabbitMQ connection closed.
+2025-07-02 08:25:53,969 - my_logger - INFO - Server_logic: Shutdown complete.

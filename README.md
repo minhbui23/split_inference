@@ -1,104 +1,91 @@
-# split_inference
+# Split Inference System
+
+A scalable, resilient, and observable distributed system for performing Split Inference on deep learning models, designed for Edge-Cloud computing scenarios.
+
+This project demonstrates how to partition a large AI model (e.g., YOLOv8) and execute it across multiple independent workers, coordinated by a central server and supported by robust infrastructure components like RabbitMQ and Redis.
+
+## System Architecture
+
+The system is designed with a decoupled, asynchronous, service-oriented architecture. It consists of three main logical planes: a Control Plane for coordination, an Execution Plane for computation, and an Infrastructure Plane for messaging and caching.
+
+![High-level Architecture](./docs/overview.png)
+
+## Prerequisites
+
+Before running the application, ensure you have the following installed:
+* Python 3.9+
+* Docker & Docker Compose
+* `make` (optional, for using Makefile shortcuts)
 
 ## Configuration
-Application configuration is in the `config.yaml` file:
-```yaml
-# ===================================================================
-# General & Data Source Configuration
-# ===================================================================
-# A general name for the YOLO model setup.
-name: YOLO
-# Path to the source video file for the pipeline.
-data: video.mp4
-# Directory where log files will be saved.
-log-path: logs
-debug-mode: False
-control-count: 10
 
-app:
-  run_duration_seconds: 200 # Duration to run the pipeline in seconds.
+All system configurations are managed in the `configs/config.yaml` file. This file is mounted into all service containers when using Docker Compose.
 
-# ===================================================================
-# Server-Side Configuration
-# ===================================================================
-server:
-  # Defines the model splitting point. Corresponds to pre-configured
-  # splits in the server logic ('a', 'b', or 'c').
-  cut-layer: a
-  # Defines the number of client instances per layer.
-  # e.g., [1, 1] means 1 client for layer 1, and 1 client for layer 2.
-  clients:
-    - 1
-    - 1
-  # Model file path
-  model: yolov8n
-  # Number of frames to process in a single batch.
-  batch-frame: 20
-  save-output: False
-
-# ===================================================================
-# Client-Side Configuration
-# ===================================================================
-client:
-  # Target image size [width, height] for model input.
-  imgsz: [640, 640]
-  # Max items in the client's internal thread queues (input, output, ack = 2x).
-  internal_queue_maxsize: 50
-  # RabbitMQ consumer prefetch count for the IOThread.
-  io_prefetch_count: 5
-  # Seconds the IOThread waits before retrying a failed RabbitMQ connection.
-  rabbit_retry_delay: 5
-  # Timeout for Pika's process_data_events() in the IOThread (seconds).
-  io_process_events_timeout: 0.1
-  # Timeout for the IOThread when getting items from its output queue (seconds).
-  io_output_q_timeout: 0.05
-
-
-# ===================================================================
-# Infrastructure Connection Details
-# ===================================================================
-# RabbitMQ message broker connection settings.
-rabbit:
-  address: rabbitmq
-  username: "admin"
-  password: "admin"
-  virtual-host: "/"
-
-# Redis server connection settings for the Claim Check pattern.
-redis:
-  host: redis
-  port: 6379
-  db: 0
-```
-This configuration is use for server and client.
-
-### For Container Stack Deploy
-```commandline
-make start
-make stop
-```
+Key configuration parameters include:
+* **`app`**: General settings like `run_duration_seconds`.
+* **`server`**: Defines the model `cut-layer`, the number of expected `clients` for each layer, and the `model` name.
+* **`client`**: Contains client-side performance tuning parameters like `imgsz`, `internal_queue_maxsize`, and `io_prefetch_count`.
+* **`rabbit` & `redis`**: Connection details for the infrastructure services. **Note:** When running with Docker Compose, these should be set to the service names (e.g., `address: rabbitmq`, `host: redis`).
 
 ## How to Run
-Alter your configuration, you need to run the server to listen and control the request from clients.
-### Server
-```commandline
-python server.py
+
+### 1. Using Docker Compose (Recommended)
+
+This is the easiest and most reliable way to run the entire distributed system. A `Makefile` is provided for convenience.
+
+* **To start the entire stack (RabbitMQ, Redis, Server, Clients):**
+    ```bash
+    make start
+    ```
+* **To stop and remove all containers:**
+    ```bash
+    make stop
+    ```
+* **To view logs from all services:**
+    ```bash
+    make logs
+    ```
+
+### 2. Local Development (Manual Run)
+
+This method is suitable for debugging individual components. Ensure RabbitMQ and Redis are running and accessible from your local machine.
+
+**Important:** Run all commands from the **root directory** of the project to ensure Python can find the modules correctly.
+
+1.  **Start the Server:**
+    The server must be running first to listen for client registrations.
+    ```bash
+    python -m app.server --config configs/config.yaml
+    ```
+
+2.  **Start the Client Workers:**
+    Open new terminal windows for each client you need to run. The number of clients must match the `server.clients` configuration.
+
+    * **Start a Layer 1 Client:**
+        ```bash
+        python -m app.client --layer_id 1 --config configs/config.yaml
+        ```
+
+    * **Start a Layer 2 Client:**
+        ```bash
+        python -m app.client --layer_id 2 --config configs/config.yaml
+        ```
+
+    **Arguments:**
+    * `--layer_id`: **(Required)** The layer this client belongs to (starts from 1).
+    * `--device`: (Optional) The device for inference (e.g., `cpu`, `cuda`).
+    * `--config`: (Optional) Path to the configuration file.
+
+## Project Structure
+
 ```
-### Client
-Now, when server is ready, run clients simultaneously with total number of client that you defined.
-
-**Layer 1**
-
-```commandline
-python client.py --layer_id 1 
-```
-Where:
-- `--layer_id` is the ID index of client's layer, start from 1.
-
-If you want to use a specific device configuration for the training process, declare it with the `--device` argument when running the command line:
-```commandline
-python client.py --layer_id 1 --device cpu
-```
-
-
-
+split_inference/
+├── app/                  # Application entrypoints (server.py, client.py)
+├── configs/              # Configuration files (config.yaml)
+├── core/                 # Core application logic (server, client workers, utils)
+├── deployments/          # Deployment manifests (docker-compose, kubernetes)
+├── docs/                 # Documentation and diagrams
+├── logs/                 # Directory for log files
+├── models/               # Pre-trained model files (.pt)
+├── videos/               # Source video files
+└── requirements.txt      # Python dependencies
